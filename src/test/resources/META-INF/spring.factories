@@ -1,0 +1,3 @@
+org.springframework.test.context.ContextCustomizerFactory = br.com.poimen.\
+    config.SqlTestContainersSpringContextCustomizerFactory,br.com.poimen.config.\
+    TestContainersSpringContextCustomizerFactory
