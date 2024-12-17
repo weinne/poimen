@@ -1,0 +1,153 @@
+<div>
+  <h2 id="page-heading" data-cy="WorshipEventHeading">
+    <span jhiTranslate="poimenApp.worshipEvent.home.title">Worship Events</span>
+
+    <div class="d-flex justify-content-end">
+      <button class="btn btn-info me-2" (click)="load()" [disabled]="isLoading">
+        <fa-icon icon="sync" [animation]="isLoading ? 'spin' : undefined"></fa-icon>
+        <span jhiTranslate="poimenApp.worshipEvent.home.refreshListLabel">Refresh list</span>
+      </button>
+
+      <button
+        id="jh-create-entity"
+        data-cy="entityCreateButton"
+        class="btn btn-primary jh-create-entity create-worship-event"
+        [routerLink]="['/worship-event/new']"
+      >
+        <fa-icon icon="plus"></fa-icon>
+        <span jhiTranslate="poimenApp.worshipEvent.home.createLabel">Create a new Worship Event</span>
+      </button>
+    </div>
+  </h2>
+
+  <jhi-alert-error></jhi-alert-error>
+
+  <jhi-alert></jhi-alert>
+
+  @if (worshipEvents?.length === 0) {
+    <div class="alert alert-warning" id="no-result">
+      <span jhiTranslate="poimenApp.worshipEvent.home.notFound">No Worship Events found</span>
+    </div>
+  }
+
+  @if (worshipEvents && worshipEvents.length > 0) {
+    <div class="table-responsive table-entities" id="entities">
+      <table class="table table-striped" aria-describedby="page-heading">
+        <thead>
+          <tr jhiSort [sortState]="sortState" (sortChange)="navigateToWithComponentValues($event)">
+            <th scope="col" jhiSortBy="id">
+              <div class="d-flex">
+                <span jhiTranslate="global.field.id">ID</span>
+
+                <fa-icon class="p-1" icon="sort"></fa-icon>
+              </div>
+            </th>
+            <th scope="col" jhiSortBy="date">
+              <div class="d-flex">
+                <span jhiTranslate="poimenApp.worshipEvent.date">Date</span>
+
+                <fa-icon class="p-1" icon="sort"></fa-icon>
+              </div>
+            </th>
+            <th scope="col" jhiSortBy="title">
+              <div class="d-flex">
+                <span jhiTranslate="poimenApp.worshipEvent.title">Title</span>
+
+                <fa-icon class="p-1" icon="sort"></fa-icon>
+              </div>
+            </th>
+            <th scope="col" jhiSortBy="description">
+              <div class="d-flex">
+                <span jhiTranslate="poimenApp.worshipEvent.description">Description</span>
+
+                <fa-icon class="p-1" icon="sort"></fa-icon>
+              </div>
+            </th>
+            <th scope="col" jhiSortBy="worshipType">
+              <div class="d-flex">
+                <span jhiTranslate="poimenApp.worshipEvent.worshipType">Worship Type</span>
+
+                <fa-icon class="p-1" icon="sort"></fa-icon>
+              </div>
+            </th>
+            <th scope="col" jhiSortBy="church.id">
+              <div class="d-flex">
+                <span jhiTranslate="poimenApp.worshipEvent.church">Church</span>
+                <fa-icon class="p-1" icon="sort"></fa-icon>
+              </div>
+            </th>
+            <th scope="col"></th>
+          </tr>
+        </thead>
+        <tbody>
+          @for (worshipEvent of worshipEvents; track trackId(worshipEvent)) {
+            <tr data-cy="entityTable">
+              <td>
+                <a [routerLink]="['/worship-event', worshipEvent.id, 'view']">{{ worshipEvent.id }}</a>
+              </td>
+              <td>{{ worshipEvent.date | formatMediumDatetime }}</td>
+              <td>{{ worshipEvent.title }}</td>
+              <td>{{ worshipEvent.description }}</td>
+              <td [jhiTranslate]="'poimenApp.WorshipType.' + (worshipEvent.worshipType ?? 'null')">
+                {{
+                  {
+                    null: '',
+                    SUNDAY_SERVICE: 'SUNDAY_SERVICE',
+                    PRAYER_MEETING: 'PRAYER_MEETING',
+                    BIBLE_STUDY: 'BIBLE_STUDY',
+                    YOUTH_SERVICE: 'YOUTH_SERVICE',
+                    SPECIAL_EVENT: 'SPECIAL_EVENT',
+                  }[worshipEvent.worshipType ?? 'null']
+                }}
+              </td>
+              <td>
+                @if (worshipEvent.church) {
+                  <div>
+                    <a [routerLink]="['/church', worshipEvent.church.id, 'view']">{{ worshipEvent.church.id }}</a>
+                  </div>
+                }
+              </td>
+              <td class="text-end">
+                <div class="btn-group">
+                  <a [routerLink]="['/worship-event', worshipEvent.id, 'view']" class="btn btn-info btn-sm" data-cy="entityDetailsButton">
+                    <fa-icon icon="eye"></fa-icon>
+                    <span class="d-none d-md-inline" jhiTranslate="entity.action.view">View</span>
+                  </a>
+
+                  <a [routerLink]="['/worship-event', worshipEvent.id, 'edit']" class="btn btn-primary btn-sm" data-cy="entityEditButton">
+                    <fa-icon icon="pencil-alt"></fa-icon>
+                    <span class="d-none d-md-inline" jhiTranslate="entity.action.edit">Edit</span>
+                  </a>
+
+                  <button type="submit" (click)="delete(worshipEvent)" class="btn btn-danger btn-sm" data-cy="entityDeleteButton">
+                    <fa-icon icon="times"></fa-icon>
+                    <span class="d-none d-md-inline" jhiTranslate="entity.action.delete">Delete</span>
+                  </button>
+                </div>
+              </td>
+            </tr>
+          }
+        </tbody>
+      </table>
+    </div>
+  }
+  @if (worshipEvents && worshipEvents.length > 0) {
+    <div>
+      <div class="d-flex justify-content-center">
+        <jhi-item-count [params]="{ page: page, totalItems: totalItems, itemsPerPage: itemsPerPage }"></jhi-item-count>
+      </div>
+
+      <div class="d-flex justify-content-center">
+        <ngb-pagination
+          [collectionSize]="totalItems"
+          [page]="page"
+          [pageSize]="itemsPerPage"
+          [maxSize]="5"
+          [rotate]="true"
+          [boundaryLinks]="true"
+          (pageChange)="navigateToPage($event)"
+        ></ngb-pagination>
+      </div>
+    </div>
+  }
+</div>

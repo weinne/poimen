@@ -1,0 +1,11 @@
+{
+  "poimenApp": {
+    "GroupType": {
+      "null": "",
+      "DEPARTMENT": "DEPARTMENT",
+      "INTERNAL_SOCIETY": "INTERNAL_SOCIETY",
+      "DEACON_BOARD": "DEACON_BOARD",
+      "CHURCH_COUNCIL": "CHURCH_COUNCIL"
+    }
+  }
+}

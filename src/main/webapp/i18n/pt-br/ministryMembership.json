@@ -1,0 +1,29 @@
+{
+  "poimenApp": {
+    "ministryMembership": {
+      "home": {
+        "title": "Ministry Memberships",
+        "refreshListLabel": "Atualizar lista",
+        "createLabel": "Criar novo Ministry Membership",
+        "createOrEditLabel": "Criar ou editar Ministry Membership",
+        "notFound": "Nenhum Ministry Membership encontrado"
+      },
+      "created": "Um novo Ministry Membership foi criado com o identificador {{ param }}",
+      "updated": "Um Ministry Membership foi atualizado com o identificador {{ param }}",
+      "deleted": "Um Ministry Membership foi excluído com o identificador {{ param }}",
+      "delete": {
+        "question": "Tem certeza de que deseja excluir Ministry Membership {{ id }}?"
+      },
+      "detail": {
+        "title": "Ministry Membership"
+      },
+      "id": "ID",
+      "role": "Role",
+      "startDate": "Start Date",
+      "endDate": "End Date",
+      "status": "Status",
+      "ministryGroup": "Ministry Group",
+      "member": "Member"
+    }
+  }
+}

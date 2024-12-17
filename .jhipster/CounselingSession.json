@@ -1,0 +1,45 @@
+{
+  "annotations": {
+    "changelogDate": "20241216194334"
+  },
+  "applications": "*",
+  "fields": [
+    {
+      "fieldName": "date",
+      "fieldType": "Instant",
+      "fieldValidateRules": ["required"]
+    },
+    {
+      "fieldName": "notes",
+      "fieldType": "TextBlob"
+    }
+  ],
+  "name": "CounselingSession",
+  "pagination": "infinite-scroll",
+  "relationships": [
+    {
+      "otherEntityName": "church",
+      "otherEntityRelationshipName": "counselingSession",
+      "relationshipName": "church",
+      "relationshipSide": "left",
+      "relationshipType": "many-to-one"
+    },
+    {
+      "otherEntityName": "member",
+      "otherEntityRelationshipName": "counselingSession",
+      "relationshipName": "member",
+      "relationshipSide": "left",
+      "relationshipType": "many-to-one"
+    },
+    {
+      "otherEntityName": "user",
+      "otherEntityRelationshipName": "counselingSession",
+      "relationshipName": "user",
+      "relationshipSide": "left",
+      "relationshipType": "many-to-one",
+      "relationshipWithBuiltInEntity": true
+    }
+  ],
+  "searchEngine": "no",
+  "service": "serviceClass"
+}

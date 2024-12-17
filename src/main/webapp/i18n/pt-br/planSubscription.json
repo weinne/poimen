@@ -1,0 +1,30 @@
+{
+  "poimenApp": {
+    "planSubscription": {
+      "home": {
+        "title": "Plan Subscriptions",
+        "refreshListLabel": "Atualizar lista",
+        "createLabel": "Criar novo Plan Subscription",
+        "createOrEditLabel": "Criar ou editar Plan Subscription",
+        "notFound": "Nenhum Plan Subscription encontrado"
+      },
+      "created": "Um novo Plan Subscription foi criado com o identificador {{ param }}",
+      "updated": "Um Plan Subscription foi atualizado com o identificador {{ param }}",
+      "deleted": "Um Plan Subscription foi excluído com o identificador {{ param }}",
+      "delete": {
+        "question": "Tem certeza de que deseja excluir Plan Subscription {{ id }}?"
+      },
+      "detail": {
+        "title": "Plan Subscription"
+      },
+      "id": "ID",
+      "startDate": "Start Date",
+      "endDate": "End Date",
+      "active": "Active",
+      "planName": "Plan Name",
+      "plan": "Plan",
+      "church": "Church",
+      "user": "User"
+    }
+  }
+}

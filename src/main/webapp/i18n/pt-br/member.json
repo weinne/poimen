@@ -1,0 +1,35 @@
+{
+  "poimenApp": {
+    "member": {
+      "home": {
+        "title": "Members",
+        "refreshListLabel": "Atualizar lista",
+        "createLabel": "Criar novo Member",
+        "createOrEditLabel": "Criar ou editar Member",
+        "notFound": "Nenhum Member encontrado"
+      },
+      "created": "Um novo Member foi criado com o identificador {{ param }}",
+      "updated": "Um Member foi atualizado com o identificador {{ param }}",
+      "deleted": "Um Member foi excluído com o identificador {{ param }}",
+      "delete": {
+        "question": "Tem certeza de que deseja excluir Member {{ id }}?"
+      },
+      "detail": {
+        "title": "Member"
+      },
+      "id": "ID",
+      "firstName": "First Name",
+      "lastName": "Last Name",
+      "email": "Email",
+      "phoneNumber": "Phone Number",
+      "dateOfBirth": "Date Of Birth",
+      "address": "Address",
+      "church": "Church",
+      "counselingSession": "Counseling Session",
+      "ministryMembership": "Ministry Membership",
+      "task": "Task",
+      "transaction": "Transaction",
+      "schedule": "Schedule"
+    }
+  }
+}

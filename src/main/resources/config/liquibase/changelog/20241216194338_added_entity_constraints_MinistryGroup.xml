@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="utf-8"?>
+<databaseChangeLog
+    xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+    xmlns:ext="http://www.liquibase.org/xml/ns/dbchangelog-ext"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-latest.xsd
+                        http://www.liquibase.org/xml/ns/dbchangelog-ext http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-ext.xsd">
+    <!--
+        Added the constraints for entity MinistryGroup.
+    -->
+    <changeSet id="20241216194338-2" author="jhipster">
+
+        <addForeignKeyConstraint baseColumnNames="church_id"
+                                 baseTableName="ministry_group"
+                                 constraintName="fk_ministry_group__church_id"
+                                 referencedColumnNames="id"
+                                 referencedTableName="church"
+                                 />
+    </changeSet>
+</databaseChangeLog>

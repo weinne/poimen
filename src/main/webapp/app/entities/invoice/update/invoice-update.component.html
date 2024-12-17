@@ -1,0 +1,168 @@
+<div class="d-flex justify-content-center">
+  <div class="col-8">
+    <form name="editForm" novalidate (ngSubmit)="save()" [formGroup]="editForm">
+      <h2 id="jhi-invoice-heading" data-cy="InvoiceCreateUpdateHeading" jhiTranslate="poimenApp.invoice.home.createOrEditLabel">
+        Create or edit a Invoice
+      </h2>
+
+      <div>
+        <jhi-alert-error></jhi-alert-error>
+
+        @if (editForm.controls.id.value !== null) {
+          <div class="mb-3">
+            <label class="form-label" for="field_id" jhiTranslate="poimenApp.invoice.id">ID</label>
+            <input type="number" class="form-control" name="id" id="field_id" data-cy="id" formControlName="id" [readonly]="true" />
+          </div>
+        }
+
+        @let numberRef = editForm.get('number')!;
+        <div class="mb-3">
+          <label class="form-label" for="field_number" jhiTranslate="poimenApp.invoice.number">Number</label>
+          <input type="text" class="form-control" name="number" id="field_number" data-cy="number" formControlName="number" />
+          @if (numberRef.invalid && (numberRef.dirty || numberRef.touched)) {
+            <div>
+              @if (editForm.get('number')?.errors?.required) {
+                <small class="form-text text-danger" jhiTranslate="entity.validation.required">This field is required.</small>
+              }
+            </div>
+          }
+        </div>
+
+        @let issueDateRef = editForm.get('issueDate')!;
+        <div class="mb-3">
+          <label class="form-label" for="field_issueDate" jhiTranslate="poimenApp.invoice.issueDate">Issue Date</label>
+          <div class="d-flex">
+            <input
+              id="field_issueDate"
+              data-cy="issueDate"
+              type="datetime-local"
+              class="form-control"
+              name="issueDate"
+              formControlName="issueDate"
+              placeholder="YYYY-MM-DD HH:mm"
+            />
+          </div>
+          @if (issueDateRef.invalid && (issueDateRef.dirty || issueDateRef.touched)) {
+            <div>
+              @if (editForm.get('issueDate')?.errors?.required) {
+                <small class="form-text text-danger" jhiTranslate="entity.validation.required">This field is required.</small>
+              }
+              <small
+                class="form-text text-danger"
+                [hidden]="!editForm.get('issueDate')?.errors?.datetimelocal"
+                jhiTranslate="entity.validation.datetimelocal"
+                >This field should be a date and time.</small
+              >
+            </div>
+          }
+        </div>
+
+        @let totalAmountRef = editForm.get('totalAmount')!;
+        <div class="mb-3">
+          <label class="form-label" for="field_totalAmount" jhiTranslate="poimenApp.invoice.totalAmount">Total Amount</label>
+          <input
+            type="number"
+            class="form-control"
+            name="totalAmount"
+            id="field_totalAmount"
+            data-cy="totalAmount"
+            formControlName="totalAmount"
+          />
+          @if (totalAmountRef.invalid && (totalAmountRef.dirty || totalAmountRef.touched)) {
+            <div>
+              @if (editForm.get('totalAmount')?.errors?.required) {
+                <small class="form-text text-danger" jhiTranslate="entity.validation.required">This field is required.</small>
+              }
+              <small
+                class="form-text text-danger"
+                [hidden]="!editForm.get('totalAmount')?.errors?.number"
+                jhiTranslate="entity.validation.number"
+                >This field should be a number.</small
+              >
+            </div>
+          }
+        </div>
+
+        @let typeRef = editForm.get('type')!;
+        <div class="mb-3">
+          <label class="form-label" for="field_type" jhiTranslate="poimenApp.invoice.type">Type</label>
+          <input type="text" class="form-control" name="type" id="field_type" data-cy="type" formControlName="type" />
+          @if (typeRef.invalid && (typeRef.dirty || typeRef.touched)) {
+            <div>
+              @if (editForm.get('type')?.errors?.required) {
+                <small class="form-text text-danger" jhiTranslate="entity.validation.required">This field is required.</small>
+              }
+            </div>
+          }
+        </div>
+
+        <div class="mb-3">
+          <label class="form-label" for="field_supplier" jhiTranslate="poimenApp.invoice.supplier">Supplier</label>
+          <input type="text" class="form-control" name="supplier" id="field_supplier" data-cy="supplier" formControlName="supplier" />
+        </div>
+
+        <div class="mb-3">
+          <label class="form-label" for="field_invoiceFile" jhiTranslate="poimenApp.invoice.invoiceFile">Invoice File</label>
+          <input
+            type="text"
+            class="form-control"
+            name="invoiceFile"
+            id="field_invoiceFile"
+            data-cy="invoiceFile"
+            formControlName="invoiceFile"
+          />
+        </div>
+
+        <div class="mb-3">
+          <label class="form-label" for="field_church" jhiTranslate="poimenApp.invoice.church">Church</label>
+          <select
+            class="form-control"
+            id="field_church"
+            data-cy="church"
+            name="church"
+            formControlName="church"
+            [compareWith]="compareChurch"
+          >
+            <option [ngValue]="null"></option>
+            @for (churchOption of churchesSharedCollection; track $index) {
+              <option [ngValue]="churchOption">{{ churchOption.id }}</option>
+            }
+          </select>
+        </div>
+
+        <div class="mb-3">
+          <label class="form-label" for="field_transaction" jhiTranslate="poimenApp.invoice.transaction">Transaction</label>
+          <select
+            class="form-control"
+            id="field_transaction"
+            data-cy="transaction"
+            name="transaction"
+            formControlName="transaction"
+            [compareWith]="compareTransaction"
+          >
+            <option [ngValue]="null"></option>
+            @for (transactionOption of transactionsSharedCollection; track $index) {
+              <option [ngValue]="transactionOption">{{ transactionOption.id }}</option>
+            }
+          </select>
+        </div>
+      </div>
+
+      <div>
+        <button type="button" id="cancel-save" data-cy="entityCreateCancelButton" class="btn btn-secondary" (click)="previousState()">
+          <fa-icon icon="ban"></fa-icon>&nbsp;<span jhiTranslate="entity.action.cancel">Cancel</span>
+        </button>
+
+        <button
+          type="submit"
+          id="save-entity"
+          data-cy="entityCreateSaveButton"
+          [disabled]="editForm.invalid || isSaving"
+          class="btn btn-primary"
+        >
+          <fa-icon icon="save"></fa-icon>&nbsp;<span jhiTranslate="entity.action.save">Save</span>
+        </button>
+      </div>
+    </form>
+  </div>
+</div>

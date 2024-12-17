@@ -8,7 +8,19 @@
       "entities": {
         "main": "Entities",
         "jhipster-needle-menu-add-entry": "JHipster will add additional entities here (do not translate!)",
-        "adminAuthority": "Authority"
+        "church": "Church",
+        "counselingSession": "Counseling Session",
+        "hymn": "Hymn",
+        "invoice": "Invoice",
+        "member": "Member",
+        "ministryGroup": "Ministry Group",
+        "ministryMembership": "Ministry Membership",
+        "plan": "Plan",
+        "planSubscription": "Plan Subscription",
+        "schedule": "Schedule",
+        "task": "Task",
+        "transaction": "Transaction",
+        "worshipEvent": "Worship Event"
       },
       "account": {
         "main": "Account",
@@ -139,7 +151,6 @@
     "idnull": "Invalid ID",
     "idinvalid": "Invalid ID",
     "idnotfound": "ID cannot be found",
-    "querySyntaxError": "Invalid search query",
     "file": {
       "could.not.extract": "Could not extract file",
       "not.image": "File was expected to be an image but was found to be \"{{ fileType }}\""

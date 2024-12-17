@@ -1,0 +1,201 @@
+// Entidade principal da igreja (tenant entity)
+entity Church {
+  name String required                     // Nome da igreja
+  cnpj String required                     // CNPJ da igreja
+  address String required                  // Endereço completo
+  city String required                     // Cidade da igreja
+  dateFoundation Instant required          // Data de fundação
+}
+
+// Entidade para membros
+entity Member {
+  firstName String required                // Primeiro nome do membro
+  lastName String required                 // Sobrenome
+  email String unique                      // E-mail único
+  phoneNumber String                       // Telefone de contato
+  dateOfBirth Instant                      // Data de nascimento
+  address String                           // Endereço completo
+}
+
+// Entidade genérica para Departamentos, Sociedades Internas, Junta Diaconal e Conselho
+entity MinistryGroup {
+  name String required                     // Nome do grupo
+  description String                       // Descrição geral
+  establishedDate Instant                  // Data de fundação
+  leader String                            // Nome do líder
+  type GroupType required                  // Tipo do grupo (ENUM)
+}
+
+enum RoleMinistry {
+  PRESIDENT
+  VICE_PRESIDENT
+  FIRST_SECRETARY
+  FIRST_TREASURER
+  SECOND_SECRETARY
+  SECOND_TREASURER
+  CAUSE_SECRETARY
+  ASSOCIATE
+}
+
+entity MinistryMembership {
+  role RoleMinistry required               // Função no ministério
+  startDate Instant                        // Data de início
+  endDate Instant                          // Data de término
+  status Boolean                           // Status da participação
+}
+
+// ENUM para distinguir os tipos de grupo
+enum GroupType {
+  DEPARTMENT                               // Departamento
+  INTERNAL_SOCIETY                         // Sociedade Interna
+  DEACON_BOARD                             // Junta Diaconal
+  CHURCH_COUNCIL                           // Conselho
+}
+
+// Entidade para assinaturas (controle de plano e status)
+entity PlanSubscription {
+  startDate Instant required               // Data de início da assinatura
+  endDate Instant                          // Data de término (opcional)
+  active Boolean required                  // Status da assinatura
+  planName String required                 // Nome do plano
+}
+
+entity Plan {
+  name String required                     // Nome do plano
+  price String required                    // Preço do plano
+}
+
+// Entidade para tarefas do pastor
+entity Task {
+  title String required                    // Título da tarefa
+  description String                       // Descrição
+  dueDate Instant                          // Prazo
+  completed Boolean                        // Se a tarefa foi concluída ou não
+}
+
+// Entidade para sessões de aconselhamento
+entity CounselingSession {
+  date Instant required                    // Data da sessão
+  notes TextBlob                           // Notas sobre a sessão
+}
+
+// ENUM para os tipos de culto
+enum WorshipType {
+  SUNDAY_SERVICE                           // Culto de Domingo
+  PRAYER_MEETING                           // Reunião de Oração
+  BIBLE_STUDY                              // Estudo Bíblico
+  YOUTH_SERVICE                            // Culto Jovem
+  SPECIAL_EVENT                            // Evento Especial
+}
+
+// Entidade para cultos
+entity WorshipEvent {
+  date Instant required                    // Data do culto
+  title String                             // Título ou tema do culto
+  description String                       // Descrição breve
+  worshipType WorshipType required         // Tipo de culto (ENUM)
+}
+
+// Entidade para o agendamento de papéis em cultos (Pregador, Liturgo, Músico)
+entity Schedule {
+  roleType RoleSchedule required           // Tipo de papel (Enum)
+  notes String                             // Notas adicionais sobre o agendamento
+  startTime Instant required               // Hora de início para o papel
+  endTime Instant                          // Hora de término se necessário
+}
+
+// ENUM para os tipos de papéis em cultos
+enum RoleSchedule {
+  PREACHER                                 // Pregador
+  LITURGIST                                // Liturgo
+  MUSICIAN                                 // Músico
+}
+
+// Entidade para hinos
+entity Hymn {
+  title String required                    // Título do hino
+  author String                            // Autor do hino
+  hymnNumber String                        // Número do hino
+  lyrics String                            // Letra do hino
+}
+
+// Entidade de Transação (movimentação de dinheiro)
+entity Transaction {
+  description String required              // Descrição da transação
+  amount BigDecimal required               // Valor da transação
+  date Instant required                    // Data da transação
+  paymentMethod String                     // Método de pagamento (e.g. cartão, transferência)
+  type String required                     // Tipo: "entrada" ou "saída"
+  supplierOrClient String                  // Nome do fornecedor ou cliente
+  invoiceFile String                       // Caminho para o arquivo da nota fiscal (opcional)
+}
+
+// Entidade de Nota Fiscal
+entity Invoice {
+  number String required                   // Número da nota fiscal
+  issueDate Instant required               // Data de emissão da nota fiscal
+  totalAmount BigDecimal required          // Total da nota fiscal
+  type String required                     // Tipo da nota fiscal: "entrada" ou "saída"
+  supplier String                          // Nome do fornecedor ou cliente
+  invoiceFile String                       // Caminho para o arquivo da nota fiscal (opcional)
+}
+
+// RELAÇÕES
+
+// Church como tenant entity (relacionamento com várias entidades)
+relationship ManyToOne {
+  Member to Church                         // Um membro pertence a uma igreja
+  MinistryGroup to Church                  // Um grupo pertence a uma igreja
+  WorshipEvent to Church                   // Um culto pertence a uma igreja
+  Task to Church                           // Uma tarefa pertence a uma igreja
+  CounselingSession to Church              // Uma sessão de aconselhamento pertence a uma igreja
+  Invoice to Church                        // Relaciona a nota fiscal à igreja
+  Transaction to Church                    // Relaciona a transação à igreja
+
+  PlanSubscription to Plan                 // Assinatura vinculada a um plano
+  PlanSubscription to Church               // Assinatura vinculada a uma igreja
+  
+  CounselingSession to Member              // Sessão de aconselhamento vinculada a um membro
+
+  MinistryMembership to MinistryGroup      // Membro de um grupo ministerial
+  MinistryMembership to Member             // Membro de um grupo ministerial
+
+  Task to Member                           // Tarefa atribuída a um membro
+
+  Transaction to Member                      // Transação vinculada a um membro
+
+  Transaction to User with builtInEntity   // Transação vinculada a um usuário
+  Task to User with builtInEntity          // Tarefa atribuída a um usuário
+  PlanSubscription to User with builtInEntity // Assinatura vinculada a um usuário
+  CounselingSession to User with builtInEntity // Sessão de aconselhamento vinculada a um usuário
+}
+
+relationship ManyToMany {
+  Schedule to Member                       // Membros podem ter múltiplos agendamentos
+  Schedule to WorshipEvent                 // Agendamentos podem estar relacionados a cultos
+  WorshipEvent to Hymn                     // Relacionamento de 1 para N entre Culto e Hinos
+  Church to User with builtInEntity        // Usuários podem pertencer a várias igrejas
+}
+
+relationship OneToMany {
+  Transaction to Invoice                   // Relacionamento de 1 para N entre Transação e Nota Fiscal
+}
+
+// Paginação das entidades (definindo como os dados serão carregados)
+paginate Transaction with pagination       // Paginação para transações
+paginate Invoice with pagination           // Paginação para notas fiscais
+
+// Serviço de todas as entidades com serviço de classe
+service all with serviceClass
+
+// PAGINAÇÃO
+
+paginate Member with pagination
+paginate MinistryGroup with pagination
+paginate WorshipEvent with pagination
+paginate CounselingSession with infinite-scroll
+paginate Schedule with pagination
+
+// SERVIÇOS
+
+service all with serviceClass              // Serviço para todas as entidades

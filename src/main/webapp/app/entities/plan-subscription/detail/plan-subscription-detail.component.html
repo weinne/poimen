@@ -1,0 +1,68 @@
+<div class="d-flex justify-content-center">
+  <div class="col-8">
+    @if (planSubscription(); as planSubscriptionRef) {
+      <div>
+        <h2 data-cy="planSubscriptionDetailsHeading">
+          <span jhiTranslate="poimenApp.planSubscription.detail.title">Plan Subscription</span>
+        </h2>
+
+        <hr />
+
+        <jhi-alert-error></jhi-alert-error>
+
+        <jhi-alert></jhi-alert>
+
+        <dl class="row-md jh-entity-details">
+          <dt><span jhiTranslate="global.field.id">ID</span></dt>
+          <dd>
+            <span>{{ planSubscriptionRef.id }}</span>
+          </dd>
+          <dt><span jhiTranslate="poimenApp.planSubscription.startDate">Start Date</span></dt>
+          <dd>
+            <span>{{ planSubscriptionRef.startDate | formatMediumDatetime }}</span>
+          </dd>
+          <dt><span jhiTranslate="poimenApp.planSubscription.endDate">End Date</span></dt>
+          <dd>
+            <span>{{ planSubscriptionRef.endDate | formatMediumDatetime }}</span>
+          </dd>
+          <dt><span jhiTranslate="poimenApp.planSubscription.active">Active</span></dt>
+          <dd>
+            <span>{{ planSubscriptionRef.active }}</span>
+          </dd>
+          <dt><span jhiTranslate="poimenApp.planSubscription.planName">Plan Name</span></dt>
+          <dd>
+            <span>{{ planSubscriptionRef.planName }}</span>
+          </dd>
+          <dt><span jhiTranslate="poimenApp.planSubscription.plan">Plan</span></dt>
+          <dd>
+            @if (planSubscription()!.plan) {
+              <div>
+                <a [routerLink]="['/plan', planSubscription()!.plan?.id, 'view']">{{ planSubscriptionRef.plan?.id }}</a>
+              </div>
+            }
+          </dd>
+          <dt><span jhiTranslate="poimenApp.planSubscription.church">Church</span></dt>
+          <dd>
+            @if (planSubscription()!.church) {
+              <div>
+                <a [routerLink]="['/church', planSubscription()!.church?.id, 'view']">{{ planSubscriptionRef.church?.id }}</a>
+              </div>
+            }
+          </dd>
+          <dt><span jhiTranslate="poimenApp.planSubscription.user">User</span></dt>
+          <dd>
+            <span>{{ planSubscriptionRef.user?.id }}</span>
+          </dd>
+        </dl>
+
+        <button type="submit" (click)="previousState()" class="btn btn-info" data-cy="entityDetailsBackButton">
+          <fa-icon icon="arrow-left"></fa-icon>&nbsp;<span jhiTranslate="entity.action.back">Back</span>
+        </button>
+
+        <button type="button" [routerLink]="['/plan-subscription', planSubscriptionRef.id, 'edit']" class="btn btn-primary">
+          <fa-icon icon="pencil-alt"></fa-icon>&nbsp;<span jhiTranslate="entity.action.edit">Edit</span>
+        </button>
+      </div>
+    }
+  </div>
+</div>

@@ -1,0 +1,60 @@
+<div class="d-flex justify-content-center">
+  <div class="col-8">
+    @if (counselingSession(); as counselingSessionRef) {
+      <div>
+        <h2 data-cy="counselingSessionDetailsHeading">
+          <span jhiTranslate="poimenApp.counselingSession.detail.title">Counseling Session</span>
+        </h2>
+
+        <hr />
+
+        <jhi-alert-error></jhi-alert-error>
+
+        <jhi-alert></jhi-alert>
+
+        <dl class="row-md jh-entity-details">
+          <dt><span jhiTranslate="global.field.id">ID</span></dt>
+          <dd>
+            <span>{{ counselingSessionRef.id }}</span>
+          </dd>
+          <dt><span jhiTranslate="poimenApp.counselingSession.date">Date</span></dt>
+          <dd>
+            <span>{{ counselingSessionRef.date | formatMediumDatetime }}</span>
+          </dd>
+          <dt><span jhiTranslate="poimenApp.counselingSession.notes">Notes</span></dt>
+          <dd>
+            <span>{{ counselingSessionRef.notes }}</span>
+          </dd>
+          <dt><span jhiTranslate="poimenApp.counselingSession.church">Church</span></dt>
+          <dd>
+            @if (counselingSession()!.church) {
+              <div>
+                <a [routerLink]="['/church', counselingSession()!.church?.id, 'view']">{{ counselingSessionRef.church?.id }}</a>
+              </div>
+            }
+          </dd>
+          <dt><span jhiTranslate="poimenApp.counselingSession.member">Member</span></dt>
+          <dd>
+            @if (counselingSession()!.member) {
+              <div>
+                <a [routerLink]="['/member', counselingSession()!.member?.id, 'view']">{{ counselingSessionRef.member?.id }}</a>
+              </div>
+            }
+          </dd>
+          <dt><span jhiTranslate="poimenApp.counselingSession.user">User</span></dt>
+          <dd>
+            <span>{{ counselingSessionRef.user?.id }}</span>
+          </dd>
+        </dl>
+
+        <button type="submit" (click)="previousState()" class="btn btn-info" data-cy="entityDetailsBackButton">
+          <fa-icon icon="arrow-left"></fa-icon>&nbsp;<span jhiTranslate="entity.action.back">Back</span>
+        </button>
+
+        <button type="button" [routerLink]="['/counseling-session', counselingSessionRef.id, 'edit']" class="btn btn-primary">
+          <fa-icon icon="pencil-alt"></fa-icon>&nbsp;<span jhiTranslate="entity.action.edit">Edit</span>
+        </button>
+      </div>
+    }
+  </div>
+</div>

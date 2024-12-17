@@ -1,0 +1,47 @@
+{
+  "annotations": {
+    "changelogDate": "20241216194342"
+  },
+  "applications": "*",
+  "fields": [
+    {
+      "fieldName": "roleType",
+      "fieldType": "RoleSchedule",
+      "fieldValidateRules": ["required"],
+      "fieldValues": "PREACHER,LITURGIST,MUSICIAN"
+    },
+    {
+      "fieldName": "notes",
+      "fieldType": "String"
+    },
+    {
+      "fieldName": "startTime",
+      "fieldType": "Instant",
+      "fieldValidateRules": ["required"]
+    },
+    {
+      "fieldName": "endTime",
+      "fieldType": "Instant"
+    }
+  ],
+  "name": "Schedule",
+  "pagination": "pagination",
+  "relationships": [
+    {
+      "otherEntityName": "member",
+      "otherEntityRelationshipName": "schedule",
+      "relationshipName": "member",
+      "relationshipSide": "left",
+      "relationshipType": "many-to-many"
+    },
+    {
+      "otherEntityName": "worshipEvent",
+      "otherEntityRelationshipName": "schedule",
+      "relationshipName": "worshipEvent",
+      "relationshipSide": "left",
+      "relationshipType": "many-to-many"
+    }
+  ],
+  "searchEngine": "no",
+  "service": "serviceClass"
+}

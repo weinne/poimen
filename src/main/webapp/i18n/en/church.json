@@ -1,0 +1,37 @@
+{
+  "poimenApp": {
+    "church": {
+      "home": {
+        "title": "Churches",
+        "refreshListLabel": "Refresh list",
+        "createLabel": "Create a new Church",
+        "createOrEditLabel": "Create or edit a Church",
+        "notFound": "No Churches found"
+      },
+      "created": "A new Church is created with identifier {{ param }}",
+      "updated": "A Church is updated with identifier {{ param }}",
+      "deleted": "A Church is deleted with identifier {{ param }}",
+      "delete": {
+        "question": "Are you sure you want to delete Church {{ id }}?"
+      },
+      "detail": {
+        "title": "Church"
+      },
+      "id": "ID",
+      "name": "Name",
+      "cnpj": "Cnpj",
+      "address": "Address",
+      "city": "City",
+      "dateFoundation": "Date Foundation",
+      "user": "User",
+      "member": "Member",
+      "ministryGroup": "Ministry Group",
+      "worshipEvent": "Worship Event",
+      "task": "Task",
+      "counselingSession": "Counseling Session",
+      "invoice": "Invoice",
+      "transaction": "Transaction",
+      "planSubscription": "Plan Subscription"
+    }
+  }
+}

@@ -1,0 +1,30 @@
+{
+  "poimenApp": {
+    "worshipEvent": {
+      "home": {
+        "title": "Worship Events",
+        "refreshListLabel": "Refresh list",
+        "createLabel": "Create a new Worship Event",
+        "createOrEditLabel": "Create or edit a Worship Event",
+        "notFound": "No Worship Events found"
+      },
+      "created": "A new Worship Event is created with identifier {{ param }}",
+      "updated": "A Worship Event is updated with identifier {{ param }}",
+      "deleted": "A Worship Event is deleted with identifier {{ param }}",
+      "delete": {
+        "question": "Are you sure you want to delete Worship Event {{ id }}?"
+      },
+      "detail": {
+        "title": "Worship Event"
+      },
+      "id": "ID",
+      "date": "Date",
+      "title": "Title",
+      "description": "Description",
+      "worshipType": "Worship Type",
+      "church": "Church",
+      "hymn": "Hymn",
+      "schedule": "Schedule"
+    }
+  }
+}

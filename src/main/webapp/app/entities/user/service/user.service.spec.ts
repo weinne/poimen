@@ -30,7 +30,7 @@ describe('User Service', () => {
       const returnedFromService = { ...requireRestSample };
       const expected = { ...sampleWithRequiredData };
 
-      service.find('ABC').subscribe(resp => (expectedResult = resp.body));
+      service.find(123).subscribe(resp => (expectedResult = resp.body));
 
       const req = httpMock.expectOne({ method: 'GET' });
       req.flush(returnedFromService);
@@ -48,20 +48,6 @@ describe('User Service', () => {
       req.flush([returnedFromService]);
       httpMock.verify();
       expect(expectedResult).toMatchObject([expected]);
-    });
-
-    it('should handle exceptions for searching a User', () => {
-      const queryObject: any = {
-        page: 0,
-        size: 20,
-        query: '',
-        sort: [],
-      };
-      service.search(queryObject).subscribe(() => expectedResult);
-
-      const req = httpMock.expectOne({ method: 'GET' });
-      req.flush(null, { status: 500, statusText: 'Internal Server Error' });
-      expect(expectedResult).toBe(null);
     });
 
     describe('addUserToCollectionIfMissing', () => {
@@ -133,7 +119,7 @@ describe('User Service', () => {
       });
 
       it('Should return false if one entity is null', () => {
-        const entity1 = { id: 'ABC' };
+        const entity1 = { id: 123 };
         const entity2 = null;
 
         const compareResult1 = service.compareUser(entity1, entity2);
@@ -144,8 +130,8 @@ describe('User Service', () => {
       });
 
       it('Should return false if primaryKey differs', () => {
-        const entity1 = { id: 'ABC' };
-        const entity2 = { id: 'CBA' };
+        const entity1 = { id: 123 };
+        const entity2 = { id: 456 };
 
         const compareResult1 = service.compareUser(entity1, entity2);
         const compareResult2 = service.compareUser(entity2, entity1);
@@ -155,8 +141,8 @@ describe('User Service', () => {
       });
 
       it('Should return false if primaryKey matches', () => {
-        const entity1 = { id: 'ABC' };
-        const entity2 = { id: 'ABC' };
+        const entity1 = { id: 123 };
+        const entity2 = { id: 123 };
 
         const compareResult1 = service.compareUser(entity1, entity2);
         const compareResult2 = service.compareUser(entity2, entity1);

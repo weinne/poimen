@@ -1,0 +1,28 @@
+{
+  "poimenApp": {
+    "hymn": {
+      "home": {
+        "title": "Hymns",
+        "refreshListLabel": "Atualizar lista",
+        "createLabel": "Criar novo Hymn",
+        "createOrEditLabel": "Criar ou editar Hymn",
+        "notFound": "Nenhum Hymn encontrado"
+      },
+      "created": "Um novo Hymn foi criado com o identificador {{ param }}",
+      "updated": "Um Hymn foi atualizado com o identificador {{ param }}",
+      "deleted": "Um Hymn foi excluído com o identificador {{ param }}",
+      "delete": {
+        "question": "Tem certeza de que deseja excluir Hymn {{ id }}?"
+      },
+      "detail": {
+        "title": "Hymn"
+      },
+      "id": "ID",
+      "title": "Title",
+      "author": "Author",
+      "hymnNumber": "Hymn Number",
+      "lyrics": "Lyrics",
+      "worshipEvent": "Worship Event"
+    }
+  }
+}

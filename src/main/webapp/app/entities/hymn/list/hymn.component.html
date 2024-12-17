@@ -1,0 +1,124 @@
+<div>
+  <h2 id="page-heading" data-cy="HymnHeading">
+    <span jhiTranslate="poimenApp.hymn.home.title">Hymns</span>
+
+    <div class="d-flex justify-content-end">
+      <button class="btn btn-info me-2" (click)="load()" [disabled]="isLoading">
+        <fa-icon icon="sync" [animation]="isLoading ? 'spin' : undefined"></fa-icon>
+        <span jhiTranslate="poimenApp.hymn.home.refreshListLabel">Refresh list</span>
+      </button>
+
+      <button
+        id="jh-create-entity"
+        data-cy="entityCreateButton"
+        class="btn btn-primary jh-create-entity create-hymn"
+        [routerLink]="['/hymn/new']"
+      >
+        <fa-icon icon="plus"></fa-icon>
+        <span jhiTranslate="poimenApp.hymn.home.createLabel">Create a new Hymn</span>
+      </button>
+    </div>
+  </h2>
+
+  <jhi-alert-error></jhi-alert-error>
+
+  <jhi-alert></jhi-alert>
+
+  @if (hymns?.length === 0) {
+    <div class="alert alert-warning" id="no-result">
+      <span jhiTranslate="poimenApp.hymn.home.notFound">No Hymns found</span>
+    </div>
+  }
+
+  @if (hymns && hymns.length > 0) {
+    <div class="table-responsive table-entities" id="entities">
+      <table class="table table-striped" aria-describedby="page-heading">
+        <thead>
+          <tr jhiSort [sortState]="sortState" (sortChange)="navigateToWithComponentValues($event)">
+            <th scope="col" jhiSortBy="id">
+              <div class="d-flex">
+                <span jhiTranslate="global.field.id">ID</span>
+
+                <fa-icon class="p-1" icon="sort"></fa-icon>
+              </div>
+            </th>
+            <th scope="col" jhiSortBy="title">
+              <div class="d-flex">
+                <span jhiTranslate="poimenApp.hymn.title">Title</span>
+
+                <fa-icon class="p-1" icon="sort"></fa-icon>
+              </div>
+            </th>
+            <th scope="col" jhiSortBy="author">
+              <div class="d-flex">
+                <span jhiTranslate="poimenApp.hymn.author">Author</span>
+
+                <fa-icon class="p-1" icon="sort"></fa-icon>
+              </div>
+            </th>
+            <th scope="col" jhiSortBy="hymnNumber">
+              <div class="d-flex">
+                <span jhiTranslate="poimenApp.hymn.hymnNumber">Hymn Number</span>
+
+                <fa-icon class="p-1" icon="sort"></fa-icon>
+              </div>
+            </th>
+            <th scope="col" jhiSortBy="lyrics">
+              <div class="d-flex">
+                <span jhiTranslate="poimenApp.hymn.lyrics">Lyrics</span>
+
+                <fa-icon class="p-1" icon="sort"></fa-icon>
+              </div>
+            </th>
+            <th scope="col" jhiSortBy="worshipEvent.id">
+              <div class="d-flex">
+                <span jhiTranslate="poimenApp.hymn.worshipEvent">Worship Event</span>
+                <fa-icon class="p-1" icon="sort"></fa-icon>
+              </div>
+            </th>
+            <th scope="col"></th>
+          </tr>
+        </thead>
+        <tbody>
+          @for (hymn of hymns; track trackId(hymn)) {
+            <tr data-cy="entityTable">
+              <td>
+                <a [routerLink]="['/hymn', hymn.id, 'view']">{{ hymn.id }}</a>
+              </td>
+              <td>{{ hymn.title }}</td>
+              <td>{{ hymn.author }}</td>
+              <td>{{ hymn.hymnNumber }}</td>
+              <td>{{ hymn.lyrics }}</td>
+              <td>
+                @for (worshipEvent of hymn.worshipEvents; track $index; let last = $last) {
+                  <span>
+                    <a class="form-control-static" [routerLink]="['/worship-event', worshipEvent.id, 'view']">{{ worshipEvent.id }}</a
+                    >{{ last ? '' : ', ' }}
+                  </span>
+                }
+              </td>
+              <td class="text-end">
+                <div class="btn-group">
+                  <a [routerLink]="['/hymn', hymn.id, 'view']" class="btn btn-info btn-sm" data-cy="entityDetailsButton">
+                    <fa-icon icon="eye"></fa-icon>
+                    <span class="d-none d-md-inline" jhiTranslate="entity.action.view">View</span>
+                  </a>
+
+                  <a [routerLink]="['/hymn', hymn.id, 'edit']" class="btn btn-primary btn-sm" data-cy="entityEditButton">
+                    <fa-icon icon="pencil-alt"></fa-icon>
+                    <span class="d-none d-md-inline" jhiTranslate="entity.action.edit">Edit</span>
+                  </a>
+
+                  <button type="submit" (click)="delete(hymn)" class="btn btn-danger btn-sm" data-cy="entityDeleteButton">
+                    <fa-icon icon="times"></fa-icon>
+                    <span class="d-none d-md-inline" jhiTranslate="entity.action.delete">Delete</span>
+                  </button>
+                </div>
+              </td>
+            </tr>
+          }
+        </tbody>
+      </table>
+    </div>
+  }
+</div>

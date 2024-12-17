@@ -8,11 +8,3 @@ services:
     profiles:
       - ''
       - prod
-  elasticsearch:
-    extends:
-      file: ./elasticsearch.yml
-      service: elasticsearch
-  keycloak:
-    extends:
-      file: ./keycloak.yml
-      service: keycloak

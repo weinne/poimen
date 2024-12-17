@@ -1,0 +1,28 @@
+{
+  "poimenApp": {
+    "counselingSession": {
+      "home": {
+        "title": "Counseling Sessions",
+        "refreshListLabel": "Refresh list",
+        "createLabel": "Create a new Counseling Session",
+        "createOrEditLabel": "Create or edit a Counseling Session",
+        "notFound": "No Counseling Sessions found"
+      },
+      "created": "A new Counseling Session is created with identifier {{ param }}",
+      "updated": "A Counseling Session is updated with identifier {{ param }}",
+      "deleted": "A Counseling Session is deleted with identifier {{ param }}",
+      "delete": {
+        "question": "Are you sure you want to delete Counseling Session {{ id }}?"
+      },
+      "detail": {
+        "title": "Counseling Session"
+      },
+      "id": "ID",
+      "date": "Date",
+      "notes": "Notes",
+      "church": "Church",
+      "member": "Member",
+      "user": "User"
+    }
+  }
+}

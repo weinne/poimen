@@ -1,0 +1,171 @@
+<div>
+  <h2 id="page-heading" data-cy="InvoiceHeading">
+    <span jhiTranslate="poimenApp.invoice.home.title">Invoices</span>
+
+    <div class="d-flex justify-content-end">
+      <button class="btn btn-info me-2" (click)="load()" [disabled]="isLoading">
+        <fa-icon icon="sync" [animation]="isLoading ? 'spin' : undefined"></fa-icon>
+        <span jhiTranslate="poimenApp.invoice.home.refreshListLabel">Refresh list</span>
+      </button>
+
+      <button
+        id="jh-create-entity"
+        data-cy="entityCreateButton"
+        class="btn btn-primary jh-create-entity create-invoice"
+        [routerLink]="['/invoice/new']"
+      >
+        <fa-icon icon="plus"></fa-icon>
+        <span jhiTranslate="poimenApp.invoice.home.createLabel">Create a new Invoice</span>
+      </button>
+    </div>
+  </h2>
+
+  <jhi-alert-error></jhi-alert-error>
+
+  <jhi-alert></jhi-alert>
+
+  @if (invoices?.length === 0) {
+    <div class="alert alert-warning" id="no-result">
+      <span jhiTranslate="poimenApp.invoice.home.notFound">No Invoices found</span>
+    </div>
+  }
+
+  @if (invoices && invoices.length > 0) {
+    <div class="table-responsive table-entities" id="entities">
+      <table class="table table-striped" aria-describedby="page-heading">
+        <thead>
+          <tr jhiSort [sortState]="sortState" (sortChange)="navigateToWithComponentValues($event)">
+            <th scope="col" jhiSortBy="id">
+              <div class="d-flex">
+                <span jhiTranslate="global.field.id">ID</span>
+
+                <fa-icon class="p-1" icon="sort"></fa-icon>
+              </div>
+            </th>
+            <th scope="col" jhiSortBy="number">
+              <div class="d-flex">
+                <span jhiTranslate="poimenApp.invoice.number">Number</span>
+
+                <fa-icon class="p-1" icon="sort"></fa-icon>
+              </div>
+            </th>
+            <th scope="col" jhiSortBy="issueDate">
+              <div class="d-flex">
+                <span jhiTranslate="poimenApp.invoice.issueDate">Issue Date</span>
+
+                <fa-icon class="p-1" icon="sort"></fa-icon>
+              </div>
+            </th>
+            <th scope="col" jhiSortBy="totalAmount">
+              <div class="d-flex">
+                <span jhiTranslate="poimenApp.invoice.totalAmount">Total Amount</span>
+
+                <fa-icon class="p-1" icon="sort"></fa-icon>
+              </div>
+            </th>
+            <th scope="col" jhiSortBy="type">
+              <div class="d-flex">
+                <span jhiTranslate="poimenApp.invoice.type">Type</span>
+
+                <fa-icon class="p-1" icon="sort"></fa-icon>
+              </div>
+            </th>
+            <th scope="col" jhiSortBy="supplier">
+              <div class="d-flex">
+                <span jhiTranslate="poimenApp.invoice.supplier">Supplier</span>
+
+                <fa-icon class="p-1" icon="sort"></fa-icon>
+              </div>
+            </th>
+            <th scope="col" jhiSortBy="invoiceFile">
+              <div class="d-flex">
+                <span jhiTranslate="poimenApp.invoice.invoiceFile">Invoice File</span>
+
+                <fa-icon class="p-1" icon="sort"></fa-icon>
+              </div>
+            </th>
+            <th scope="col" jhiSortBy="church.id">
+              <div class="d-flex">
+                <span jhiTranslate="poimenApp.invoice.church">Church</span>
+                <fa-icon class="p-1" icon="sort"></fa-icon>
+              </div>
+            </th>
+            <th scope="col" jhiSortBy="transaction.id">
+              <div class="d-flex">
+                <span jhiTranslate="poimenApp.invoice.transaction">Transaction</span>
+                <fa-icon class="p-1" icon="sort"></fa-icon>
+              </div>
+            </th>
+            <th scope="col"></th>
+          </tr>
+        </thead>
+        <tbody>
+          @for (invoice of invoices; track trackId(invoice)) {
+            <tr data-cy="entityTable">
+              <td>
+                <a [routerLink]="['/invoice', invoice.id, 'view']">{{ invoice.id }}</a>
+              </td>
+              <td>{{ invoice.number }}</td>
+              <td>{{ invoice.issueDate | formatMediumDatetime }}</td>
+              <td>{{ invoice.totalAmount }}</td>
+              <td>{{ invoice.type }}</td>
+              <td>{{ invoice.supplier }}</td>
+              <td>{{ invoice.invoiceFile }}</td>
+              <td>
+                @if (invoice.church) {
+                  <div>
+                    <a [routerLink]="['/church', invoice.church.id, 'view']">{{ invoice.church.id }}</a>
+                  </div>
+                }
+              </td>
+              <td>
+                @if (invoice.transaction) {
+                  <div>
+                    <a [routerLink]="['/transaction', invoice.transaction.id, 'view']">{{ invoice.transaction.id }}</a>
+                  </div>
+                }
+              </td>
+              <td class="text-end">
+                <div class="btn-group">
+                  <a [routerLink]="['/invoice', invoice.id, 'view']" class="btn btn-info btn-sm" data-cy="entityDetailsButton">
+                    <fa-icon icon="eye"></fa-icon>
+                    <span class="d-none d-md-inline" jhiTranslate="entity.action.view">View</span>
+                  </a>
+
+                  <a [routerLink]="['/invoice', invoice.id, 'edit']" class="btn btn-primary btn-sm" data-cy="entityEditButton">
+                    <fa-icon icon="pencil-alt"></fa-icon>
+                    <span class="d-none d-md-inline" jhiTranslate="entity.action.edit">Edit</span>
+                  </a>
+
+                  <button type="submit" (click)="delete(invoice)" class="btn btn-danger btn-sm" data-cy="entityDeleteButton">
+                    <fa-icon icon="times"></fa-icon>
+                    <span class="d-none d-md-inline" jhiTranslate="entity.action.delete">Delete</span>
+                  </button>
+                </div>
+              </td>
+            </tr>
+          }
+        </tbody>
+      </table>
+    </div>
+  }
+  @if (invoices && invoices.length > 0) {
+    <div>
+      <div class="d-flex justify-content-center">
+        <jhi-item-count [params]="{ page: page, totalItems: totalItems, itemsPerPage: itemsPerPage }"></jhi-item-count>
+      </div>
+
+      <div class="d-flex justify-content-center">
+        <ngb-pagination
+          [collectionSize]="totalItems"
+          [page]="page"
+          [pageSize]="itemsPerPage"
+          [maxSize]="5"
+          [rotate]="true"
+          [boundaryLinks]="true"
+          (pageChange)="navigateToPage($event)"
+        ></ngb-pagination>
+      </div>
+    </div>
+  }
+</div>

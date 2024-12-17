@@ -1,0 +1,30 @@
+{
+  "annotations": {
+    "changelogDate": "20241216194340"
+  },
+  "applications": "*",
+  "fields": [
+    {
+      "fieldName": "name",
+      "fieldType": "String",
+      "fieldValidateRules": ["required"]
+    },
+    {
+      "fieldName": "price",
+      "fieldType": "String",
+      "fieldValidateRules": ["required"]
+    }
+  ],
+  "name": "Plan",
+  "relationships": [
+    {
+      "otherEntityName": "planSubscription",
+      "otherEntityRelationshipName": "plan",
+      "relationshipName": "planSubscription",
+      "relationshipSide": "right",
+      "relationshipType": "one-to-many"
+    }
+  ],
+  "searchEngine": "no",
+  "service": "serviceClass"
+}

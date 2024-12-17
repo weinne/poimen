@@ -1,0 +1,10 @@
+{
+  "poimenApp": {
+    "RoleSchedule": {
+      "null": "",
+      "PREACHER": "PREACHER",
+      "LITURGIST": "LITURGIST",
+      "MUSICIAN": "MUSICIAN"
+    }
+  }
+}

@@ -1,0 +1,26 @@
+{
+  "poimenApp": {
+    "plan": {
+      "home": {
+        "title": "Plans",
+        "refreshListLabel": "Atualizar lista",
+        "createLabel": "Criar novo Plan",
+        "createOrEditLabel": "Criar ou editar Plan",
+        "notFound": "Nenhum Plan encontrado"
+      },
+      "created": "Um novo Plan foi criado com o identificador {{ param }}",
+      "updated": "Um Plan foi atualizado com o identificador {{ param }}",
+      "deleted": "Um Plan foi excluído com o identificador {{ param }}",
+      "delete": {
+        "question": "Tem certeza de que deseja excluir Plan {{ id }}?"
+      },
+      "detail": {
+        "title": "Plan"
+      },
+      "id": "ID",
+      "name": "Name",
+      "price": "Price",
+      "planSubscription": "Plan Subscription"
+    }
+  }
+}

@@ -1,13 +1,14 @@
 package br.com.poimen.web.rest;
 
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
 import br.com.poimen.IntegrationTest;
 import br.com.poimen.domain.User;
 import br.com.poimen.repository.UserRepository;
-import br.com.poimen.repository.search.UserSearchRepository;
 import br.com.poimen.security.AuthoritiesConstants;
+import br.com.poimen.service.UserService;
 import java.util.Objects;
 import java.util.Set;
 import org.junit.jupiter.api.AfterEach;
@@ -33,13 +34,8 @@ class PublicUserResourceIT {
     @Autowired
     private UserRepository userRepository;
 
-    /**
-     * This repository is mocked in the br.com.poimen.repository.search test package.
-     *
-     * @see br.com.poimen.repository.search.UserSearchRepositoryMockConfiguration
-     */
     @Autowired
-    private UserSearchRepository mockUserSearchRepository;
+    private UserService userService;
 
     @Autowired
     private CacheManager cacheManager;
@@ -48,6 +44,12 @@ class PublicUserResourceIT {
     private MockMvc restUserMockMvc;
 
     private User user;
+    private Long numberOfUsers;
+
+    @BeforeEach
+    public void countUsers() {
+        numberOfUsers = userRepository.count();
+    }
 
     @BeforeEach
     public void initTest() {
@@ -62,7 +64,9 @@ class PublicUserResourceIT {
             .map(cacheName -> this.cacheManager.getCache(cacheName))
             .filter(Objects::nonNull)
             .forEach(Cache::clear);
-        userRepository.deleteAll();
+        userService.deleteUser(user.getLogin());
+        assertThat(userRepository.count()).isEqualTo(numberOfUsers);
+        numberOfUsers = null;
     }
 
     @Test
@@ -76,10 +80,24 @@ class PublicUserResourceIT {
             .perform(get("/api/users?sort=id,desc").accept(MediaType.APPLICATION_JSON))
             .andExpect(status().isOk())
             .andExpect(content().contentType(MediaType.APPLICATION_JSON_VALUE))
-            .andExpect(jsonPath("$.[?(@.id == '%s')].login", user.getId()).value(user.getLogin()))
-            .andExpect(jsonPath("$.[?(@.id == '%s')].keys()", user.getId()).value(Set.of("id", "login")))
+            .andExpect(jsonPath("$.[?(@.id == %d)].login", user.getId()).value(user.getLogin()))
+            .andExpect(jsonPath("$.[?(@.id == %d)].keys()", user.getId()).value(Set.of("id", "login")))
             .andExpect(jsonPath("$.[*].email").doesNotHaveJsonPath())
             .andExpect(jsonPath("$.[*].imageUrl").doesNotHaveJsonPath())
             .andExpect(jsonPath("$.[*].langKey").doesNotHaveJsonPath());
+    }
+
+    @Test
+    @Transactional
+    void getAllUsersSortedByParameters() throws Exception {
+        // Initialize the database
+        userRepository.saveAndFlush(user);
+
+        restUserMockMvc.perform(get("/api/users?sort=resetKey,desc").accept(MediaType.APPLICATION_JSON)).andExpect(status().isBadRequest());
+        restUserMockMvc.perform(get("/api/users?sort=password,desc").accept(MediaType.APPLICATION_JSON)).andExpect(status().isBadRequest());
+        restUserMockMvc
+            .perform(get("/api/users?sort=resetKey,desc&sort=id,desc").accept(MediaType.APPLICATION_JSON))
+            .andExpect(status().isBadRequest());
+        restUserMockMvc.perform(get("/api/users?sort=id,desc").accept(MediaType.APPLICATION_JSON)).andExpect(status().isOk());
     }
 }

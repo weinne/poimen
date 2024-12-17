@@ -1,0 +1,78 @@
+<div class="d-flex justify-content-center">
+  <div class="col-8">
+    @if (transaction(); as transactionRef) {
+      <div>
+        <h2 data-cy="transactionDetailsHeading"><span jhiTranslate="poimenApp.transaction.detail.title">Transaction</span></h2>
+
+        <hr />
+
+        <jhi-alert-error></jhi-alert-error>
+
+        <jhi-alert></jhi-alert>
+
+        <dl class="row-md jh-entity-details">
+          <dt><span jhiTranslate="global.field.id">ID</span></dt>
+          <dd>
+            <span>{{ transactionRef.id }}</span>
+          </dd>
+          <dt><span jhiTranslate="poimenApp.transaction.description">Description</span></dt>
+          <dd>
+            <span>{{ transactionRef.description }}</span>
+          </dd>
+          <dt><span jhiTranslate="poimenApp.transaction.amount">Amount</span></dt>
+          <dd>
+            <span>{{ transactionRef.amount }}</span>
+          </dd>
+          <dt><span jhiTranslate="poimenApp.transaction.date">Date</span></dt>
+          <dd>
+            <span>{{ transactionRef.date | formatMediumDatetime }}</span>
+          </dd>
+          <dt><span jhiTranslate="poimenApp.transaction.paymentMethod">Payment Method</span></dt>
+          <dd>
+            <span>{{ transactionRef.paymentMethod }}</span>
+          </dd>
+          <dt><span jhiTranslate="poimenApp.transaction.type">Type</span></dt>
+          <dd>
+            <span>{{ transactionRef.type }}</span>
+          </dd>
+          <dt><span jhiTranslate="poimenApp.transaction.supplierOrClient">Supplier Or Client</span></dt>
+          <dd>
+            <span>{{ transactionRef.supplierOrClient }}</span>
+          </dd>
+          <dt><span jhiTranslate="poimenApp.transaction.invoiceFile">Invoice File</span></dt>
+          <dd>
+            <span>{{ transactionRef.invoiceFile }}</span>
+          </dd>
+          <dt><span jhiTranslate="poimenApp.transaction.church">Church</span></dt>
+          <dd>
+            @if (transaction()!.church) {
+              <div>
+                <a [routerLink]="['/church', transaction()!.church?.id, 'view']">{{ transactionRef.church?.id }}</a>
+              </div>
+            }
+          </dd>
+          <dt><span jhiTranslate="poimenApp.transaction.member">Member</span></dt>
+          <dd>
+            @if (transaction()!.member) {
+              <div>
+                <a [routerLink]="['/member', transaction()!.member?.id, 'view']">{{ transactionRef.member?.id }}</a>
+              </div>
+            }
+          </dd>
+          <dt><span jhiTranslate="poimenApp.transaction.user">User</span></dt>
+          <dd>
+            <span>{{ transactionRef.user?.id }}</span>
+          </dd>
+        </dl>
+
+        <button type="submit" (click)="previousState()" class="btn btn-info" data-cy="entityDetailsBackButton">
+          <fa-icon icon="arrow-left"></fa-icon>&nbsp;<span jhiTranslate="entity.action.back">Back</span>
+        </button>
+
+        <button type="button" [routerLink]="['/transaction', transactionRef.id, 'edit']" class="btn btn-primary">
+          <fa-icon icon="pencil-alt"></fa-icon>&nbsp;<span jhiTranslate="entity.action.edit">Edit</span>
+        </button>
+      </div>
+    }
+  </div>
+</div>

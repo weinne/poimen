@@ -1,0 +1,137 @@
+<div class="d-flex justify-content-center">
+  <div class="col-8">
+    <form name="editForm" novalidate (ngSubmit)="save()" [formGroup]="editForm">
+      <h2 id="jhi-schedule-heading" data-cy="ScheduleCreateUpdateHeading" jhiTranslate="poimenApp.schedule.home.createOrEditLabel">
+        Create or edit a Schedule
+      </h2>
+
+      <div>
+        <jhi-alert-error></jhi-alert-error>
+
+        @if (editForm.controls.id.value !== null) {
+          <div class="mb-3">
+            <label class="form-label" for="field_id" jhiTranslate="poimenApp.schedule.id">ID</label>
+            <input type="number" class="form-control" name="id" id="field_id" data-cy="id" formControlName="id" [readonly]="true" />
+          </div>
+        }
+
+        @let roleTypeRef = editForm.get('roleType')!;
+        <div class="mb-3">
+          <label class="form-label" for="field_roleType" jhiTranslate="poimenApp.schedule.roleType">Role Type</label>
+          <select class="form-control" name="roleType" formControlName="roleType" id="field_roleType" data-cy="roleType">
+            <option [ngValue]="null">{{ 'poimenApp.RoleSchedule.null' | translate }}</option>
+            @for (roleSchedule of roleScheduleValues; track $index) {
+              <option [value]="roleSchedule">{{ 'poimenApp.RoleSchedule.' + roleSchedule | translate }}</option>
+            }
+          </select>
+          @if (roleTypeRef.invalid && (roleTypeRef.dirty || roleTypeRef.touched)) {
+            <div>
+              @if (editForm.get('roleType')?.errors?.required) {
+                <small class="form-text text-danger" jhiTranslate="entity.validation.required">This field is required.</small>
+              }
+            </div>
+          }
+        </div>
+
+        <div class="mb-3">
+          <label class="form-label" for="field_notes" jhiTranslate="poimenApp.schedule.notes">Notes</label>
+          <input type="text" class="form-control" name="notes" id="field_notes" data-cy="notes" formControlName="notes" />
+        </div>
+
+        @let startTimeRef = editForm.get('startTime')!;
+        <div class="mb-3">
+          <label class="form-label" for="field_startTime" jhiTranslate="poimenApp.schedule.startTime">Start Time</label>
+          <div class="d-flex">
+            <input
+              id="field_startTime"
+              data-cy="startTime"
+              type="datetime-local"
+              class="form-control"
+              name="startTime"
+              formControlName="startTime"
+              placeholder="YYYY-MM-DD HH:mm"
+            />
+          </div>
+          @if (startTimeRef.invalid && (startTimeRef.dirty || startTimeRef.touched)) {
+            <div>
+              @if (editForm.get('startTime')?.errors?.required) {
+                <small class="form-text text-danger" jhiTranslate="entity.validation.required">This field is required.</small>
+              }
+              <small
+                class="form-text text-danger"
+                [hidden]="!editForm.get('startTime')?.errors?.datetimelocal"
+                jhiTranslate="entity.validation.datetimelocal"
+                >This field should be a date and time.</small
+              >
+            </div>
+          }
+        </div>
+
+        <div class="mb-3">
+          <label class="form-label" for="field_endTime" jhiTranslate="poimenApp.schedule.endTime">End Time</label>
+          <div class="d-flex">
+            <input
+              id="field_endTime"
+              data-cy="endTime"
+              type="datetime-local"
+              class="form-control"
+              name="endTime"
+              formControlName="endTime"
+              placeholder="YYYY-MM-DD HH:mm"
+            />
+          </div>
+        </div>
+
+        <div class="mb-3">
+          <label for="field_members" jhiTranslate="poimenApp.schedule.member">Member</label>
+          <select
+            class="form-control"
+            id="field_members"
+            data-cy="member"
+            multiple
+            name="members"
+            formControlName="members"
+            [compareWith]="compareMember"
+          >
+            @for (memberOption of membersSharedCollection; track $index) {
+              <option [ngValue]="memberOption">{{ memberOption.id }}</option>
+            }
+          </select>
+        </div>
+
+        <div class="mb-3">
+          <label for="field_worshipEvents" jhiTranslate="poimenApp.schedule.worshipEvent">Worship Event</label>
+          <select
+            class="form-control"
+            id="field_worshipEvents"
+            data-cy="worshipEvent"
+            multiple
+            name="worshipEvents"
+            formControlName="worshipEvents"
+            [compareWith]="compareWorshipEvent"
+          >
+            @for (worshipEventOption of worshipEventsSharedCollection; track $index) {
+              <option [ngValue]="worshipEventOption">{{ worshipEventOption.id }}</option>
+            }
+          </select>
+        </div>
+      </div>
+
+      <div>
+        <button type="button" id="cancel-save" data-cy="entityCreateCancelButton" class="btn btn-secondary" (click)="previousState()">
+          <fa-icon icon="ban"></fa-icon>&nbsp;<span jhiTranslate="entity.action.cancel">Cancel</span>
+        </button>
+
+        <button
+          type="submit"
+          id="save-entity"
+          data-cy="entityCreateSaveButton"
+          [disabled]="editForm.invalid || isSaving"
+          class="btn btn-primary"
+        >
+          <fa-icon icon="save"></fa-icon>&nbsp;<span jhiTranslate="entity.action.save">Save</span>
+        </button>
+      </div>
+    </form>
+  </div>
+</div>

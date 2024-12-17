@@ -1,0 +1,51 @@
+{
+  "annotations": {
+    "changelogDate": "20241216194338"
+  },
+  "applications": "*",
+  "fields": [
+    {
+      "fieldName": "name",
+      "fieldType": "String",
+      "fieldValidateRules": ["required"]
+    },
+    {
+      "fieldName": "description",
+      "fieldType": "String"
+    },
+    {
+      "fieldName": "establishedDate",
+      "fieldType": "Instant"
+    },
+    {
+      "fieldName": "leader",
+      "fieldType": "String"
+    },
+    {
+      "fieldName": "type",
+      "fieldType": "GroupType",
+      "fieldValidateRules": ["required"],
+      "fieldValues": "DEPARTMENT,INTERNAL_SOCIETY,DEACON_BOARD,CHURCH_COUNCIL"
+    }
+  ],
+  "name": "MinistryGroup",
+  "pagination": "pagination",
+  "relationships": [
+    {
+      "otherEntityName": "church",
+      "otherEntityRelationshipName": "ministryGroup",
+      "relationshipName": "church",
+      "relationshipSide": "left",
+      "relationshipType": "many-to-one"
+    },
+    {
+      "otherEntityName": "ministryMembership",
+      "otherEntityRelationshipName": "ministryGroup",
+      "relationshipName": "ministryMembership",
+      "relationshipSide": "right",
+      "relationshipType": "one-to-many"
+    }
+  ],
+  "searchEngine": "no",
+  "service": "serviceClass"
+}

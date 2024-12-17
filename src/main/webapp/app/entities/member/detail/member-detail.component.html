@@ -1,0 +1,71 @@
+<div class="d-flex justify-content-center">
+  <div class="col-8">
+    @if (member(); as memberRef) {
+      <div>
+        <h2 data-cy="memberDetailsHeading"><span jhiTranslate="poimenApp.member.detail.title">Member</span></h2>
+
+        <hr />
+
+        <jhi-alert-error></jhi-alert-error>
+
+        <jhi-alert></jhi-alert>
+
+        <dl class="row-md jh-entity-details">
+          <dt><span jhiTranslate="global.field.id">ID</span></dt>
+          <dd>
+            <span>{{ memberRef.id }}</span>
+          </dd>
+          <dt><span jhiTranslate="poimenApp.member.firstName">First Name</span></dt>
+          <dd>
+            <span>{{ memberRef.firstName }}</span>
+          </dd>
+          <dt><span jhiTranslate="poimenApp.member.lastName">Last Name</span></dt>
+          <dd>
+            <span>{{ memberRef.lastName }}</span>
+          </dd>
+          <dt><span jhiTranslate="poimenApp.member.email">Email</span></dt>
+          <dd>
+            <span>{{ memberRef.email }}</span>
+          </dd>
+          <dt><span jhiTranslate="poimenApp.member.phoneNumber">Phone Number</span></dt>
+          <dd>
+            <span>{{ memberRef.phoneNumber }}</span>
+          </dd>
+          <dt><span jhiTranslate="poimenApp.member.dateOfBirth">Date Of Birth</span></dt>
+          <dd>
+            <span>{{ memberRef.dateOfBirth | formatMediumDatetime }}</span>
+          </dd>
+          <dt><span jhiTranslate="poimenApp.member.address">Address</span></dt>
+          <dd>
+            <span>{{ memberRef.address }}</span>
+          </dd>
+          <dt><span jhiTranslate="poimenApp.member.church">Church</span></dt>
+          <dd>
+            @if (member()!.church) {
+              <div>
+                <a [routerLink]="['/church', member()!.church?.id, 'view']">{{ memberRef.church?.id }}</a>
+              </div>
+            }
+          </dd>
+          <dt><span jhiTranslate="poimenApp.member.schedule">Schedule</span></dt>
+          <dd>
+            @for (schedule of memberRef.schedules; track $index; let last = $last) {
+              <span>
+                <a [routerLink]="['/schedule', schedule.id, 'view']">{{ schedule?.id }}</a
+                >{{ last ? '' : ', ' }}
+              </span>
+            }
+          </dd>
+        </dl>
+
+        <button type="submit" (click)="previousState()" class="btn btn-info" data-cy="entityDetailsBackButton">
+          <fa-icon icon="arrow-left"></fa-icon>&nbsp;<span jhiTranslate="entity.action.back">Back</span>
+        </button>
+
+        <button type="button" [routerLink]="['/member', memberRef.id, 'edit']" class="btn btn-primary">
+          <fa-icon icon="pencil-alt"></fa-icon>&nbsp;<span jhiTranslate="entity.action.edit">Edit</span>
+        </button>
+      </div>
+    }
+  </div>
+</div>

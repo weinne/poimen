@@ -1,0 +1,31 @@
+{
+  "poimenApp": {
+    "invoice": {
+      "home": {
+        "title": "Invoices",
+        "refreshListLabel": "Atualizar lista",
+        "createLabel": "Criar novo Invoice",
+        "createOrEditLabel": "Criar ou editar Invoice",
+        "notFound": "Nenhum Invoice encontrado"
+      },
+      "created": "Um novo Invoice foi criado com o identificador {{ param }}",
+      "updated": "Um Invoice foi atualizado com o identificador {{ param }}",
+      "deleted": "Um Invoice foi excluído com o identificador {{ param }}",
+      "delete": {
+        "question": "Tem certeza de que deseja excluir Invoice {{ id }}?"
+      },
+      "detail": {
+        "title": "Invoice"
+      },
+      "id": "ID",
+      "number": "Number",
+      "issueDate": "Issue Date",
+      "totalAmount": "Total Amount",
+      "type": "Type",
+      "supplier": "Supplier",
+      "invoiceFile": "Invoice File",
+      "church": "Church",
+      "transaction": "Transaction"
+    }
+  }
+}

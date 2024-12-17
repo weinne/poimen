@@ -1,0 +1,55 @@
+<div class="d-flex justify-content-center">
+  <div class="col-8">
+    @if (hymn(); as hymnRef) {
+      <div>
+        <h2 data-cy="hymnDetailsHeading"><span jhiTranslate="poimenApp.hymn.detail.title">Hymn</span></h2>
+
+        <hr />
+
+        <jhi-alert-error></jhi-alert-error>
+
+        <jhi-alert></jhi-alert>
+
+        <dl class="row-md jh-entity-details">
+          <dt><span jhiTranslate="global.field.id">ID</span></dt>
+          <dd>
+            <span>{{ hymnRef.id }}</span>
+          </dd>
+          <dt><span jhiTranslate="poimenApp.hymn.title">Title</span></dt>
+          <dd>
+            <span>{{ hymnRef.title }}</span>
+          </dd>
+          <dt><span jhiTranslate="poimenApp.hymn.author">Author</span></dt>
+          <dd>
+            <span>{{ hymnRef.author }}</span>
+          </dd>
+          <dt><span jhiTranslate="poimenApp.hymn.hymnNumber">Hymn Number</span></dt>
+          <dd>
+            <span>{{ hymnRef.hymnNumber }}</span>
+          </dd>
+          <dt><span jhiTranslate="poimenApp.hymn.lyrics">Lyrics</span></dt>
+          <dd>
+            <span>{{ hymnRef.lyrics }}</span>
+          </dd>
+          <dt><span jhiTranslate="poimenApp.hymn.worshipEvent">Worship Event</span></dt>
+          <dd>
+            @for (worshipEvent of hymnRef.worshipEvents; track $index; let last = $last) {
+              <span>
+                <a [routerLink]="['/worship-event', worshipEvent.id, 'view']">{{ worshipEvent?.id }}</a
+                >{{ last ? '' : ', ' }}
+              </span>
+            }
+          </dd>
+        </dl>
+
+        <button type="submit" (click)="previousState()" class="btn btn-info" data-cy="entityDetailsBackButton">
+          <fa-icon icon="arrow-left"></fa-icon>&nbsp;<span jhiTranslate="entity.action.back">Back</span>
+        </button>
+
+        <button type="button" [routerLink]="['/hymn', hymnRef.id, 'edit']" class="btn btn-primary">
+          <fa-icon icon="pencil-alt"></fa-icon>&nbsp;<span jhiTranslate="entity.action.edit">Edit</span>
+        </button>
+      </div>
+    }
+  </div>
+</div>

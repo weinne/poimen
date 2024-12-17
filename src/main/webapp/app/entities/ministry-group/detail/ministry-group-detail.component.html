@@ -1,0 +1,66 @@
+<div class="d-flex justify-content-center">
+  <div class="col-8">
+    @if (ministryGroup(); as ministryGroupRef) {
+      <div>
+        <h2 data-cy="ministryGroupDetailsHeading"><span jhiTranslate="poimenApp.ministryGroup.detail.title">Ministry Group</span></h2>
+
+        <hr />
+
+        <jhi-alert-error></jhi-alert-error>
+
+        <jhi-alert></jhi-alert>
+
+        <dl class="row-md jh-entity-details">
+          <dt><span jhiTranslate="global.field.id">ID</span></dt>
+          <dd>
+            <span>{{ ministryGroupRef.id }}</span>
+          </dd>
+          <dt><span jhiTranslate="poimenApp.ministryGroup.name">Name</span></dt>
+          <dd>
+            <span>{{ ministryGroupRef.name }}</span>
+          </dd>
+          <dt><span jhiTranslate="poimenApp.ministryGroup.description">Description</span></dt>
+          <dd>
+            <span>{{ ministryGroupRef.description }}</span>
+          </dd>
+          <dt><span jhiTranslate="poimenApp.ministryGroup.establishedDate">Established Date</span></dt>
+          <dd>
+            <span>{{ ministryGroupRef.establishedDate | formatMediumDatetime }}</span>
+          </dd>
+          <dt><span jhiTranslate="poimenApp.ministryGroup.leader">Leader</span></dt>
+          <dd>
+            <span>{{ ministryGroupRef.leader }}</span>
+          </dd>
+          <dt><span jhiTranslate="poimenApp.ministryGroup.type">Type</span></dt>
+          <dd>
+            <span [jhiTranslate]="'poimenApp.GroupType.' + (ministryGroupRef.type ?? 'null')">{{
+              {
+                null: '',
+                DEPARTMENT: 'DEPARTMENT',
+                INTERNAL_SOCIETY: 'INTERNAL_SOCIETY',
+                DEACON_BOARD: 'DEACON_BOARD',
+                CHURCH_COUNCIL: 'CHURCH_COUNCIL',
+              }[ministryGroupRef.type ?? 'null']
+            }}</span>
+          </dd>
+          <dt><span jhiTranslate="poimenApp.ministryGroup.church">Church</span></dt>
+          <dd>
+            @if (ministryGroup()!.church) {
+              <div>
+                <a [routerLink]="['/church', ministryGroup()!.church?.id, 'view']">{{ ministryGroupRef.church?.id }}</a>
+              </div>
+            }
+          </dd>
+        </dl>
+
+        <button type="submit" (click)="previousState()" class="btn btn-info" data-cy="entityDetailsBackButton">
+          <fa-icon icon="arrow-left"></fa-icon>&nbsp;<span jhiTranslate="entity.action.back">Back</span>
+        </button>
+
+        <button type="button" [routerLink]="['/ministry-group', ministryGroupRef.id, 'edit']" class="btn btn-primary">
+          <fa-icon icon="pencil-alt"></fa-icon>&nbsp;<span jhiTranslate="entity.action.edit">Edit</span>
+        </button>
+      </div>
+    }
+  </div>
+</div>

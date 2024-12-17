@@ -1,0 +1,30 @@
+{
+  "poimenApp": {
+    "ministryGroup": {
+      "home": {
+        "title": "Ministry Groups",
+        "refreshListLabel": "Atualizar lista",
+        "createLabel": "Criar novo Ministry Group",
+        "createOrEditLabel": "Criar ou editar Ministry Group",
+        "notFound": "Nenhum Ministry Group encontrado"
+      },
+      "created": "Um novo Ministry Group foi criado com o identificador {{ param }}",
+      "updated": "Um Ministry Group foi atualizado com o identificador {{ param }}",
+      "deleted": "Um Ministry Group foi excluído com o identificador {{ param }}",
+      "delete": {
+        "question": "Tem certeza de que deseja excluir Ministry Group {{ id }}?"
+      },
+      "detail": {
+        "title": "Ministry Group"
+      },
+      "id": "ID",
+      "name": "Name",
+      "description": "Description",
+      "establishedDate": "Established Date",
+      "leader": "Leader",
+      "type": "Type",
+      "church": "Church",
+      "ministryMembership": "Ministry Membership"
+    }
+  }
+}

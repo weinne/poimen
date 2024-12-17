@@ -1,0 +1,78 @@
+<div class="d-flex justify-content-center">
+  <div class="col-8">
+    @if (ministryMembership(); as ministryMembershipRef) {
+      <div>
+        <h2 data-cy="ministryMembershipDetailsHeading">
+          <span jhiTranslate="poimenApp.ministryMembership.detail.title">Ministry Membership</span>
+        </h2>
+
+        <hr />
+
+        <jhi-alert-error></jhi-alert-error>
+
+        <jhi-alert></jhi-alert>
+
+        <dl class="row-md jh-entity-details">
+          <dt><span jhiTranslate="global.field.id">ID</span></dt>
+          <dd>
+            <span>{{ ministryMembershipRef.id }}</span>
+          </dd>
+          <dt><span jhiTranslate="poimenApp.ministryMembership.role">Role</span></dt>
+          <dd>
+            <span [jhiTranslate]="'poimenApp.RoleMinistry.' + (ministryMembershipRef.role ?? 'null')">{{
+              {
+                null: '',
+                PRESIDENT: 'PRESIDENT',
+                VICE_PRESIDENT: 'VICE_PRESIDENT',
+                FIRST_SECRETARY: 'FIRST_SECRETARY',
+                FIRST_TREASURER: 'FIRST_TREASURER',
+                SECOND_SECRETARY: 'SECOND_SECRETARY',
+                SECOND_TREASURER: 'SECOND_TREASURER',
+                CAUSE_SECRETARY: 'CAUSE_SECRETARY',
+                ASSOCIATE: 'ASSOCIATE',
+              }[ministryMembershipRef.role ?? 'null']
+            }}</span>
+          </dd>
+          <dt><span jhiTranslate="poimenApp.ministryMembership.startDate">Start Date</span></dt>
+          <dd>
+            <span>{{ ministryMembershipRef.startDate | formatMediumDatetime }}</span>
+          </dd>
+          <dt><span jhiTranslate="poimenApp.ministryMembership.endDate">End Date</span></dt>
+          <dd>
+            <span>{{ ministryMembershipRef.endDate | formatMediumDatetime }}</span>
+          </dd>
+          <dt><span jhiTranslate="poimenApp.ministryMembership.status">Status</span></dt>
+          <dd>
+            <span>{{ ministryMembershipRef.status }}</span>
+          </dd>
+          <dt><span jhiTranslate="poimenApp.ministryMembership.ministryGroup">Ministry Group</span></dt>
+          <dd>
+            @if (ministryMembership()!.ministryGroup) {
+              <div>
+                <a [routerLink]="['/ministry-group', ministryMembership()!.ministryGroup?.id, 'view']">{{
+                  ministryMembershipRef.ministryGroup?.id
+                }}</a>
+              </div>
+            }
+          </dd>
+          <dt><span jhiTranslate="poimenApp.ministryMembership.member">Member</span></dt>
+          <dd>
+            @if (ministryMembership()!.member) {
+              <div>
+                <a [routerLink]="['/member', ministryMembership()!.member?.id, 'view']">{{ ministryMembershipRef.member?.id }}</a>
+              </div>
+            }
+          </dd>
+        </dl>
+
+        <button type="submit" (click)="previousState()" class="btn btn-info" data-cy="entityDetailsBackButton">
+          <fa-icon icon="arrow-left"></fa-icon>&nbsp;<span jhiTranslate="entity.action.back">Back</span>
+        </button>
+
+        <button type="button" [routerLink]="['/ministry-membership', ministryMembershipRef.id, 'edit']" class="btn btn-primary">
+          <fa-icon icon="pencil-alt"></fa-icon>&nbsp;<span jhiTranslate="entity.action.edit">Edit</span>
+        </button>
+      </div>
+    }
+  </div>
+</div>

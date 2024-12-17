@@ -1,0 +1,81 @@
+<div class="d-flex justify-content-center">
+  <div class="col-8">
+    @if (worshipEvent(); as worshipEventRef) {
+      <div>
+        <h2 data-cy="worshipEventDetailsHeading"><span jhiTranslate="poimenApp.worshipEvent.detail.title">Worship Event</span></h2>
+
+        <hr />
+
+        <jhi-alert-error></jhi-alert-error>
+
+        <jhi-alert></jhi-alert>
+
+        <dl class="row-md jh-entity-details">
+          <dt><span jhiTranslate="global.field.id">ID</span></dt>
+          <dd>
+            <span>{{ worshipEventRef.id }}</span>
+          </dd>
+          <dt><span jhiTranslate="poimenApp.worshipEvent.date">Date</span></dt>
+          <dd>
+            <span>{{ worshipEventRef.date | formatMediumDatetime }}</span>
+          </dd>
+          <dt><span jhiTranslate="poimenApp.worshipEvent.title">Title</span></dt>
+          <dd>
+            <span>{{ worshipEventRef.title }}</span>
+          </dd>
+          <dt><span jhiTranslate="poimenApp.worshipEvent.description">Description</span></dt>
+          <dd>
+            <span>{{ worshipEventRef.description }}</span>
+          </dd>
+          <dt><span jhiTranslate="poimenApp.worshipEvent.worshipType">Worship Type</span></dt>
+          <dd>
+            <span [jhiTranslate]="'poimenApp.WorshipType.' + (worshipEventRef.worshipType ?? 'null')">{{
+              {
+                null: '',
+                SUNDAY_SERVICE: 'SUNDAY_SERVICE',
+                PRAYER_MEETING: 'PRAYER_MEETING',
+                BIBLE_STUDY: 'BIBLE_STUDY',
+                YOUTH_SERVICE: 'YOUTH_SERVICE',
+                SPECIAL_EVENT: 'SPECIAL_EVENT',
+              }[worshipEventRef.worshipType ?? 'null']
+            }}</span>
+          </dd>
+          <dt><span jhiTranslate="poimenApp.worshipEvent.church">Church</span></dt>
+          <dd>
+            @if (worshipEvent()!.church) {
+              <div>
+                <a [routerLink]="['/church', worshipEvent()!.church?.id, 'view']">{{ worshipEventRef.church?.id }}</a>
+              </div>
+            }
+          </dd>
+          <dt><span jhiTranslate="poimenApp.worshipEvent.hymn">Hymn</span></dt>
+          <dd>
+            @for (hymn of worshipEventRef.hymns; track $index; let last = $last) {
+              <span>
+                <a [routerLink]="['/hymn', hymn.id, 'view']">{{ hymn?.id }}</a
+                >{{ last ? '' : ', ' }}
+              </span>
+            }
+          </dd>
+          <dt><span jhiTranslate="poimenApp.worshipEvent.schedule">Schedule</span></dt>
+          <dd>
+            @for (schedule of worshipEventRef.schedules; track $index; let last = $last) {
+              <span>
+                <a [routerLink]="['/schedule', schedule.id, 'view']">{{ schedule?.id }}</a
+                >{{ last ? '' : ', ' }}
+              </span>
+            }
+          </dd>
+        </dl>
+
+        <button type="submit" (click)="previousState()" class="btn btn-info" data-cy="entityDetailsBackButton">
+          <fa-icon icon="arrow-left"></fa-icon>&nbsp;<span jhiTranslate="entity.action.back">Back</span>
+        </button>
+
+        <button type="button" [routerLink]="['/worship-event', worshipEventRef.id, 'edit']" class="btn btn-primary">
+          <fa-icon icon="pencil-alt"></fa-icon>&nbsp;<span jhiTranslate="entity.action.edit">Edit</span>
+        </button>
+      </div>
+    }
+  </div>
+</div>

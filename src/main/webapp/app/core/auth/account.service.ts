@@ -21,6 +21,10 @@ export class AccountService {
   private readonly router = inject(Router);
   private readonly applicationConfigService = inject(ApplicationConfigService);
 
+  save(account: Account): Observable<{}> {
+    return this.http.post(this.applicationConfigService.getEndpointFor('api/account'), account);
+  }
+
   authenticate(identity: Account | null): void {
     this.userIdentity.set(identity);
     this.authenticationState.next(this.userIdentity());

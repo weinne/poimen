@@ -1,0 +1,45 @@
+{
+  "annotations": {
+    "changelogDate": "20241216194339"
+  },
+  "applications": "*",
+  "fields": [
+    {
+      "fieldName": "role",
+      "fieldType": "RoleMinistry",
+      "fieldValidateRules": ["required"],
+      "fieldValues": "PRESIDENT,VICE_PRESIDENT,FIRST_SECRETARY,FIRST_TREASURER,SECOND_SECRETARY,SECOND_TREASURER,CAUSE_SECRETARY,ASSOCIATE"
+    },
+    {
+      "fieldName": "startDate",
+      "fieldType": "Instant"
+    },
+    {
+      "fieldName": "endDate",
+      "fieldType": "Instant"
+    },
+    {
+      "fieldName": "status",
+      "fieldType": "Boolean"
+    }
+  ],
+  "name": "MinistryMembership",
+  "relationships": [
+    {
+      "otherEntityName": "ministryGroup",
+      "otherEntityRelationshipName": "ministryMembership",
+      "relationshipName": "ministryGroup",
+      "relationshipSide": "left",
+      "relationshipType": "many-to-one"
+    },
+    {
+      "otherEntityName": "member",
+      "otherEntityRelationshipName": "ministryMembership",
+      "relationshipName": "member",
+      "relationshipSide": "left",
+      "relationshipType": "many-to-one"
+    }
+  ],
+  "searchEngine": "no",
+  "service": "serviceClass"
+}

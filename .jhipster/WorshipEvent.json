@@ -1,0 +1,54 @@
+{
+  "annotations": {
+    "changelogDate": "20241216194345"
+  },
+  "applications": "*",
+  "fields": [
+    {
+      "fieldName": "date",
+      "fieldType": "Instant",
+      "fieldValidateRules": ["required"]
+    },
+    {
+      "fieldName": "title",
+      "fieldType": "String"
+    },
+    {
+      "fieldName": "description",
+      "fieldType": "String"
+    },
+    {
+      "fieldName": "worshipType",
+      "fieldType": "WorshipType",
+      "fieldValidateRules": ["required"],
+      "fieldValues": "SUNDAY_SERVICE,PRAYER_MEETING,BIBLE_STUDY,YOUTH_SERVICE,SPECIAL_EVENT"
+    }
+  ],
+  "name": "WorshipEvent",
+  "pagination": "pagination",
+  "relationships": [
+    {
+      "otherEntityName": "church",
+      "otherEntityRelationshipName": "worshipEvent",
+      "relationshipName": "church",
+      "relationshipSide": "left",
+      "relationshipType": "many-to-one"
+    },
+    {
+      "otherEntityName": "hymn",
+      "otherEntityRelationshipName": "worshipEvent",
+      "relationshipName": "hymn",
+      "relationshipSide": "left",
+      "relationshipType": "many-to-many"
+    },
+    {
+      "otherEntityName": "schedule",
+      "otherEntityRelationshipName": "worshipEvent",
+      "relationshipName": "schedule",
+      "relationshipSide": "right",
+      "relationshipType": "many-to-many"
+    }
+  ],
+  "searchEngine": "no",
+  "service": "serviceClass"
+}

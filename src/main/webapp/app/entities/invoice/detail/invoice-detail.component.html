@@ -1,0 +1,70 @@
+<div class="d-flex justify-content-center">
+  <div class="col-8">
+    @if (invoice(); as invoiceRef) {
+      <div>
+        <h2 data-cy="invoiceDetailsHeading"><span jhiTranslate="poimenApp.invoice.detail.title">Invoice</span></h2>
+
+        <hr />
+
+        <jhi-alert-error></jhi-alert-error>
+
+        <jhi-alert></jhi-alert>
+
+        <dl class="row-md jh-entity-details">
+          <dt><span jhiTranslate="global.field.id">ID</span></dt>
+          <dd>
+            <span>{{ invoiceRef.id }}</span>
+          </dd>
+          <dt><span jhiTranslate="poimenApp.invoice.number">Number</span></dt>
+          <dd>
+            <span>{{ invoiceRef.number }}</span>
+          </dd>
+          <dt><span jhiTranslate="poimenApp.invoice.issueDate">Issue Date</span></dt>
+          <dd>
+            <span>{{ invoiceRef.issueDate | formatMediumDatetime }}</span>
+          </dd>
+          <dt><span jhiTranslate="poimenApp.invoice.totalAmount">Total Amount</span></dt>
+          <dd>
+            <span>{{ invoiceRef.totalAmount }}</span>
+          </dd>
+          <dt><span jhiTranslate="poimenApp.invoice.type">Type</span></dt>
+          <dd>
+            <span>{{ invoiceRef.type }}</span>
+          </dd>
+          <dt><span jhiTranslate="poimenApp.invoice.supplier">Supplier</span></dt>
+          <dd>
+            <span>{{ invoiceRef.supplier }}</span>
+          </dd>
+          <dt><span jhiTranslate="poimenApp.invoice.invoiceFile">Invoice File</span></dt>
+          <dd>
+            <span>{{ invoiceRef.invoiceFile }}</span>
+          </dd>
+          <dt><span jhiTranslate="poimenApp.invoice.church">Church</span></dt>
+          <dd>
+            @if (invoice()!.church) {
+              <div>
+                <a [routerLink]="['/church', invoice()!.church?.id, 'view']">{{ invoiceRef.church?.id }}</a>
+              </div>
+            }
+          </dd>
+          <dt><span jhiTranslate="poimenApp.invoice.transaction">Transaction</span></dt>
+          <dd>
+            @if (invoice()!.transaction) {
+              <div>
+                <a [routerLink]="['/transaction', invoice()!.transaction?.id, 'view']">{{ invoiceRef.transaction?.id }}</a>
+              </div>
+            }
+          </dd>
+        </dl>
+
+        <button type="submit" (click)="previousState()" class="btn btn-info" data-cy="entityDetailsBackButton">
+          <fa-icon icon="arrow-left"></fa-icon>&nbsp;<span jhiTranslate="entity.action.back">Back</span>
+        </button>
+
+        <button type="button" [routerLink]="['/invoice', invoiceRef.id, 'edit']" class="btn btn-primary">
+          <fa-icon icon="pencil-alt"></fa-icon>&nbsp;<span jhiTranslate="entity.action.edit">Edit</span>
+        </button>
+      </div>
+    }
+  </div>
+</div>
