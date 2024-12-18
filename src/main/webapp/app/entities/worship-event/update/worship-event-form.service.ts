@@ -27,7 +27,7 @@ type WorshipEventFormRawValue = FormValueOf<IWorshipEvent>;
 
 type NewWorshipEventFormRawValue = FormValueOf<NewWorshipEvent>;
 
-type WorshipEventFormDefaults = Pick<NewWorshipEvent, 'id' | 'date' | 'hymns' | 'schedules'>;
+type WorshipEventFormDefaults = Pick<NewWorshipEvent, 'id' | 'date' | 'hymns' | 'musicians'>;
 
 type WorshipEventFormGroupContent = {
   id: FormControl<WorshipEventFormRawValue['id'] | NewWorshipEvent['id']>;
@@ -36,8 +36,10 @@ type WorshipEventFormGroupContent = {
   description: FormControl<WorshipEventFormRawValue['description']>;
   worshipType: FormControl<WorshipEventFormRawValue['worshipType']>;
   church: FormControl<WorshipEventFormRawValue['church']>;
+  preacher: FormControl<WorshipEventFormRawValue['preacher']>;
+  liturgist: FormControl<WorshipEventFormRawValue['liturgist']>;
   hymns: FormControl<WorshipEventFormRawValue['hymns']>;
-  schedules: FormControl<WorshipEventFormRawValue['schedules']>;
+  musicians: FormControl<WorshipEventFormRawValue['musicians']>;
 };
 
 export type WorshipEventFormGroup = FormGroup<WorshipEventFormGroupContent>;
@@ -66,8 +68,10 @@ export class WorshipEventFormService {
         validators: [Validators.required],
       }),
       church: new FormControl(worshipEventRawValue.church),
+      preacher: new FormControl(worshipEventRawValue.preacher),
+      liturgist: new FormControl(worshipEventRawValue.liturgist),
       hymns: new FormControl(worshipEventRawValue.hymns ?? []),
-      schedules: new FormControl(worshipEventRawValue.schedules ?? []),
+      musicians: new FormControl(worshipEventRawValue.musicians ?? []),
     });
   }
 
@@ -92,7 +96,7 @@ export class WorshipEventFormService {
       id: null,
       date: currentTime,
       hymns: [],
-      schedules: [],
+      musicians: [],
     };
   }
 
@@ -112,7 +116,7 @@ export class WorshipEventFormService {
       ...worshipEvent,
       date: worshipEvent.date ? worshipEvent.date.format(DATE_TIME_FORMAT) : undefined,
       hymns: worshipEvent.hymns ?? [],
-      schedules: worshipEvent.schedules ?? [],
+      musicians: worshipEvent.musicians ?? [],
     };
   }
 }

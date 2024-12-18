@@ -27,7 +27,7 @@ type MemberFormRawValue = FormValueOf<IMember>;
 
 type NewMemberFormRawValue = FormValueOf<NewMember>;
 
-type MemberFormDefaults = Pick<NewMember, 'id' | 'dateOfBirth' | 'schedules'>;
+type MemberFormDefaults = Pick<NewMember, 'id' | 'dateOfBirth' | 'schedules' | 'worshipEvents'>;
 
 type MemberFormGroupContent = {
   id: FormControl<MemberFormRawValue['id'] | NewMember['id']>;
@@ -39,6 +39,7 @@ type MemberFormGroupContent = {
   address: FormControl<MemberFormRawValue['address']>;
   church: FormControl<MemberFormRawValue['church']>;
   schedules: FormControl<MemberFormRawValue['schedules']>;
+  worshipEvents: FormControl<MemberFormRawValue['worshipEvents']>;
 };
 
 export type MemberFormGroup = FormGroup<MemberFormGroupContent>;
@@ -70,6 +71,7 @@ export class MemberFormService {
       address: new FormControl(memberRawValue.address),
       church: new FormControl(memberRawValue.church),
       schedules: new FormControl(memberRawValue.schedules ?? []),
+      worshipEvents: new FormControl(memberRawValue.worshipEvents ?? []),
     });
   }
 
@@ -94,6 +96,7 @@ export class MemberFormService {
       id: null,
       dateOfBirth: currentTime,
       schedules: [],
+      worshipEvents: [],
     };
   }
 
@@ -111,6 +114,7 @@ export class MemberFormService {
       ...member,
       dateOfBirth: member.dateOfBirth ? member.dateOfBirth.format(DATE_TIME_FORMAT) : undefined,
       schedules: member.schedules ?? [],
+      worshipEvents: member.worshipEvents ?? [],
     };
   }
 }

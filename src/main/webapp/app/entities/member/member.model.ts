@@ -1,6 +1,7 @@
 import dayjs from 'dayjs/esm';
 import { IChurch } from 'app/entities/church/church.model';
 import { ISchedule } from 'app/entities/schedule/schedule.model';
+import { IWorshipEvent } from 'app/entities/worship-event/worship-event.model';
 
 export interface IMember {
   id: number;
@@ -12,6 +13,7 @@ export interface IMember {
   address?: string | null;
   church?: IChurch | null;
   schedules?: ISchedule[] | null;
+  worshipEvents?: IWorshipEvent[] | null;
 }
 
 export type NewMember = Omit<IMember, 'id'> & { id: null };

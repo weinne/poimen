@@ -48,6 +48,22 @@
               </div>
             }
           </dd>
+          <dt><span jhiTranslate="poimenApp.worshipEvent.preacher">Preacher</span></dt>
+          <dd>
+            @if (worshipEvent()!.preacher) {
+              <div>
+                <a [routerLink]="['/member', worshipEvent()!.preacher?.id, 'view']">{{ worshipEventRef.preacher?.id }}</a>
+              </div>
+            }
+          </dd>
+          <dt><span jhiTranslate="poimenApp.worshipEvent.liturgist">Liturgist</span></dt>
+          <dd>
+            @if (worshipEvent()!.liturgist) {
+              <div>
+                <a [routerLink]="['/member', worshipEvent()!.liturgist?.id, 'view']">{{ worshipEventRef.liturgist?.id }}</a>
+              </div>
+            }
+          </dd>
           <dt><span jhiTranslate="poimenApp.worshipEvent.hymn">Hymn</span></dt>
           <dd>
             @for (hymn of worshipEventRef.hymns; track $index; let last = $last) {
@@ -57,11 +73,11 @@
               </span>
             }
           </dd>
-          <dt><span jhiTranslate="poimenApp.worshipEvent.schedule">Schedule</span></dt>
+          <dt><span jhiTranslate="poimenApp.worshipEvent.musicians">Musicians</span></dt>
           <dd>
-            @for (schedule of worshipEventRef.schedules; track $index; let last = $last) {
+            @for (musicians of worshipEventRef.musicians; track $index; let last = $last) {
               <span>
-                <a [routerLink]="['/schedule', schedule.id, 'view']">{{ schedule?.id }}</a
+                <a [routerLink]="['/member', musicians.id, 'view']">{{ musicians?.id }}</a
                 >{{ last ? '' : ', ' }}
               </span>
             }

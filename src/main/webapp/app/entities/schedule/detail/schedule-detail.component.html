@@ -15,12 +15,6 @@
           <dd>
             <span>{{ scheduleRef.id }}</span>
           </dd>
-          <dt><span jhiTranslate="poimenApp.schedule.roleType">Role Type</span></dt>
-          <dd>
-            <span [jhiTranslate]="'poimenApp.RoleSchedule.' + (scheduleRef.roleType ?? 'null')">{{
-              { null: '', PREACHER: 'PREACHER', LITURGIST: 'LITURGIST', MUSICIAN: 'MUSICIAN' }[scheduleRef.roleType ?? 'null']
-            }}</span>
-          </dd>
           <dt><span jhiTranslate="poimenApp.schedule.notes">Notes</span></dt>
           <dd>
             <span>{{ scheduleRef.notes }}</span>
@@ -42,13 +36,10 @@
               </span>
             }
           </dd>
-          <dt><span jhiTranslate="poimenApp.schedule.worshipEvent">Worship Event</span></dt>
+          <dt><span jhiTranslate="poimenApp.schedule.user">User</span></dt>
           <dd>
-            @for (worshipEvent of scheduleRef.worshipEvents; track $index; let last = $last) {
-              <span>
-                <a [routerLink]="['/worship-event', worshipEvent.id, 'view']">{{ worshipEvent?.id }}</a
-                >{{ last ? '' : ', ' }}
-              </span>
+            @for (user of scheduleRef.users; track $index; let last = $last) {
+              <span> {{ user.id }}{{ last ? '' : ', ' }} </span>
             }
           </dd>
         </dl>

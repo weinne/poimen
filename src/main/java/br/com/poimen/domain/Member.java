@@ -86,8 +86,13 @@ public class Member implements Serializable {
 
     @ManyToMany(fetch = FetchType.LAZY, mappedBy = "members")
     @Cache(usage = CacheConcurrencyStrategy.READ_WRITE)
-    @JsonIgnoreProperties(value = { "members", "worshipEvents" }, allowSetters = true)
+    @JsonIgnoreProperties(value = { "members", "users" }, allowSetters = true)
     private Set<Schedule> schedules = new HashSet<>();
+
+    @ManyToMany(fetch = FetchType.LAZY, mappedBy = "musicians")
+    @Cache(usage = CacheConcurrencyStrategy.READ_WRITE)
+    @JsonIgnoreProperties(value = { "church", "preacher", "liturgist", "hymns", "musicians" }, allowSetters = true)
+    private Set<WorshipEvent> worshipEvents = new HashSet<>();
 
     // jhipster-needle-entity-add-field - JHipster will add fields here
 
@@ -347,6 +352,37 @@ public class Member implements Serializable {
     public Member removeSchedule(Schedule schedule) {
         this.schedules.remove(schedule);
         schedule.getMembers().remove(this);
+        return this;
+    }
+
+    public Set<WorshipEvent> getWorshipEvents() {
+        return this.worshipEvents;
+    }
+
+    public void setWorshipEvents(Set<WorshipEvent> worshipEvents) {
+        if (this.worshipEvents != null) {
+            this.worshipEvents.forEach(i -> i.removeMusicians(this));
+        }
+        if (worshipEvents != null) {
+            worshipEvents.forEach(i -> i.addMusicians(this));
+        }
+        this.worshipEvents = worshipEvents;
+    }
+
+    public Member worshipEvents(Set<WorshipEvent> worshipEvents) {
+        this.setWorshipEvents(worshipEvents);
+        return this;
+    }
+
+    public Member addWorshipEvent(WorshipEvent worshipEvent) {
+        this.worshipEvents.add(worshipEvent);
+        worshipEvent.getMusicians().add(this);
+        return this;
+    }
+
+    public Member removeWorshipEvent(WorshipEvent worshipEvent) {
+        this.worshipEvents.remove(worshipEvent);
+        worshipEvent.getMusicians().remove(this);
         return this;
     }
 

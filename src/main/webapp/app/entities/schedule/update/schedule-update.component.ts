@@ -9,9 +9,8 @@ import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 
 import { IMember } from 'app/entities/member/member.model';
 import { MemberService } from 'app/entities/member/service/member.service';
-import { IWorshipEvent } from 'app/entities/worship-event/worship-event.model';
-import { WorshipEventService } from 'app/entities/worship-event/service/worship-event.service';
-import { RoleSchedule } from 'app/entities/enumerations/role-schedule.model';
+import { IUser } from 'app/entities/user/user.model';
+import { UserService } from 'app/entities/user/service/user.service';
 import { ScheduleService } from '../service/schedule.service';
 import { ISchedule } from '../schedule.model';
 import { ScheduleFormGroup, ScheduleFormService } from './schedule-form.service';
@@ -25,15 +24,14 @@ import { ScheduleFormGroup, ScheduleFormService } from './schedule-form.service'
 export class ScheduleUpdateComponent implements OnInit {
   isSaving = false;
   schedule: ISchedule | null = null;
-  roleScheduleValues = Object.keys(RoleSchedule);
 
   membersSharedCollection: IMember[] = [];
-  worshipEventsSharedCollection: IWorshipEvent[] = [];
+  usersSharedCollection: IUser[] = [];
 
   protected scheduleService = inject(ScheduleService);
   protected scheduleFormService = inject(ScheduleFormService);
   protected memberService = inject(MemberService);
-  protected worshipEventService = inject(WorshipEventService);
+  protected userService = inject(UserService);
   protected activatedRoute = inject(ActivatedRoute);
 
   // eslint-disable-next-line @typescript-eslint/member-ordering
@@ -41,8 +39,7 @@ export class ScheduleUpdateComponent implements OnInit {
 
   compareMember = (o1: IMember | null, o2: IMember | null): boolean => this.memberService.compareMember(o1, o2);
 
-  compareWorshipEvent = (o1: IWorshipEvent | null, o2: IWorshipEvent | null): boolean =>
-    this.worshipEventService.compareWorshipEvent(o1, o2);
+  compareUser = (o1: IUser | null, o2: IUser | null): boolean => this.userService.compareUser(o1, o2);
 
   ngOnInit(): void {
     this.activatedRoute.data.subscribe(({ schedule }) => {
@@ -96,9 +93,9 @@ export class ScheduleUpdateComponent implements OnInit {
       this.membersSharedCollection,
       ...(schedule.members ?? []),
     );
-    this.worshipEventsSharedCollection = this.worshipEventService.addWorshipEventToCollectionIfMissing<IWorshipEvent>(
-      this.worshipEventsSharedCollection,
-      ...(schedule.worshipEvents ?? []),
+    this.usersSharedCollection = this.userService.addUserToCollectionIfMissing<IUser>(
+      this.usersSharedCollection,
+      ...(schedule.users ?? []),
     );
   }
 
@@ -111,17 +108,10 @@ export class ScheduleUpdateComponent implements OnInit {
       )
       .subscribe((members: IMember[]) => (this.membersSharedCollection = members));
 
-    this.worshipEventService
+    this.userService
       .query()
-      .pipe(map((res: HttpResponse<IWorshipEvent[]>) => res.body ?? []))
-      .pipe(
-        map((worshipEvents: IWorshipEvent[]) =>
-          this.worshipEventService.addWorshipEventToCollectionIfMissing<IWorshipEvent>(
-            worshipEvents,
-            ...(this.schedule?.worshipEvents ?? []),
-          ),
-        ),
-      )
-      .subscribe((worshipEvents: IWorshipEvent[]) => (this.worshipEventsSharedCollection = worshipEvents));
+      .pipe(map((res: HttpResponse<IUser[]>) => res.body ?? []))
+      .pipe(map((users: IUser[]) => this.userService.addUserToCollectionIfMissing<IUser>(users, ...(this.schedule?.users ?? []))))
+      .subscribe((users: IUser[]) => (this.usersSharedCollection = users));
   }
 }

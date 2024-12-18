@@ -3,28 +3,26 @@ import dayjs from 'dayjs/esm';
 import { ISchedule, NewSchedule } from './schedule.model';
 
 export const sampleWithRequiredData: ISchedule = {
-  id: 18747,
-  roleType: 'PREACHER',
-  startTime: dayjs('2024-12-16T02:07'),
+  id: 10305,
+  startTime: dayjs('2024-12-17T14:56'),
 };
 
 export const sampleWithPartialData: ISchedule = {
-  id: 27433,
-  roleType: 'PREACHER',
-  startTime: dayjs('2024-12-15T20:32'),
+  id: 16690,
+  notes: 'pecan fluff drat',
+  startTime: dayjs('2024-12-17T23:15'),
+  endTime: dayjs('2024-12-17T13:36'),
 };
 
 export const sampleWithFullData: ISchedule = {
-  id: 24970,
-  roleType: 'LITURGIST',
-  notes: 'since nasalise happily',
-  startTime: dayjs('2024-12-16T02:18'),
-  endTime: dayjs('2024-12-16T03:02'),
+  id: 23796,
+  notes: 'buzzing',
+  startTime: dayjs('2024-12-17T04:59'),
+  endTime: dayjs('2024-12-17T16:02'),
 };
 
 export const sampleWithNewData: NewSchedule = {
-  roleType: 'MUSICIAN',
-  startTime: dayjs('2024-12-16T17:01'),
+  startTime: dayjs('2024-12-17T12:03'),
   id: null,
 };
 

@@ -15,24 +15,6 @@
           </div>
         }
 
-        @let roleTypeRef = editForm.get('roleType')!;
-        <div class="mb-3">
-          <label class="form-label" for="field_roleType" jhiTranslate="poimenApp.schedule.roleType">Role Type</label>
-          <select class="form-control" name="roleType" formControlName="roleType" id="field_roleType" data-cy="roleType">
-            <option [ngValue]="null">{{ 'poimenApp.RoleSchedule.null' | translate }}</option>
-            @for (roleSchedule of roleScheduleValues; track $index) {
-              <option [value]="roleSchedule">{{ 'poimenApp.RoleSchedule.' + roleSchedule | translate }}</option>
-            }
-          </select>
-          @if (roleTypeRef.invalid && (roleTypeRef.dirty || roleTypeRef.touched)) {
-            <div>
-              @if (editForm.get('roleType')?.errors?.required) {
-                <small class="form-text text-danger" jhiTranslate="entity.validation.required">This field is required.</small>
-              }
-            </div>
-          }
-        </div>
-
         <div class="mb-3">
           <label class="form-label" for="field_notes" jhiTranslate="poimenApp.schedule.notes">Notes</label>
           <input type="text" class="form-control" name="notes" id="field_notes" data-cy="notes" formControlName="notes" />
@@ -100,18 +82,18 @@
         </div>
 
         <div class="mb-3">
-          <label for="field_worshipEvents" jhiTranslate="poimenApp.schedule.worshipEvent">Worship Event</label>
+          <label for="field_users" jhiTranslate="poimenApp.schedule.user">User</label>
           <select
             class="form-control"
-            id="field_worshipEvents"
-            data-cy="worshipEvent"
+            id="field_users"
+            data-cy="user"
             multiple
-            name="worshipEvents"
-            formControlName="worshipEvents"
-            [compareWith]="compareWorshipEvent"
+            name="users"
+            formControlName="users"
+            [compareWith]="compareUser"
           >
-            @for (worshipEventOption of worshipEventsSharedCollection; track $index) {
-              <option [ngValue]="worshipEventOption">{{ worshipEventOption.id }}</option>
+            @for (userOption of usersSharedCollection; track $index) {
+              <option [ngValue]="userOption">{{ userOption.id }}</option>
             }
           </select>
         </div>

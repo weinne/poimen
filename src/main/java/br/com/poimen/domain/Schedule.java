@@ -1,6 +1,5 @@
 package br.com.poimen.domain;
 
-import br.com.poimen.domain.enumeration.RoleSchedule;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.*;
@@ -28,11 +27,6 @@ public class Schedule implements Serializable {
     @Column(name = "id")
     private Long id;
 
-    @NotNull
-    @Enumerated(EnumType.STRING)
-    @Column(name = "role_type", nullable = false)
-    private RoleSchedule roleType;
-
     @Column(name = "notes")
     private String notes;
 
@@ -51,20 +45,19 @@ public class Schedule implements Serializable {
     )
     @Cache(usage = CacheConcurrencyStrategy.READ_WRITE)
     @JsonIgnoreProperties(
-        value = { "church", "counselingSessions", "ministryMemberships", "tasks", "transactions", "schedules" },
+        value = { "church", "counselingSessions", "ministryMemberships", "tasks", "transactions", "schedules", "worshipEvents" },
         allowSetters = true
     )
     private Set<Member> members = new HashSet<>();
 
     @ManyToMany(fetch = FetchType.LAZY)
     @JoinTable(
-        name = "rel_schedule__worship_event",
+        name = "rel_schedule__user",
         joinColumns = @JoinColumn(name = "schedule_id"),
-        inverseJoinColumns = @JoinColumn(name = "worship_event_id")
+        inverseJoinColumns = @JoinColumn(name = "user_id")
     )
     @Cache(usage = CacheConcurrencyStrategy.READ_WRITE)
-    @JsonIgnoreProperties(value = { "church", "hymns", "schedules" }, allowSetters = true)
-    private Set<WorshipEvent> worshipEvents = new HashSet<>();
+    private Set<User> users = new HashSet<>();
 
     // jhipster-needle-entity-add-field - JHipster will add fields here
 
@@ -79,19 +72,6 @@ public class Schedule implements Serializable {
 
     public void setId(Long id) {
         this.id = id;
-    }
-
-    public RoleSchedule getRoleType() {
-        return this.roleType;
-    }
-
-    public Schedule roleType(RoleSchedule roleType) {
-        this.setRoleType(roleType);
-        return this;
-    }
-
-    public void setRoleType(RoleSchedule roleType) {
-        this.roleType = roleType;
     }
 
     public String getNotes() {
@@ -156,26 +136,26 @@ public class Schedule implements Serializable {
         return this;
     }
 
-    public Set<WorshipEvent> getWorshipEvents() {
-        return this.worshipEvents;
+    public Set<User> getUsers() {
+        return this.users;
     }
 
-    public void setWorshipEvents(Set<WorshipEvent> worshipEvents) {
-        this.worshipEvents = worshipEvents;
+    public void setUsers(Set<User> users) {
+        this.users = users;
     }
 
-    public Schedule worshipEvents(Set<WorshipEvent> worshipEvents) {
-        this.setWorshipEvents(worshipEvents);
+    public Schedule users(Set<User> users) {
+        this.setUsers(users);
         return this;
     }
 
-    public Schedule addWorshipEvent(WorshipEvent worshipEvent) {
-        this.worshipEvents.add(worshipEvent);
+    public Schedule addUser(User user) {
+        this.users.add(user);
         return this;
     }
 
-    public Schedule removeWorshipEvent(WorshipEvent worshipEvent) {
-        this.worshipEvents.remove(worshipEvent);
+    public Schedule removeUser(User user) {
+        this.users.remove(user);
         return this;
     }
 
@@ -203,7 +183,6 @@ public class Schedule implements Serializable {
     public String toString() {
         return "Schedule{" +
             "id=" + getId() +
-            ", roleType='" + getRoleType() + "'" +
             ", notes='" + getNotes() + "'" +
             ", startTime='" + getStartTime() + "'" +
             ", endTime='" + getEndTime() + "'" +

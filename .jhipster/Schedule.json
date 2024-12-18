@@ -1,15 +1,9 @@
 {
   "annotations": {
-    "changelogDate": "20241216194342"
+    "changelogDate": "20241218011232"
   },
   "applications": "*",
   "fields": [
-    {
-      "fieldName": "roleType",
-      "fieldType": "RoleSchedule",
-      "fieldValidateRules": ["required"],
-      "fieldValues": "PREACHER,LITURGIST,MUSICIAN"
-    },
     {
       "fieldName": "notes",
       "fieldType": "String"
@@ -35,13 +29,15 @@
       "relationshipType": "many-to-many"
     },
     {
-      "otherEntityName": "worshipEvent",
+      "otherEntityName": "user",
       "otherEntityRelationshipName": "schedule",
-      "relationshipName": "worshipEvent",
+      "relationshipName": "user",
       "relationshipSide": "left",
-      "relationshipType": "many-to-many"
+      "relationshipType": "many-to-many",
+      "relationshipWithBuiltInEntity": true
     }
   ],
   "searchEngine": "no",
-  "service": "serviceClass"
+  "service": "serviceClass",
+  "skipDbChangelog": true
 }

@@ -23,8 +23,10 @@
       "description": "Description",
       "worshipType": "Worship Type",
       "church": "Church",
+      "preacher": "Preacher",
+      "liturgist": "Liturgist",
       "hymn": "Hymn",
-      "schedule": "Schedule"
+      "musicians": "Musicians"
     }
   }
 }

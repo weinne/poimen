@@ -7,6 +7,7 @@ import static br.com.poimen.domain.MinistryMembershipTestSamples.*;
 import static br.com.poimen.domain.ScheduleTestSamples.*;
 import static br.com.poimen.domain.TaskTestSamples.*;
 import static br.com.poimen.domain.TransactionTestSamples.*;
+import static br.com.poimen.domain.WorshipEventTestSamples.*;
 import static org.assertj.core.api.Assertions.assertThat;
 
 import br.com.poimen.web.rest.TestUtil;
@@ -150,5 +151,27 @@ class MemberTest {
         member.setSchedules(new HashSet<>());
         assertThat(member.getSchedules()).doesNotContain(scheduleBack);
         assertThat(scheduleBack.getMembers()).doesNotContain(member);
+    }
+
+    @Test
+    void worshipEventTest() {
+        Member member = getMemberRandomSampleGenerator();
+        WorshipEvent worshipEventBack = getWorshipEventRandomSampleGenerator();
+
+        member.addWorshipEvent(worshipEventBack);
+        assertThat(member.getWorshipEvents()).containsOnly(worshipEventBack);
+        assertThat(worshipEventBack.getMusicians()).containsOnly(member);
+
+        member.removeWorshipEvent(worshipEventBack);
+        assertThat(member.getWorshipEvents()).doesNotContain(worshipEventBack);
+        assertThat(worshipEventBack.getMusicians()).doesNotContain(member);
+
+        member.worshipEvents(new HashSet<>(Set.of(worshipEventBack)));
+        assertThat(member.getWorshipEvents()).containsOnly(worshipEventBack);
+        assertThat(worshipEventBack.getMusicians()).containsOnly(member);
+
+        member.setWorshipEvents(new HashSet<>());
+        assertThat(member.getWorshipEvents()).doesNotContain(worshipEventBack);
+        assertThat(worshipEventBack.getMusicians()).doesNotContain(member);
     }
 }

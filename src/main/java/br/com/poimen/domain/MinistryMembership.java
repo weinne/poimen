@@ -46,7 +46,7 @@ public class MinistryMembership implements Serializable {
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JsonIgnoreProperties(
-        value = { "church", "counselingSessions", "ministryMemberships", "tasks", "transactions", "schedules" },
+        value = { "church", "counselingSessions", "ministryMemberships", "tasks", "transactions", "schedules", "worshipEvents" },
         allowSetters = true
     )
     private Member member;

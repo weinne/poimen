@@ -10,8 +10,8 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 import br.com.poimen.IntegrationTest;
 import br.com.poimen.domain.Schedule;
-import br.com.poimen.domain.enumeration.RoleSchedule;
 import br.com.poimen.repository.ScheduleRepository;
+import br.com.poimen.repository.UserRepository;
 import br.com.poimen.service.ScheduleService;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import jakarta.persistence.EntityManager;
@@ -44,9 +44,6 @@ import org.springframework.transaction.annotation.Transactional;
 @WithMockUser
 class ScheduleResourceIT {
 
-    private static final RoleSchedule DEFAULT_ROLE_TYPE = RoleSchedule.PREACHER;
-    private static final RoleSchedule UPDATED_ROLE_TYPE = RoleSchedule.LITURGIST;
-
     private static final String DEFAULT_NOTES = "AAAAAAAAAA";
     private static final String UPDATED_NOTES = "BBBBBBBBBB";
 
@@ -67,6 +64,9 @@ class ScheduleResourceIT {
 
     @Autowired
     private ScheduleRepository scheduleRepository;
+
+    @Autowired
+    private UserRepository userRepository;
 
     @Mock
     private ScheduleRepository scheduleRepositoryMock;
@@ -91,7 +91,7 @@ class ScheduleResourceIT {
      * if they test an entity which requires the current entity.
      */
     public static Schedule createEntity() {
-        return new Schedule().roleType(DEFAULT_ROLE_TYPE).notes(DEFAULT_NOTES).startTime(DEFAULT_START_TIME).endTime(DEFAULT_END_TIME);
+        return new Schedule().notes(DEFAULT_NOTES).startTime(DEFAULT_START_TIME).endTime(DEFAULT_END_TIME);
     }
 
     /**
@@ -101,7 +101,7 @@ class ScheduleResourceIT {
      * if they test an entity which requires the current entity.
      */
     public static Schedule createUpdatedEntity() {
-        return new Schedule().roleType(UPDATED_ROLE_TYPE).notes(UPDATED_NOTES).startTime(UPDATED_START_TIME).endTime(UPDATED_END_TIME);
+        return new Schedule().notes(UPDATED_NOTES).startTime(UPDATED_START_TIME).endTime(UPDATED_END_TIME);
     }
 
     @BeforeEach
@@ -158,22 +158,6 @@ class ScheduleResourceIT {
 
     @Test
     @Transactional
-    void checkRoleTypeIsRequired() throws Exception {
-        long databaseSizeBeforeTest = getRepositoryCount();
-        // set the field null
-        schedule.setRoleType(null);
-
-        // Create the Schedule, which fails.
-
-        restScheduleMockMvc
-            .perform(post(ENTITY_API_URL).contentType(MediaType.APPLICATION_JSON).content(om.writeValueAsBytes(schedule)))
-            .andExpect(status().isBadRequest());
-
-        assertSameRepositoryCount(databaseSizeBeforeTest);
-    }
-
-    @Test
-    @Transactional
     void checkStartTimeIsRequired() throws Exception {
         long databaseSizeBeforeTest = getRepositoryCount();
         // set the field null
@@ -200,7 +184,6 @@ class ScheduleResourceIT {
             .andExpect(status().isOk())
             .andExpect(content().contentType(MediaType.APPLICATION_JSON_VALUE))
             .andExpect(jsonPath("$.[*].id").value(hasItem(schedule.getId().intValue())))
-            .andExpect(jsonPath("$.[*].roleType").value(hasItem(DEFAULT_ROLE_TYPE.toString())))
             .andExpect(jsonPath("$.[*].notes").value(hasItem(DEFAULT_NOTES)))
             .andExpect(jsonPath("$.[*].startTime").value(hasItem(DEFAULT_START_TIME.toString())))
             .andExpect(jsonPath("$.[*].endTime").value(hasItem(DEFAULT_END_TIME.toString())));
@@ -235,7 +218,6 @@ class ScheduleResourceIT {
             .andExpect(status().isOk())
             .andExpect(content().contentType(MediaType.APPLICATION_JSON_VALUE))
             .andExpect(jsonPath("$.id").value(schedule.getId().intValue()))
-            .andExpect(jsonPath("$.roleType").value(DEFAULT_ROLE_TYPE.toString()))
             .andExpect(jsonPath("$.notes").value(DEFAULT_NOTES))
             .andExpect(jsonPath("$.startTime").value(DEFAULT_START_TIME.toString()))
             .andExpect(jsonPath("$.endTime").value(DEFAULT_END_TIME.toString()));
@@ -260,7 +242,7 @@ class ScheduleResourceIT {
         Schedule updatedSchedule = scheduleRepository.findById(schedule.getId()).orElseThrow();
         // Disconnect from session so that the updates on updatedSchedule are not directly saved in db
         em.detach(updatedSchedule);
-        updatedSchedule.roleType(UPDATED_ROLE_TYPE).notes(UPDATED_NOTES).startTime(UPDATED_START_TIME).endTime(UPDATED_END_TIME);
+        updatedSchedule.notes(UPDATED_NOTES).startTime(UPDATED_START_TIME).endTime(UPDATED_END_TIME);
 
         restScheduleMockMvc
             .perform(
@@ -338,7 +320,7 @@ class ScheduleResourceIT {
         Schedule partialUpdatedSchedule = new Schedule();
         partialUpdatedSchedule.setId(schedule.getId());
 
-        partialUpdatedSchedule.roleType(UPDATED_ROLE_TYPE).endTime(UPDATED_END_TIME);
+        partialUpdatedSchedule.notes(UPDATED_NOTES);
 
         restScheduleMockMvc
             .perform(
@@ -366,7 +348,7 @@ class ScheduleResourceIT {
         Schedule partialUpdatedSchedule = new Schedule();
         partialUpdatedSchedule.setId(schedule.getId());
 
-        partialUpdatedSchedule.roleType(UPDATED_ROLE_TYPE).notes(UPDATED_NOTES).startTime(UPDATED_START_TIME).endTime(UPDATED_END_TIME);
+        partialUpdatedSchedule.notes(UPDATED_NOTES).startTime(UPDATED_START_TIME).endTime(UPDATED_END_TIME);
 
         restScheduleMockMvc
             .perform(

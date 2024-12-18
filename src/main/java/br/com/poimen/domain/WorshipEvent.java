@@ -60,6 +60,20 @@ public class WorshipEvent implements Serializable {
     )
     private Church church;
 
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JsonIgnoreProperties(
+        value = { "church", "counselingSessions", "ministryMemberships", "tasks", "transactions", "schedules", "worshipEvents" },
+        allowSetters = true
+    )
+    private Member preacher;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JsonIgnoreProperties(
+        value = { "church", "counselingSessions", "ministryMemberships", "tasks", "transactions", "schedules", "worshipEvents" },
+        allowSetters = true
+    )
+    private Member liturgist;
+
     @ManyToMany(fetch = FetchType.LAZY)
     @JoinTable(
         name = "rel_worship_event__hymn",
@@ -70,10 +84,18 @@ public class WorshipEvent implements Serializable {
     @JsonIgnoreProperties(value = { "worshipEvents" }, allowSetters = true)
     private Set<Hymn> hymns = new HashSet<>();
 
-    @ManyToMany(fetch = FetchType.LAZY, mappedBy = "worshipEvents")
+    @ManyToMany(fetch = FetchType.LAZY)
+    @JoinTable(
+        name = "rel_worship_event__musicians",
+        joinColumns = @JoinColumn(name = "worship_event_id"),
+        inverseJoinColumns = @JoinColumn(name = "musicians_id")
+    )
     @Cache(usage = CacheConcurrencyStrategy.READ_WRITE)
-    @JsonIgnoreProperties(value = { "members", "worshipEvents" }, allowSetters = true)
-    private Set<Schedule> schedules = new HashSet<>();
+    @JsonIgnoreProperties(
+        value = { "church", "counselingSessions", "ministryMemberships", "tasks", "transactions", "schedules", "worshipEvents" },
+        allowSetters = true
+    )
+    private Set<Member> musicians = new HashSet<>();
 
     // jhipster-needle-entity-add-field - JHipster will add fields here
 
@@ -155,6 +177,32 @@ public class WorshipEvent implements Serializable {
         return this;
     }
 
+    public Member getPreacher() {
+        return this.preacher;
+    }
+
+    public void setPreacher(Member member) {
+        this.preacher = member;
+    }
+
+    public WorshipEvent preacher(Member member) {
+        this.setPreacher(member);
+        return this;
+    }
+
+    public Member getLiturgist() {
+        return this.liturgist;
+    }
+
+    public void setLiturgist(Member member) {
+        this.liturgist = member;
+    }
+
+    public WorshipEvent liturgist(Member member) {
+        this.setLiturgist(member);
+        return this;
+    }
+
     public Set<Hymn> getHymns() {
         return this.hymns;
     }
@@ -178,34 +226,26 @@ public class WorshipEvent implements Serializable {
         return this;
     }
 
-    public Set<Schedule> getSchedules() {
-        return this.schedules;
+    public Set<Member> getMusicians() {
+        return this.musicians;
     }
 
-    public void setSchedules(Set<Schedule> schedules) {
-        if (this.schedules != null) {
-            this.schedules.forEach(i -> i.removeWorshipEvent(this));
-        }
-        if (schedules != null) {
-            schedules.forEach(i -> i.addWorshipEvent(this));
-        }
-        this.schedules = schedules;
+    public void setMusicians(Set<Member> members) {
+        this.musicians = members;
     }
 
-    public WorshipEvent schedules(Set<Schedule> schedules) {
-        this.setSchedules(schedules);
+    public WorshipEvent musicians(Set<Member> members) {
+        this.setMusicians(members);
         return this;
     }
 
-    public WorshipEvent addSchedule(Schedule schedule) {
-        this.schedules.add(schedule);
-        schedule.getWorshipEvents().add(this);
+    public WorshipEvent addMusicians(Member member) {
+        this.musicians.add(member);
         return this;
     }
 
-    public WorshipEvent removeSchedule(Schedule schedule) {
-        this.schedules.remove(schedule);
-        schedule.getWorshipEvents().remove(this);
+    public WorshipEvent removeMusicians(Member member) {
+        this.musicians.remove(member);
         return this;
     }
 

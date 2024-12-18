@@ -55,7 +55,7 @@ public class Church implements Serializable {
     @OneToMany(fetch = FetchType.LAZY, mappedBy = "church")
     @Cache(usage = CacheConcurrencyStrategy.READ_WRITE)
     @JsonIgnoreProperties(
-        value = { "church", "counselingSessions", "ministryMemberships", "tasks", "transactions", "schedules" },
+        value = { "church", "counselingSessions", "ministryMemberships", "tasks", "transactions", "schedules", "worshipEvents" },
         allowSetters = true
     )
     private Set<Member> members = new HashSet<>();
@@ -67,7 +67,7 @@ public class Church implements Serializable {
 
     @OneToMany(fetch = FetchType.LAZY, mappedBy = "church")
     @Cache(usage = CacheConcurrencyStrategy.READ_WRITE)
-    @JsonIgnoreProperties(value = { "church", "hymns", "schedules" }, allowSetters = true)
+    @JsonIgnoreProperties(value = { "church", "preacher", "liturgist", "hymns", "musicians" }, allowSetters = true)
     private Set<WorshipEvent> worshipEvents = new HashSet<>();
 
     @OneToMany(fetch = FetchType.LAZY, mappedBy = "church")

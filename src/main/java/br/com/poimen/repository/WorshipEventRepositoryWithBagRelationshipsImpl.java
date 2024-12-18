@@ -24,7 +24,7 @@ public class WorshipEventRepositoryWithBagRelationshipsImpl implements WorshipEv
 
     @Override
     public Optional<WorshipEvent> fetchBagRelationships(Optional<WorshipEvent> worshipEvent) {
-        return worshipEvent.map(this::fetchHymns);
+        return worshipEvent.map(this::fetchHymns).map(this::fetchMusicians);
     }
 
     @Override
@@ -38,7 +38,7 @@ public class WorshipEventRepositoryWithBagRelationshipsImpl implements WorshipEv
 
     @Override
     public List<WorshipEvent> fetchBagRelationships(List<WorshipEvent> worshipEvents) {
-        return Optional.of(worshipEvents).map(this::fetchHymns).orElse(Collections.emptyList());
+        return Optional.of(worshipEvents).map(this::fetchHymns).map(this::fetchMusicians).orElse(Collections.emptyList());
     }
 
     WorshipEvent fetchHymns(WorshipEvent result) {
@@ -57,6 +57,30 @@ public class WorshipEventRepositoryWithBagRelationshipsImpl implements WorshipEv
         List<WorshipEvent> result = entityManager
             .createQuery(
                 "select worshipEvent from WorshipEvent worshipEvent left join fetch worshipEvent.hymns where worshipEvent in :worshipEvents",
+                WorshipEvent.class
+            )
+            .setParameter(WORSHIPEVENTS_PARAMETER, worshipEvents)
+            .getResultList();
+        Collections.sort(result, (o1, o2) -> Integer.compare(order.get(o1.getId()), order.get(o2.getId())));
+        return result;
+    }
+
+    WorshipEvent fetchMusicians(WorshipEvent result) {
+        return entityManager
+            .createQuery(
+                "select worshipEvent from WorshipEvent worshipEvent left join fetch worshipEvent.musicians where worshipEvent.id = :id",
+                WorshipEvent.class
+            )
+            .setParameter(ID_PARAMETER, result.getId())
+            .getSingleResult();
+    }
+
+    List<WorshipEvent> fetchMusicians(List<WorshipEvent> worshipEvents) {
+        HashMap<Object, Integer> order = new HashMap<>();
+        IntStream.range(0, worshipEvents.size()).forEach(index -> order.put(worshipEvents.get(index).getId(), index));
+        List<WorshipEvent> result = entityManager
+            .createQuery(
+                "select worshipEvent from WorshipEvent worshipEvent left join fetch worshipEvent.musicians where worshipEvent in :worshipEvents",
                 WorshipEvent.class
             )
             .setParameter(WORSHIPEVENTS_PARAMETER, worshipEvents)

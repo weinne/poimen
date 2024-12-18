@@ -56,6 +56,15 @@
               </span>
             }
           </dd>
+          <dt><span jhiTranslate="poimenApp.member.worshipEvent">Worship Event</span></dt>
+          <dd>
+            @for (worshipEvent of memberRef.worshipEvents; track $index; let last = $last) {
+              <span>
+                <a [routerLink]="['/worship-event', worshipEvent.id, 'view']">{{ worshipEvent?.id }}</a
+                >{{ last ? '' : ', ' }}
+              </span>
+            }
+          </dd>
         </dl>
 
         <button type="submit" (click)="previousState()" class="btn btn-info" data-cy="entityDetailsBackButton">

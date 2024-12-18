@@ -101,6 +101,40 @@
         </div>
 
         <div class="mb-3">
+          <label class="form-label" for="field_preacher" jhiTranslate="poimenApp.worshipEvent.preacher">Preacher</label>
+          <select
+            class="form-control"
+            id="field_preacher"
+            data-cy="preacher"
+            name="preacher"
+            formControlName="preacher"
+            [compareWith]="compareMember"
+          >
+            <option [ngValue]="null"></option>
+            @for (memberOption of membersSharedCollection; track $index) {
+              <option [ngValue]="memberOption">{{ memberOption.id }}</option>
+            }
+          </select>
+        </div>
+
+        <div class="mb-3">
+          <label class="form-label" for="field_liturgist" jhiTranslate="poimenApp.worshipEvent.liturgist">Liturgist</label>
+          <select
+            class="form-control"
+            id="field_liturgist"
+            data-cy="liturgist"
+            name="liturgist"
+            formControlName="liturgist"
+            [compareWith]="compareMember"
+          >
+            <option [ngValue]="null"></option>
+            @for (memberOption of membersSharedCollection; track $index) {
+              <option [ngValue]="memberOption">{{ memberOption.id }}</option>
+            }
+          </select>
+        </div>
+
+        <div class="mb-3">
           <label for="field_hymns" jhiTranslate="poimenApp.worshipEvent.hymn">Hymn</label>
           <select
             class="form-control"
@@ -118,18 +152,18 @@
         </div>
 
         <div class="mb-3">
-          <label for="field_schedules" jhiTranslate="poimenApp.worshipEvent.schedule">Schedule</label>
+          <label for="field_musicians" jhiTranslate="poimenApp.worshipEvent.musicians">Musicians</label>
           <select
             class="form-control"
-            id="field_schedules"
-            data-cy="schedule"
+            id="field_musicians"
+            data-cy="musicians"
             multiple
-            name="schedules"
-            formControlName="schedules"
-            [compareWith]="compareSchedule"
+            name="musicians"
+            formControlName="musicians"
+            [compareWith]="compareMember"
           >
-            @for (scheduleOption of schedulesSharedCollection; track $index) {
-              <option [ngValue]="scheduleOption">{{ scheduleOption.id }}</option>
+            @for (memberOption of membersSharedCollection; track $index) {
+              <option [ngValue]="memberOption">{{ memberOption.id }}</option>
             }
           </select>
         </div>

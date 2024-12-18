@@ -101,10 +101,10 @@ describe('Transaction Management Update Component', () => {
 
     it('Should call User query and add missing value', () => {
       const transaction: ITransaction = { id: 456 };
-      const user: IUser = { id: 9537 };
+      const user: IUser = { id: 24571 };
       transaction.user = user;
 
-      const userCollection: IUser[] = [{ id: 29660 }];
+      const userCollection: IUser[] = [{ id: 16970 }];
       jest.spyOn(userService, 'query').mockReturnValue(of(new HttpResponse({ body: userCollection })));
       const additionalUsers = [user];
       const expectedCollection: IUser[] = [...additionalUsers, ...userCollection];
@@ -127,7 +127,7 @@ describe('Transaction Management Update Component', () => {
       transaction.church = church;
       const member: IMember = { id: 14781 };
       transaction.member = member;
-      const user: IUser = { id: 10483 };
+      const user: IUser = { id: 4709 };
       transaction.user = user;
 
       activatedRoute.data = of({ transaction });

@@ -85,6 +85,9 @@ public class CacheConfiguration {
             createCache(cm, br.com.poimen.domain.WorshipEvent.class.getName());
             createCache(cm, br.com.poimen.domain.WorshipEvent.class.getName() + ".hymns");
             createCache(cm, br.com.poimen.domain.WorshipEvent.class.getName() + ".schedules");
+            createCache(cm, br.com.poimen.domain.Member.class.getName() + ".worshipEvents");
+            createCache(cm, br.com.poimen.domain.Schedule.class.getName() + ".users");
+            createCache(cm, br.com.poimen.domain.WorshipEvent.class.getName() + ".musicians");
             // jhipster-needle-ehcache-add-entry
         };
     }

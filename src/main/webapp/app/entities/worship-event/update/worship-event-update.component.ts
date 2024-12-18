@@ -9,10 +9,10 @@ import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 
 import { IChurch } from 'app/entities/church/church.model';
 import { ChurchService } from 'app/entities/church/service/church.service';
+import { IMember } from 'app/entities/member/member.model';
+import { MemberService } from 'app/entities/member/service/member.service';
 import { IHymn } from 'app/entities/hymn/hymn.model';
 import { HymnService } from 'app/entities/hymn/service/hymn.service';
-import { ISchedule } from 'app/entities/schedule/schedule.model';
-import { ScheduleService } from 'app/entities/schedule/service/schedule.service';
 import { WorshipType } from 'app/entities/enumerations/worship-type.model';
 import { WorshipEventService } from '../service/worship-event.service';
 import { IWorshipEvent } from '../worship-event.model';
@@ -30,14 +30,14 @@ export class WorshipEventUpdateComponent implements OnInit {
   worshipTypeValues = Object.keys(WorshipType);
 
   churchesSharedCollection: IChurch[] = [];
+  membersSharedCollection: IMember[] = [];
   hymnsSharedCollection: IHymn[] = [];
-  schedulesSharedCollection: ISchedule[] = [];
 
   protected worshipEventService = inject(WorshipEventService);
   protected worshipEventFormService = inject(WorshipEventFormService);
   protected churchService = inject(ChurchService);
+  protected memberService = inject(MemberService);
   protected hymnService = inject(HymnService);
-  protected scheduleService = inject(ScheduleService);
   protected activatedRoute = inject(ActivatedRoute);
 
   // eslint-disable-next-line @typescript-eslint/member-ordering
@@ -45,9 +45,9 @@ export class WorshipEventUpdateComponent implements OnInit {
 
   compareChurch = (o1: IChurch | null, o2: IChurch | null): boolean => this.churchService.compareChurch(o1, o2);
 
-  compareHymn = (o1: IHymn | null, o2: IHymn | null): boolean => this.hymnService.compareHymn(o1, o2);
+  compareMember = (o1: IMember | null, o2: IMember | null): boolean => this.memberService.compareMember(o1, o2);
 
-  compareSchedule = (o1: ISchedule | null, o2: ISchedule | null): boolean => this.scheduleService.compareSchedule(o1, o2);
+  compareHymn = (o1: IHymn | null, o2: IHymn | null): boolean => this.hymnService.compareHymn(o1, o2);
 
   ngOnInit(): void {
     this.activatedRoute.data.subscribe(({ worshipEvent }) => {
@@ -101,13 +101,15 @@ export class WorshipEventUpdateComponent implements OnInit {
       this.churchesSharedCollection,
       worshipEvent.church,
     );
+    this.membersSharedCollection = this.memberService.addMemberToCollectionIfMissing<IMember>(
+      this.membersSharedCollection,
+      worshipEvent.preacher,
+      worshipEvent.liturgist,
+      ...(worshipEvent.musicians ?? []),
+    );
     this.hymnsSharedCollection = this.hymnService.addHymnToCollectionIfMissing<IHymn>(
       this.hymnsSharedCollection,
       ...(worshipEvent.hymns ?? []),
-    );
-    this.schedulesSharedCollection = this.scheduleService.addScheduleToCollectionIfMissing<ISchedule>(
-      this.schedulesSharedCollection,
-      ...(worshipEvent.schedules ?? []),
     );
   }
 
@@ -118,20 +120,25 @@ export class WorshipEventUpdateComponent implements OnInit {
       .pipe(map((churches: IChurch[]) => this.churchService.addChurchToCollectionIfMissing<IChurch>(churches, this.worshipEvent?.church)))
       .subscribe((churches: IChurch[]) => (this.churchesSharedCollection = churches));
 
+    this.memberService
+      .query()
+      .pipe(map((res: HttpResponse<IMember[]>) => res.body ?? []))
+      .pipe(
+        map((members: IMember[]) =>
+          this.memberService.addMemberToCollectionIfMissing<IMember>(
+            members,
+            this.worshipEvent?.preacher,
+            this.worshipEvent?.liturgist,
+            ...(this.worshipEvent?.musicians ?? []),
+          ),
+        ),
+      )
+      .subscribe((members: IMember[]) => (this.membersSharedCollection = members));
+
     this.hymnService
       .query()
       .pipe(map((res: HttpResponse<IHymn[]>) => res.body ?? []))
       .pipe(map((hymns: IHymn[]) => this.hymnService.addHymnToCollectionIfMissing<IHymn>(hymns, ...(this.worshipEvent?.hymns ?? []))))
       .subscribe((hymns: IHymn[]) => (this.hymnsSharedCollection = hymns));
-
-    this.scheduleService
-      .query()
-      .pipe(map((res: HttpResponse<ISchedule[]>) => res.body ?? []))
-      .pipe(
-        map((schedules: ISchedule[]) =>
-          this.scheduleService.addScheduleToCollectionIfMissing<ISchedule>(schedules, ...(this.worshipEvent?.schedules ?? [])),
-        ),
-      )
-      .subscribe((schedules: ISchedule[]) => (this.schedulesSharedCollection = schedules));
   }
 }

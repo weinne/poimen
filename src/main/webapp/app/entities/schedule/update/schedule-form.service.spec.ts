@@ -20,12 +20,11 @@ describe('Schedule Form Service', () => {
         expect(formGroup.controls).toEqual(
           expect.objectContaining({
             id: expect.any(Object),
-            roleType: expect.any(Object),
             notes: expect.any(Object),
             startTime: expect.any(Object),
             endTime: expect.any(Object),
             members: expect.any(Object),
-            worshipEvents: expect.any(Object),
+            users: expect.any(Object),
           }),
         );
       });
@@ -36,12 +35,11 @@ describe('Schedule Form Service', () => {
         expect(formGroup.controls).toEqual(
           expect.objectContaining({
             id: expect.any(Object),
-            roleType: expect.any(Object),
             notes: expect.any(Object),
             startTime: expect.any(Object),
             endTime: expect.any(Object),
             members: expect.any(Object),
-            worshipEvents: expect.any(Object),
+            users: expect.any(Object),
           }),
         );
       });

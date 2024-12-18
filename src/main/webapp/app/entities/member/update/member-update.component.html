@@ -115,6 +115,23 @@
             }
           </select>
         </div>
+
+        <div class="mb-3">
+          <label for="field_worshipEvents" jhiTranslate="poimenApp.member.worshipEvent">Worship Event</label>
+          <select
+            class="form-control"
+            id="field_worshipEvents"
+            data-cy="worshipEvent"
+            multiple
+            name="worshipEvents"
+            formControlName="worshipEvents"
+            [compareWith]="compareWorshipEvent"
+          >
+            @for (worshipEventOption of worshipEventsSharedCollection; track $index) {
+              <option [ngValue]="worshipEventOption">{{ worshipEventOption.id }}</option>
+            }
+          </select>
+        </div>
       </div>
 
       <div>

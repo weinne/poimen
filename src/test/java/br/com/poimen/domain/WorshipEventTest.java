@@ -2,7 +2,7 @@ package br.com.poimen.domain;
 
 import static br.com.poimen.domain.ChurchTestSamples.*;
 import static br.com.poimen.domain.HymnTestSamples.*;
-import static br.com.poimen.domain.ScheduleTestSamples.*;
+import static br.com.poimen.domain.MemberTestSamples.*;
 import static br.com.poimen.domain.WorshipEventTestSamples.*;
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -40,6 +40,30 @@ class WorshipEventTest {
     }
 
     @Test
+    void preacherTest() {
+        WorshipEvent worshipEvent = getWorshipEventRandomSampleGenerator();
+        Member memberBack = getMemberRandomSampleGenerator();
+
+        worshipEvent.setPreacher(memberBack);
+        assertThat(worshipEvent.getPreacher()).isEqualTo(memberBack);
+
+        worshipEvent.preacher(null);
+        assertThat(worshipEvent.getPreacher()).isNull();
+    }
+
+    @Test
+    void liturgistTest() {
+        WorshipEvent worshipEvent = getWorshipEventRandomSampleGenerator();
+        Member memberBack = getMemberRandomSampleGenerator();
+
+        worshipEvent.setLiturgist(memberBack);
+        assertThat(worshipEvent.getLiturgist()).isEqualTo(memberBack);
+
+        worshipEvent.liturgist(null);
+        assertThat(worshipEvent.getLiturgist()).isNull();
+    }
+
+    @Test
     void hymnTest() {
         WorshipEvent worshipEvent = getWorshipEventRandomSampleGenerator();
         Hymn hymnBack = getHymnRandomSampleGenerator();
@@ -58,24 +82,20 @@ class WorshipEventTest {
     }
 
     @Test
-    void scheduleTest() {
+    void musiciansTest() {
         WorshipEvent worshipEvent = getWorshipEventRandomSampleGenerator();
-        Schedule scheduleBack = getScheduleRandomSampleGenerator();
+        Member memberBack = getMemberRandomSampleGenerator();
 
-        worshipEvent.addSchedule(scheduleBack);
-        assertThat(worshipEvent.getSchedules()).containsOnly(scheduleBack);
-        assertThat(scheduleBack.getWorshipEvents()).containsOnly(worshipEvent);
+        worshipEvent.addMusicians(memberBack);
+        assertThat(worshipEvent.getMusicians()).containsOnly(memberBack);
 
-        worshipEvent.removeSchedule(scheduleBack);
-        assertThat(worshipEvent.getSchedules()).doesNotContain(scheduleBack);
-        assertThat(scheduleBack.getWorshipEvents()).doesNotContain(worshipEvent);
+        worshipEvent.removeMusicians(memberBack);
+        assertThat(worshipEvent.getMusicians()).doesNotContain(memberBack);
 
-        worshipEvent.schedules(new HashSet<>(Set.of(scheduleBack)));
-        assertThat(worshipEvent.getSchedules()).containsOnly(scheduleBack);
-        assertThat(scheduleBack.getWorshipEvents()).containsOnly(worshipEvent);
+        worshipEvent.musicians(new HashSet<>(Set.of(memberBack)));
+        assertThat(worshipEvent.getMusicians()).containsOnly(memberBack);
 
-        worshipEvent.setSchedules(new HashSet<>());
-        assertThat(worshipEvent.getSchedules()).doesNotContain(scheduleBack);
-        assertThat(scheduleBack.getWorshipEvents()).doesNotContain(worshipEvent);
+        worshipEvent.setMusicians(new HashSet<>());
+        assertThat(worshipEvent.getMusicians()).doesNotContain(memberBack);
     }
 }

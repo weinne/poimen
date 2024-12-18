@@ -6,10 +6,10 @@ import { Subject, from, of } from 'rxjs';
 
 import { IChurch } from 'app/entities/church/church.model';
 import { ChurchService } from 'app/entities/church/service/church.service';
+import { IMember } from 'app/entities/member/member.model';
+import { MemberService } from 'app/entities/member/service/member.service';
 import { IHymn } from 'app/entities/hymn/hymn.model';
 import { HymnService } from 'app/entities/hymn/service/hymn.service';
-import { ISchedule } from 'app/entities/schedule/schedule.model';
-import { ScheduleService } from 'app/entities/schedule/service/schedule.service';
 import { IWorshipEvent } from '../worship-event.model';
 import { WorshipEventService } from '../service/worship-event.service';
 import { WorshipEventFormService } from './worship-event-form.service';
@@ -23,8 +23,8 @@ describe('WorshipEvent Management Update Component', () => {
   let worshipEventFormService: WorshipEventFormService;
   let worshipEventService: WorshipEventService;
   let churchService: ChurchService;
+  let memberService: MemberService;
   let hymnService: HymnService;
-  let scheduleService: ScheduleService;
 
   beforeEach(() => {
     TestBed.configureTestingModule({
@@ -48,8 +48,8 @@ describe('WorshipEvent Management Update Component', () => {
     worshipEventFormService = TestBed.inject(WorshipEventFormService);
     worshipEventService = TestBed.inject(WorshipEventService);
     churchService = TestBed.inject(ChurchService);
+    memberService = TestBed.inject(MemberService);
     hymnService = TestBed.inject(HymnService);
-    scheduleService = TestBed.inject(ScheduleService);
 
     comp = fixture.componentInstance;
   });
@@ -77,6 +77,32 @@ describe('WorshipEvent Management Update Component', () => {
       expect(comp.churchesSharedCollection).toEqual(expectedCollection);
     });
 
+    it('Should call Member query and add missing value', () => {
+      const worshipEvent: IWorshipEvent = { id: 456 };
+      const preacher: IMember = { id: 3686 };
+      worshipEvent.preacher = preacher;
+      const liturgist: IMember = { id: 17883 };
+      worshipEvent.liturgist = liturgist;
+      const musicians: IMember[] = [{ id: 6460 }];
+      worshipEvent.musicians = musicians;
+
+      const memberCollection: IMember[] = [{ id: 16627 }];
+      jest.spyOn(memberService, 'query').mockReturnValue(of(new HttpResponse({ body: memberCollection })));
+      const additionalMembers = [preacher, liturgist, ...musicians];
+      const expectedCollection: IMember[] = [...additionalMembers, ...memberCollection];
+      jest.spyOn(memberService, 'addMemberToCollectionIfMissing').mockReturnValue(expectedCollection);
+
+      activatedRoute.data = of({ worshipEvent });
+      comp.ngOnInit();
+
+      expect(memberService.query).toHaveBeenCalled();
+      expect(memberService.addMemberToCollectionIfMissing).toHaveBeenCalledWith(
+        memberCollection,
+        ...additionalMembers.map(expect.objectContaining),
+      );
+      expect(comp.membersSharedCollection).toEqual(expectedCollection);
+    });
+
     it('Should call Hymn query and add missing value', () => {
       const worshipEvent: IWorshipEvent = { id: 456 };
       const hymns: IHymn[] = [{ id: 26558 }];
@@ -99,43 +125,27 @@ describe('WorshipEvent Management Update Component', () => {
       expect(comp.hymnsSharedCollection).toEqual(expectedCollection);
     });
 
-    it('Should call Schedule query and add missing value', () => {
-      const worshipEvent: IWorshipEvent = { id: 456 };
-      const schedules: ISchedule[] = [{ id: 3267 }];
-      worshipEvent.schedules = schedules;
-
-      const scheduleCollection: ISchedule[] = [{ id: 5171 }];
-      jest.spyOn(scheduleService, 'query').mockReturnValue(of(new HttpResponse({ body: scheduleCollection })));
-      const additionalSchedules = [...schedules];
-      const expectedCollection: ISchedule[] = [...additionalSchedules, ...scheduleCollection];
-      jest.spyOn(scheduleService, 'addScheduleToCollectionIfMissing').mockReturnValue(expectedCollection);
-
-      activatedRoute.data = of({ worshipEvent });
-      comp.ngOnInit();
-
-      expect(scheduleService.query).toHaveBeenCalled();
-      expect(scheduleService.addScheduleToCollectionIfMissing).toHaveBeenCalledWith(
-        scheduleCollection,
-        ...additionalSchedules.map(expect.objectContaining),
-      );
-      expect(comp.schedulesSharedCollection).toEqual(expectedCollection);
-    });
-
     it('Should update editForm', () => {
       const worshipEvent: IWorshipEvent = { id: 456 };
       const church: IChurch = { id: 15668 };
       worshipEvent.church = church;
+      const preacher: IMember = { id: 7060 };
+      worshipEvent.preacher = preacher;
+      const liturgist: IMember = { id: 15453 };
+      worshipEvent.liturgist = liturgist;
+      const musicians: IMember = { id: 10053 };
+      worshipEvent.musicians = [musicians];
       const hymn: IHymn = { id: 30111 };
       worshipEvent.hymns = [hymn];
-      const schedule: ISchedule = { id: 20260 };
-      worshipEvent.schedules = [schedule];
 
       activatedRoute.data = of({ worshipEvent });
       comp.ngOnInit();
 
       expect(comp.churchesSharedCollection).toContain(church);
+      expect(comp.membersSharedCollection).toContain(preacher);
+      expect(comp.membersSharedCollection).toContain(liturgist);
+      expect(comp.membersSharedCollection).toContain(musicians);
       expect(comp.hymnsSharedCollection).toContain(hymn);
-      expect(comp.schedulesSharedCollection).toContain(schedule);
       expect(comp.worshipEvent).toEqual(worshipEvent);
     });
   });
@@ -219,6 +229,16 @@ describe('WorshipEvent Management Update Component', () => {
       });
     });
 
+    describe('compareMember', () => {
+      it('Should forward to memberService', () => {
+        const entity = { id: 123 };
+        const entity2 = { id: 456 };
+        jest.spyOn(memberService, 'compareMember');
+        comp.compareMember(entity, entity2);
+        expect(memberService.compareMember).toHaveBeenCalledWith(entity, entity2);
+      });
+    });
+
     describe('compareHymn', () => {
       it('Should forward to hymnService', () => {
         const entity = { id: 123 };
@@ -226,16 +246,6 @@ describe('WorshipEvent Management Update Component', () => {
         jest.spyOn(hymnService, 'compareHymn');
         comp.compareHymn(entity, entity2);
         expect(hymnService.compareHymn).toHaveBeenCalledWith(entity, entity2);
-      });
-    });
-
-    describe('compareSchedule', () => {
-      it('Should forward to scheduleService', () => {
-        const entity = { id: 123 };
-        const entity2 = { id: 456 };
-        jest.spyOn(scheduleService, 'compareSchedule');
-        comp.compareSchedule(entity, entity2);
-        expect(scheduleService.compareSchedule).toHaveBeenCalledWith(entity, entity2);
       });
     });
   });

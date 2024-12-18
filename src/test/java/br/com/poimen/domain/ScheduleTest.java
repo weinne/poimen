@@ -2,7 +2,6 @@ package br.com.poimen.domain;
 
 import static br.com.poimen.domain.MemberTestSamples.*;
 import static br.com.poimen.domain.ScheduleTestSamples.*;
-import static br.com.poimen.domain.WorshipEventTestSamples.*;
 import static org.assertj.core.api.Assertions.assertThat;
 
 import br.com.poimen.web.rest.TestUtil;
@@ -42,23 +41,5 @@ class ScheduleTest {
 
         schedule.setMembers(new HashSet<>());
         assertThat(schedule.getMembers()).doesNotContain(memberBack);
-    }
-
-    @Test
-    void worshipEventTest() {
-        Schedule schedule = getScheduleRandomSampleGenerator();
-        WorshipEvent worshipEventBack = getWorshipEventRandomSampleGenerator();
-
-        schedule.addWorshipEvent(worshipEventBack);
-        assertThat(schedule.getWorshipEvents()).containsOnly(worshipEventBack);
-
-        schedule.removeWorshipEvent(worshipEventBack);
-        assertThat(schedule.getWorshipEvents()).doesNotContain(worshipEventBack);
-
-        schedule.worshipEvents(new HashSet<>(Set.of(worshipEventBack)));
-        assertThat(schedule.getWorshipEvents()).containsOnly(worshipEventBack);
-
-        schedule.setWorshipEvents(new HashSet<>());
-        assertThat(schedule.getWorshipEvents()).doesNotContain(worshipEventBack);
     }
 }

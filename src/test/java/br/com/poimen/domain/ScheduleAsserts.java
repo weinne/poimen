@@ -47,7 +47,6 @@ public class ScheduleAsserts {
     public static void assertScheduleUpdatableFieldsEquals(Schedule expected, Schedule actual) {
         assertThat(expected)
             .as("Verify Schedule relevant properties")
-            .satisfies(e -> assertThat(e.getRoleType()).as("check roleType").isEqualTo(actual.getRoleType()))
             .satisfies(e -> assertThat(e.getNotes()).as("check notes").isEqualTo(actual.getNotes()))
             .satisfies(e -> assertThat(e.getStartTime()).as("check startTime").isEqualTo(actual.getStartTime()))
             .satisfies(e -> assertThat(e.getEndTime()).as("check endTime").isEqualTo(actual.getEndTime()));
@@ -62,7 +61,6 @@ public class ScheduleAsserts {
     public static void assertScheduleUpdatableRelationshipsEquals(Schedule expected, Schedule actual) {
         assertThat(expected)
             .as("Verify Schedule relationships")
-            .satisfies(e -> assertThat(e.getMembers()).as("check members").isEqualTo(actual.getMembers()))
-            .satisfies(e -> assertThat(e.getWorshipEvents()).as("check worshipEvents").isEqualTo(actual.getWorshipEvents()));
+            .satisfies(e -> assertThat(e.getMembers()).as("check members").isEqualTo(actual.getMembers()));
     }
 }

@@ -101,10 +101,10 @@ describe('Task Management Update Component', () => {
 
     it('Should call User query and add missing value', () => {
       const task: ITask = { id: 456 };
-      const user: IUser = { id: 27925 };
+      const user: IUser = { id: 9537 };
       task.user = user;
 
-      const userCollection: IUser[] = [{ id: 30624 }];
+      const userCollection: IUser[] = [{ id: 29660 }];
       jest.spyOn(userService, 'query').mockReturnValue(of(new HttpResponse({ body: userCollection })));
       const additionalUsers = [user];
       const expectedCollection: IUser[] = [...additionalUsers, ...userCollection];
@@ -127,7 +127,7 @@ describe('Task Management Update Component', () => {
       task.church = church;
       const member: IMember = { id: 20475 };
       task.member = member;
-      const user: IUser = { id: 14557 };
+      const user: IUser = { id: 10483 };
       task.user = user;
 
       activatedRoute.data = of({ task });

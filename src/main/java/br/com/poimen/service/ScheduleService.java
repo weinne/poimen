@@ -59,9 +59,6 @@ public class ScheduleService {
         return scheduleRepository
             .findById(schedule.getId())
             .map(existingSchedule -> {
-                if (schedule.getRoleType() != null) {
-                    existingSchedule.setRoleType(schedule.getRoleType());
-                }
                 if (schedule.getNotes() != null) {
                     existingSchedule.setNotes(schedule.getNotes());
                 }

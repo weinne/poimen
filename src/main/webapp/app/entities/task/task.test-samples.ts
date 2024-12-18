@@ -18,7 +18,7 @@ export const sampleWithFullData: ITask = {
   id: 24616,
   title: 'overstay superb',
   description: 'creamy',
-  dueDate: dayjs('2024-12-15T21:06'),
+  dueDate: dayjs('2024-12-17T02:34'),
   completed: false,
 };
 

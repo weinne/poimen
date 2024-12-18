@@ -16,8 +16,8 @@ export const sampleWithPartialData: IMinistryMembership = {
 export const sampleWithFullData: IMinistryMembership = {
   id: 50,
   role: 'VICE_PRESIDENT',
-  startDate: dayjs('2024-12-16T04:02'),
-  endDate: dayjs('2024-12-16T14:54'),
+  startDate: dayjs('2024-12-17T09:30'),
+  endDate: dayjs('2024-12-17T20:23'),
   status: true,
 };
 

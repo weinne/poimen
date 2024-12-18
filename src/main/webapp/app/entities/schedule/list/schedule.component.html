@@ -42,13 +42,6 @@
                 <fa-icon class="p-1" icon="sort"></fa-icon>
               </div>
             </th>
-            <th scope="col" jhiSortBy="roleType">
-              <div class="d-flex">
-                <span jhiTranslate="poimenApp.schedule.roleType">Role Type</span>
-
-                <fa-icon class="p-1" icon="sort"></fa-icon>
-              </div>
-            </th>
             <th scope="col" jhiSortBy="notes">
               <div class="d-flex">
                 <span jhiTranslate="poimenApp.schedule.notes">Notes</span>
@@ -78,9 +71,6 @@
             <tr data-cy="entityTable">
               <td>
                 <a [routerLink]="['/schedule', schedule.id, 'view']">{{ schedule.id }}</a>
-              </td>
-              <td [jhiTranslate]="'poimenApp.RoleSchedule.' + (schedule.roleType ?? 'null')">
-                {{ { null: '', PREACHER: 'PREACHER', LITURGIST: 'LITURGIST', MUSICIAN: 'MUSICIAN' }[schedule.roleType ?? 'null'] }}
               </td>
               <td>{{ schedule.notes }}</td>
               <td>{{ schedule.startTime | formatMediumDatetime }}</td>

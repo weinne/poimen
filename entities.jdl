@@ -98,17 +98,9 @@ entity WorshipEvent {
 
 // Entidade para o agendamento de papéis em cultos (Pregador, Liturgo, Músico)
 entity Schedule {
-  roleType RoleSchedule required           // Tipo de papel (Enum)
   notes String                             // Notas adicionais sobre o agendamento
   startTime Instant required               // Hora de início para o papel
   endTime Instant                          // Hora de término se necessário
-}
-
-// ENUM para os tipos de papéis em cultos
-enum RoleSchedule {
-  PREACHER                                 // Pregador
-  LITURGIST                                // Liturgo
-  MUSICIAN                                 // Músico
 }
 
 // Entidade para hinos
@@ -168,13 +160,17 @@ relationship ManyToOne {
   Task to User with builtInEntity          // Tarefa atribuída a um usuário
   PlanSubscription to User with builtInEntity // Assinatura vinculada a um usuário
   CounselingSession to User with builtInEntity // Sessão de aconselhamento vinculada a um usuário
+
+  WorshipEvent{preacher} to Member          // Pregador do culto
+  WorshipEvent{liturgist} to Member         // Liturgo do culto
 }
 
 relationship ManyToMany {
   Schedule to Member                       // Membros podem ter múltiplos agendamentos
-  Schedule to WorshipEvent                 // Agendamentos podem estar relacionados a cultos
+  Schedule to User with builtInEntity      // Usuários podem ter múltiplos agendamentos
   WorshipEvent to Hymn                     // Relacionamento de 1 para N entre Culto e Hinos
   Church to User with builtInEntity        // Usuários podem pertencer a várias igrejas
+  WorshipEvent{musicians} to Member        // Músicos do culto
 }
 
 relationship OneToMany {

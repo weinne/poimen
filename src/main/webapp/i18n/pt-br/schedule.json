@@ -18,12 +18,11 @@
         "title": "Schedule"
       },
       "id": "ID",
-      "roleType": "Role Type",
       "notes": "Notes",
       "startTime": "Start Time",
       "endTime": "End Time",
       "member": "Member",
-      "worshipEvent": "Worship Event"
+      "user": "User"
     }
   }
 }

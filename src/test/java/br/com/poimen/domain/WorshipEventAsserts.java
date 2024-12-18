@@ -63,7 +63,9 @@ public class WorshipEventAsserts {
         assertThat(expected)
             .as("Verify WorshipEvent relationships")
             .satisfies(e -> assertThat(e.getChurch()).as("check church").isEqualTo(actual.getChurch()))
+            .satisfies(e -> assertThat(e.getPreacher()).as("check preacher").isEqualTo(actual.getPreacher()))
+            .satisfies(e -> assertThat(e.getLiturgist()).as("check liturgist").isEqualTo(actual.getLiturgist()))
             .satisfies(e -> assertThat(e.getHymns()).as("check hymns").isEqualTo(actual.getHymns()))
-            .satisfies(e -> assertThat(e.getSchedules()).as("check schedules").isEqualTo(actual.getSchedules()));
+            .satisfies(e -> assertThat(e.getMusicians()).as("check musicians").isEqualTo(actual.getMusicians()));
     }
 }

@@ -12,7 +12,7 @@ export const sampleWithPartialData: IMember = {
   id: 6066,
   firstName: 'Garett',
   lastName: 'Aufderhar',
-  dateOfBirth: dayjs('2024-12-16T17:43'),
+  dateOfBirth: dayjs('2024-12-17T23:12'),
 };
 
 export const sampleWithFullData: IMember = {
@@ -21,7 +21,7 @@ export const sampleWithFullData: IMember = {
   lastName: 'Dare',
   email: 'Hailee_Mayert@gmail.com',
   phoneNumber: 'if including',
-  dateOfBirth: dayjs('2024-12-16T10:27'),
+  dateOfBirth: dayjs('2024-12-17T15:56'),
   address: 'duster whereas',
 };
 

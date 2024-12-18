@@ -11,6 +11,8 @@ import { IChurch } from 'app/entities/church/church.model';
 import { ChurchService } from 'app/entities/church/service/church.service';
 import { ISchedule } from 'app/entities/schedule/schedule.model';
 import { ScheduleService } from 'app/entities/schedule/service/schedule.service';
+import { IWorshipEvent } from 'app/entities/worship-event/worship-event.model';
+import { WorshipEventService } from 'app/entities/worship-event/service/worship-event.service';
 import { MemberService } from '../service/member.service';
 import { IMember } from '../member.model';
 import { MemberFormGroup, MemberFormService } from './member-form.service';
@@ -27,11 +29,13 @@ export class MemberUpdateComponent implements OnInit {
 
   churchesSharedCollection: IChurch[] = [];
   schedulesSharedCollection: ISchedule[] = [];
+  worshipEventsSharedCollection: IWorshipEvent[] = [];
 
   protected memberService = inject(MemberService);
   protected memberFormService = inject(MemberFormService);
   protected churchService = inject(ChurchService);
   protected scheduleService = inject(ScheduleService);
+  protected worshipEventService = inject(WorshipEventService);
   protected activatedRoute = inject(ActivatedRoute);
 
   // eslint-disable-next-line @typescript-eslint/member-ordering
@@ -40,6 +44,9 @@ export class MemberUpdateComponent implements OnInit {
   compareChurch = (o1: IChurch | null, o2: IChurch | null): boolean => this.churchService.compareChurch(o1, o2);
 
   compareSchedule = (o1: ISchedule | null, o2: ISchedule | null): boolean => this.scheduleService.compareSchedule(o1, o2);
+
+  compareWorshipEvent = (o1: IWorshipEvent | null, o2: IWorshipEvent | null): boolean =>
+    this.worshipEventService.compareWorshipEvent(o1, o2);
 
   ngOnInit(): void {
     this.activatedRoute.data.subscribe(({ member }) => {
@@ -97,6 +104,10 @@ export class MemberUpdateComponent implements OnInit {
       this.schedulesSharedCollection,
       ...(member.schedules ?? []),
     );
+    this.worshipEventsSharedCollection = this.worshipEventService.addWorshipEventToCollectionIfMissing<IWorshipEvent>(
+      this.worshipEventsSharedCollection,
+      ...(member.worshipEvents ?? []),
+    );
   }
 
   protected loadRelationshipsOptions(): void {
@@ -115,5 +126,18 @@ export class MemberUpdateComponent implements OnInit {
         ),
       )
       .subscribe((schedules: ISchedule[]) => (this.schedulesSharedCollection = schedules));
+
+    this.worshipEventService
+      .query()
+      .pipe(map((res: HttpResponse<IWorshipEvent[]>) => res.body ?? []))
+      .pipe(
+        map((worshipEvents: IWorshipEvent[]) =>
+          this.worshipEventService.addWorshipEventToCollectionIfMissing<IWorshipEvent>(
+            worshipEvents,
+            ...(this.member?.worshipEvents ?? []),
+          ),
+        ),
+      )
+      .subscribe((worshipEvents: IWorshipEvent[]) => (this.worshipEventsSharedCollection = worshipEvents));
   }
 }

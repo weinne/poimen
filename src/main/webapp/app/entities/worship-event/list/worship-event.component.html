@@ -76,6 +76,18 @@
                 <fa-icon class="p-1" icon="sort"></fa-icon>
               </div>
             </th>
+            <th scope="col" jhiSortBy="preacher.id">
+              <div class="d-flex">
+                <span jhiTranslate="poimenApp.worshipEvent.preacher">Preacher</span>
+                <fa-icon class="p-1" icon="sort"></fa-icon>
+              </div>
+            </th>
+            <th scope="col" jhiSortBy="liturgist.id">
+              <div class="d-flex">
+                <span jhiTranslate="poimenApp.worshipEvent.liturgist">Liturgist</span>
+                <fa-icon class="p-1" icon="sort"></fa-icon>
+              </div>
+            </th>
             <th scope="col"></th>
           </tr>
         </thead>
@@ -104,6 +116,20 @@
                 @if (worshipEvent.church) {
                   <div>
                     <a [routerLink]="['/church', worshipEvent.church.id, 'view']">{{ worshipEvent.church.id }}</a>
+                  </div>
+                }
+              </td>
+              <td>
+                @if (worshipEvent.preacher) {
+                  <div>
+                    <a [routerLink]="['/member', worshipEvent.preacher.id, 'view']">{{ worshipEvent.preacher.id }}</a>
+                  </div>
+                }
+              </td>
+              <td>
+                @if (worshipEvent.liturgist) {
+                  <div>
+                    <a [routerLink]="['/member', worshipEvent.liturgist.id, 'view']">{{ worshipEvent.liturgist.id }}</a>
                   </div>
                 }
               </td>

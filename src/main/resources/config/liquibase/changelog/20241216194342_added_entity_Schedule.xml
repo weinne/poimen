@@ -14,9 +14,6 @@
             <column name="id" type="bigint">
                 <constraints primaryKey="true" nullable="false"/>
             </column>
-            <column name="role_type" type="varchar(255)">
-                <constraints nullable="false" />
-            </column>
             <column name="notes" type="varchar(255)">
                 <constraints nullable="true" />
             </column>
@@ -44,17 +41,6 @@
         </createTable>
 
         <addPrimaryKey columnNames="schedule_id, member_id" tableName="rel_schedule__member"/>
-
-        <createTable tableName="rel_schedule__worship_event">
-            <column name="worship_event_id" type="bigint">
-                <constraints nullable="false"/>
-            </column>
-            <column name="schedule_id" type="bigint">
-                <constraints nullable="false"/>
-            </column>
-        </createTable>
-
-        <addPrimaryKey columnNames="schedule_id, worship_event_id" tableName="rel_schedule__worship_event"/>
     </changeSet>
 
     <!-- jhipster-needle-liquibase-add-changeset - JHipster will add changesets here -->
@@ -74,7 +60,6 @@
                   tableName="schedule"
                   usePreparedStatements="true">
             <column name="id" type="numeric"/>
-            <column name="role_type" type="string"/>
             <column name="notes" type="string"/>
             <column name="start_time" type="date"/>
             <column name="end_time" type="date"/>

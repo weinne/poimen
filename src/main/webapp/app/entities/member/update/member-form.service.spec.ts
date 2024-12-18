@@ -28,6 +28,7 @@ describe('Member Form Service', () => {
             address: expect.any(Object),
             church: expect.any(Object),
             schedules: expect.any(Object),
+            worshipEvents: expect.any(Object),
           }),
         );
       });
@@ -46,6 +47,7 @@ describe('Member Form Service', () => {
             address: expect.any(Object),
             church: expect.any(Object),
             schedules: expect.any(Object),
+            worshipEvents: expect.any(Object),
           }),
         );
       });

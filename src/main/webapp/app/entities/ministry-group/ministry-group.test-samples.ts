@@ -11,7 +11,7 @@ export const sampleWithRequiredData: IMinistryGroup = {
 export const sampleWithPartialData: IMinistryGroup = {
   id: 5999,
   name: 'yahoo',
-  establishedDate: dayjs('2024-12-16T07:36'),
+  establishedDate: dayjs('2024-12-17T13:05'),
   leader: 'promptly as',
   type: 'DEACON_BOARD',
 };
@@ -20,7 +20,7 @@ export const sampleWithFullData: IMinistryGroup = {
   id: 4397,
   name: 'impractical tough plus',
   description: 'vain even ouch',
-  establishedDate: dayjs('2024-12-16T15:07'),
+  establishedDate: dayjs('2024-12-17T20:36'),
   leader: 'ha',
   type: 'DEPARTMENT',
 };

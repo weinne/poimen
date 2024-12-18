@@ -24,7 +24,7 @@ public class ScheduleRepositoryWithBagRelationshipsImpl implements ScheduleRepos
 
     @Override
     public Optional<Schedule> fetchBagRelationships(Optional<Schedule> schedule) {
-        return schedule.map(this::fetchMembers).map(this::fetchWorshipEvents);
+        return schedule.map(this::fetchMembers).map(this::fetchUsers);
     }
 
     @Override
@@ -34,7 +34,7 @@ public class ScheduleRepositoryWithBagRelationshipsImpl implements ScheduleRepos
 
     @Override
     public List<Schedule> fetchBagRelationships(List<Schedule> schedules) {
-        return Optional.of(schedules).map(this::fetchMembers).map(this::fetchWorshipEvents).orElse(Collections.emptyList());
+        return Optional.of(schedules).map(this::fetchMembers).map(this::fetchUsers).orElse(Collections.emptyList());
     }
 
     Schedule fetchMembers(Schedule result) {
@@ -58,22 +58,19 @@ public class ScheduleRepositoryWithBagRelationshipsImpl implements ScheduleRepos
         return result;
     }
 
-    Schedule fetchWorshipEvents(Schedule result) {
+    Schedule fetchUsers(Schedule result) {
         return entityManager
-            .createQuery(
-                "select schedule from Schedule schedule left join fetch schedule.worshipEvents where schedule.id = :id",
-                Schedule.class
-            )
+            .createQuery("select schedule from Schedule schedule left join fetch schedule.users where schedule.id = :id", Schedule.class)
             .setParameter(ID_PARAMETER, result.getId())
             .getSingleResult();
     }
 
-    List<Schedule> fetchWorshipEvents(List<Schedule> schedules) {
+    List<Schedule> fetchUsers(List<Schedule> schedules) {
         HashMap<Object, Integer> order = new HashMap<>();
         IntStream.range(0, schedules.size()).forEach(index -> order.put(schedules.get(index).getId(), index));
         List<Schedule> result = entityManager
             .createQuery(
-                "select schedule from Schedule schedule left join fetch schedule.worshipEvents where schedule in :schedules",
+                "select schedule from Schedule schedule left join fetch schedule.users where schedule in :schedules",
                 Schedule.class
             )
             .setParameter(SCHEDULES_PARAMETER, schedules)

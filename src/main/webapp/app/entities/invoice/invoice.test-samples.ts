@@ -5,7 +5,7 @@ import { IInvoice, NewInvoice } from './invoice.model';
 export const sampleWithRequiredData: IInvoice = {
   id: 500,
   number: 'successfully psst requirement',
-  issueDate: dayjs('2024-12-16T07:42'),
+  issueDate: dayjs('2024-12-17T13:11'),
   totalAmount: 16400.67,
   type: 'oh er',
 };
@@ -13,7 +13,7 @@ export const sampleWithRequiredData: IInvoice = {
 export const sampleWithPartialData: IInvoice = {
   id: 16551,
   number: 'as',
-  issueDate: dayjs('2024-12-15T21:45'),
+  issueDate: dayjs('2024-12-17T03:13'),
   totalAmount: 13999.36,
   type: 'that yuck anenst',
   invoiceFile: 'ouch creator',
@@ -22,7 +22,7 @@ export const sampleWithPartialData: IInvoice = {
 export const sampleWithFullData: IInvoice = {
   id: 17304,
   number: 'square likewise option',
-  issueDate: dayjs('2024-12-15T23:55'),
+  issueDate: dayjs('2024-12-17T05:24'),
   totalAmount: 973.55,
   type: 'than first secrecy',
   supplier: 'exempt',
@@ -31,7 +31,7 @@ export const sampleWithFullData: IInvoice = {
 
 export const sampleWithNewData: NewInvoice = {
   number: 'now exhaust',
-  issueDate: dayjs('2024-12-16T03:13'),
+  issueDate: dayjs('2024-12-17T08:42'),
   totalAmount: 29663.05,
   type: 'the',
   id: null,

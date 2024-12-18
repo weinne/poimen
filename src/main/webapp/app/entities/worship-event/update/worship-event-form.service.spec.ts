@@ -25,8 +25,10 @@ describe('WorshipEvent Form Service', () => {
             description: expect.any(Object),
             worshipType: expect.any(Object),
             church: expect.any(Object),
+            preacher: expect.any(Object),
+            liturgist: expect.any(Object),
             hymns: expect.any(Object),
-            schedules: expect.any(Object),
+            musicians: expect.any(Object),
           }),
         );
       });
@@ -42,8 +44,10 @@ describe('WorshipEvent Form Service', () => {
             description: expect.any(Object),
             worshipType: expect.any(Object),
             church: expect.any(Object),
+            preacher: expect.any(Object),
+            liturgist: expect.any(Object),
             hymns: expect.any(Object),
-            schedules: expect.any(Object),
+            musicians: expect.any(Object),
           }),
         );
       });

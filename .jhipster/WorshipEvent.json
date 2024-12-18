@@ -1,6 +1,6 @@
 {
   "annotations": {
-    "changelogDate": "20241216194345"
+    "changelogDate": "20241218011235"
   },
   "applications": "*",
   "fields": [
@@ -35,6 +35,18 @@
       "relationshipType": "many-to-one"
     },
     {
+      "otherEntityName": "member",
+      "relationshipName": "preacher",
+      "relationshipSide": "left",
+      "relationshipType": "many-to-one"
+    },
+    {
+      "otherEntityName": "member",
+      "relationshipName": "liturgist",
+      "relationshipSide": "left",
+      "relationshipType": "many-to-one"
+    },
+    {
       "otherEntityName": "hymn",
       "otherEntityRelationshipName": "worshipEvent",
       "relationshipName": "hymn",
@@ -42,10 +54,9 @@
       "relationshipType": "many-to-many"
     },
     {
-      "otherEntityName": "schedule",
-      "otherEntityRelationshipName": "worshipEvent",
-      "relationshipName": "schedule",
-      "relationshipSide": "right",
+      "otherEntityName": "member",
+      "relationshipName": "musicians",
+      "relationshipSide": "left",
       "relationshipType": "many-to-many"
     }
   ],

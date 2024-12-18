@@ -28,16 +28,15 @@ type ScheduleFormRawValue = FormValueOf<ISchedule>;
 
 type NewScheduleFormRawValue = FormValueOf<NewSchedule>;
 
-type ScheduleFormDefaults = Pick<NewSchedule, 'id' | 'startTime' | 'endTime' | 'members' | 'worshipEvents'>;
+type ScheduleFormDefaults = Pick<NewSchedule, 'id' | 'startTime' | 'endTime' | 'members' | 'users'>;
 
 type ScheduleFormGroupContent = {
   id: FormControl<ScheduleFormRawValue['id'] | NewSchedule['id']>;
-  roleType: FormControl<ScheduleFormRawValue['roleType']>;
   notes: FormControl<ScheduleFormRawValue['notes']>;
   startTime: FormControl<ScheduleFormRawValue['startTime']>;
   endTime: FormControl<ScheduleFormRawValue['endTime']>;
   members: FormControl<ScheduleFormRawValue['members']>;
-  worshipEvents: FormControl<ScheduleFormRawValue['worshipEvents']>;
+  users: FormControl<ScheduleFormRawValue['users']>;
 };
 
 export type ScheduleFormGroup = FormGroup<ScheduleFormGroupContent>;
@@ -57,16 +56,13 @@ export class ScheduleFormService {
           validators: [Validators.required],
         },
       ),
-      roleType: new FormControl(scheduleRawValue.roleType, {
-        validators: [Validators.required],
-      }),
       notes: new FormControl(scheduleRawValue.notes),
       startTime: new FormControl(scheduleRawValue.startTime, {
         validators: [Validators.required],
       }),
       endTime: new FormControl(scheduleRawValue.endTime),
       members: new FormControl(scheduleRawValue.members ?? []),
-      worshipEvents: new FormControl(scheduleRawValue.worshipEvents ?? []),
+      users: new FormControl(scheduleRawValue.users ?? []),
     });
   }
 
@@ -92,7 +88,7 @@ export class ScheduleFormService {
       startTime: currentTime,
       endTime: currentTime,
       members: [],
-      worshipEvents: [],
+      users: [],
     };
   }
 
@@ -112,7 +108,7 @@ export class ScheduleFormService {
       startTime: schedule.startTime ? schedule.startTime.format(DATE_TIME_FORMAT) : undefined,
       endTime: schedule.endTime ? schedule.endTime.format(DATE_TIME_FORMAT) : undefined,
       members: schedule.members ?? [],
-      worshipEvents: schedule.worshipEvents ?? [],
+      users: schedule.users ?? [],
     };
   }
 }

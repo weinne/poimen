@@ -8,7 +8,7 @@ export const sampleWithRequiredData: IChurch = {
   cnpj: 'barring unlike out',
   address: 'zowie enormously',
   city: 'Lonnyton',
-  dateFoundation: dayjs('2024-12-16T10:07'),
+  dateFoundation: dayjs('2024-12-17T15:36'),
 };
 
 export const sampleWithPartialData: IChurch = {
@@ -17,7 +17,7 @@ export const sampleWithPartialData: IChurch = {
   cnpj: 'woot',
   address: 'order',
   city: 'Lake Sydni',
-  dateFoundation: dayjs('2024-12-15T23:44'),
+  dateFoundation: dayjs('2024-12-17T05:13'),
 };
 
 export const sampleWithFullData: IChurch = {
@@ -26,7 +26,7 @@ export const sampleWithFullData: IChurch = {
   cnpj: 'however cardboard thick',
   address: 'heartfelt beyond',
   city: 'Lake Darryl',
-  dateFoundation: dayjs('2024-12-15T21:30'),
+  dateFoundation: dayjs('2024-12-17T02:59'),
 };
 
 export const sampleWithNewData: NewChurch = {
@@ -34,7 +34,7 @@ export const sampleWithNewData: NewChurch = {
   cnpj: 'aw greedily',
   address: 'till besides',
   city: 'North Ethancester',
-  dateFoundation: dayjs('2024-12-15T23:17'),
+  dateFoundation: dayjs('2024-12-17T04:46'),
   id: null,
 };
 

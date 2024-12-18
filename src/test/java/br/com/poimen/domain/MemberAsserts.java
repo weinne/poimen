@@ -65,6 +65,7 @@ public class MemberAsserts {
         assertThat(expected)
             .as("Verify Member relationships")
             .satisfies(e -> assertThat(e.getChurch()).as("check church").isEqualTo(actual.getChurch()))
-            .satisfies(e -> assertThat(e.getSchedules()).as("check schedules").isEqualTo(actual.getSchedules()));
+            .satisfies(e -> assertThat(e.getSchedules()).as("check schedules").isEqualTo(actual.getSchedules()))
+            .satisfies(e -> assertThat(e.getWorshipEvents()).as("check worshipEvents").isEqualTo(actual.getWorshipEvents()));
     }
 }

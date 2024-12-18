@@ -29,7 +29,8 @@
       "ministryMembership": "Ministry Membership",
       "task": "Task",
       "transaction": "Transaction",
-      "schedule": "Schedule"
+      "schedule": "Schedule",
+      "worshipEvent": "Worship Event"
     }
   }
 }
