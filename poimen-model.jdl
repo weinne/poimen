@@ -30,7 +30,7 @@ application {
 
 entity ApplicationUser {
   name String required                     // Nome do usuário
-  description TextBlob
+  description TextBlob                     // Descrição do usuário
   status UserStatus required               // Status do usuário (ENUM)
 }
 
@@ -46,7 +46,7 @@ entity Church {
   cnpj String pattern(/^\d{14}$/) required // CNPJ da igreja (apenas números, 14 dígitos)
   address String required                  // Endereço completo
   city String required                     // Cidade da igreja
-  dateFoundation LocalDate required          // Data de fundação
+  dateFoundation LocalDate required        // Data de fundação
   phone String                             // Telefone de contato
   email String                             // E-mail de contato
   website String                           // Site da igreja
@@ -59,7 +59,7 @@ entity Church {
 
 // Entidade para membros
 entity Member {
-  name String required                // Primeiro nome do membro
+  name String required                     // Primeiro nome do membro
   photo ImageBlob maxbytes(2097152)        // Foto do membro (limite de 2MB)
   email String                             // E-mail do membro
   phoneNumber String                       // Telefone de contato
@@ -138,10 +138,10 @@ entity MinistryGroup {
 
 // ENUM para distinguir os tipos de grupo
 enum GroupType {
-  DEPARTMENT ("Department")              // Departamento
-  INTERNAL_SOCIETY ("Internal Society") // Sociedade Interna
-  DEACON_BOARD ("Deacon Board")         // Junta Diaconal
-  CHURCH_COUNCIL ("Church Council")    // Conselho da Igreja
+  DEPARTMENT ("Department")                // Departamento
+  INTERNAL_SOCIETY ("Internal Society")    // Sociedade Interna
+  DEACON_BOARD ("Deacon Board")            // Junta Diaconal
+  CHURCH_COUNCIL ("Church Council")        // Conselho da Igreja
 }
 
 // Entidade para planos de assinatura
@@ -195,15 +195,15 @@ entity Task {
 }
 
 enum PriorityTask {
-  LOW ("Low")                            // Baixa
-  MEDIUM ("Medium")                      // Média
-  HIGH ("High")                          // Alta
+  LOW ("Low")                             // Baixa
+  MEDIUM ("Medium")                       // Média
+  HIGH ("High")                           // Alta
 }
 
 enum StatusTask {
-  PENDING ("Pending")                   // Pendente
-  IN_PROGRESS ("In Progress")            // Em Progresso
-  DONE ("Done")                         // Concluída
+  PENDING ("Pending")                     // Pendente
+  IN_PROGRESS ("In Progress")             // Em Progresso
+  DONE ("Done")                           // Concluída
 }
 
 // Entidade para sessões de aconselhamento
@@ -211,7 +211,7 @@ entity CounselingSession {
   subject String required                  // Assunto da sessão
   date LocalDate required                  // Data da sessão
   startTime Instant required               // Hora de início
-  endTime Instant                         // Hora de término
+  endTime Instant                          // Hora de término
   notes TextBlob                           // Notas sobre a sessão
   counselingTasks TextBlob                 // Tarefas de aconselhamento
   status StatusCounseling required         // Status da sessão (ENUM)
@@ -226,11 +226,11 @@ enum StatusCounseling {
 
 // ENUM para os tipos de culto
 enum WorshipType {
-  SUNDAY_SERVICE ("Sunday Service")         // Culto de Domingo
-  PRAYER_MEETING ("Prayer Meeting")         // Reunião de Oração
-  BIBLE_STUDY ("Bible Study")               // Estudo Bíblico
-  SPECIAL_EVENT ("Special Event")           // Evento Especial
-  OTHER ("Other")                           // Outro
+  SUNDAY_SERVICE ("Sunday Service")       // Culto de Domingo
+  PRAYER_MEETING ("Prayer Meeting")       // Reunião de Oração
+  BIBLE_STUDY ("Bible Study")             // Estudo Bíblico
+  SPECIAL_EVENT ("Special Event")         // Evento Especial
+  OTHER ("Other")                         // Outro
 }
 
 // Entidade para cultos
@@ -260,33 +260,33 @@ entity Appointment {
   endTime Instant                          // Hora de término se necessário
   notes TextBlob                           // Notas adicionais
   local String                             // Local do agendamento
-  appointmentType AppointmentType required       // Tipo de agendamento (ENUM)
+  appointmentType AppointmentType required // Tipo de agendamento (ENUM)
 }
 
 enum AppointmentType {
-  SERVICE ("Worship Service")                       // Culto
-  MEETING ("Meeting")                               // Reunião
-  EVENT  ("Event")                                  // Evento
-  REHEARSAL ("Rehearsal")                           // Ensaio
-  VISIT ("Visit")                                   // Visita
-  COUNSELING ("Counseling")                         // Aconselhamento
-  DISCIPLESHIP ("Discipleship")                     // Discipulado
-  SMALL_GROUP ("Small Group")                       // Pequeno Grupo
-  OTHER ("Other")                                   // Outro
+  SERVICE ("Worship Service")              // Culto
+  MEETING ("Meeting")                      // Reunião
+  EVENT ("Event")                          // Evento
+  REHEARSAL ("Rehearsal")                  // Ensaio
+  VISIT ("Visit")                          // Visita
+  COUNSELING ("Counseling")                // Aconselhamento
+  DISCIPLESHIP ("Discipleship")            // Discipulado
+  SMALL_GROUP ("Small Group")              // Pequeno Grupo
+  OTHER ("Other")                          // Outro
 }
 
 // Entidade para hinos
 entity Hymn {
   title String required                    // Título do hino
-  lyricsAuthor String                     // Autor da letra
-  musicAuthor String                      // Autor da música
-  hymnary String                        // Hinário
+  lyricsAuthor String                      // Autor da letra
+  musicAuthor String                       // Autor da música
+  hymnary String                           // Hinário
   hymnNumber String                        // Número do hino
-  link String                             // Link para o hino
-  youtubeLink String                      // Link do YouTube
-  sheetMusic AnyBlob maxbytes(5242880)    // Partitura (limite de 5MB)
-  midi AnyBlob maxbytes(5242880)          // Arquivo MIDI (limite de 5MB)
-  tone String maxlength(5)                // Tom do hino
+  link String                              // Link para o hino
+  youtubeLink String                       // Link do YouTube
+  sheetMusic AnyBlob maxbytes(5242880)     // Partitura (limite de 5MB)
+  midi AnyBlob maxbytes(5242880)           // Arquivo MIDI (limite de 5MB)
+  tone String maxlength(5)                 // Tom do hino
   lyrics String                            // Letra do hino
 }
 
@@ -323,50 +323,50 @@ relationship ManyToOne {
   Member{church(name)} to Church{member(name)} // Um membro pertence a uma igreja
 
   PlanSubscription{church(name)} to Church{subscription(description)}        // Assinatura vinculada a uma igreja
-  PlanSubscription{plan(name)} to Plan{subscription(description)}          // Assinatura vinculada a um plano
+  PlanSubscription{plan(name)} to Plan{subscription(description)}            // Assinatura vinculada a um plano
   
-  CounselingSession{church(name)} to Church{counselingSession(subject)} // Uma sessão de aconselhamento pertence a uma igreja
-  CounselingSession{member(name)} to Member{counseling(subject)}            // Sessão de aconselhamento vinculada a um membro
+  CounselingSession{church(name)} to Church{counselingSession(subject)}      // Uma sessão de aconselhamento pertence a uma igreja
+  CounselingSession{member(name)} to Member{counseling(subject)}             // Sessão de aconselhamento vinculada a um membro
 
-  Task{church(name)} to Church{task(title)}                  // Uma tarefa pertence a uma igreja
-  Task{member(name)} to Member{tasks(title)}                         // Tarefa atribuída a um membro
+  Task{church(name)} to Church{task(title)}                                  // Uma tarefa pertence a uma igreja
+  Task{member(name)} to Member{tasks(title)}                                 // Tarefa atribuída a um membro
 
-  Transaction{church(name)} to Church{transaction(description)} // Relaciona a transação à igreja
-  Transaction{member(name)} to Member                  // Transação vinculada a um membro
-  Invoice{church(name)} to Church{invoice(number)}           // Relaciona a nota fiscal à igreja
+  Transaction{church(name)} to Church{transaction(description)}              // Relaciona a transação à igreja
+  Transaction{member(name)} to Member                                         // Transação vinculada a um membro
+  Invoice{church(name)} to Church{invoice(number)}                           // Relaciona a nota fiscal à igreja
 
-  WorshipEvent{church(name)} to Church{worshipEvent(title)}  // Um culto pertence a uma igreja
-  WorshipEvent{preacher(name)} to Member{preachIn(title)}          // Pregador do culto
-  WorshipEvent{liturgist(name)} to Member{liturgyIn(title)}        // Liturgo do culto
+  WorshipEvent{church(name)} to Church{worshipEvent(title)}                  // Um culto pertence a uma igreja
+  WorshipEvent{preacher(name)} to Member{preachIn(title)}                    // Pregador do culto
+  WorshipEvent{liturgist(name)} to Member{liturgyIn(title)}                  // Liturgo do culto
 
-  Appointment{church(name)} to Church{appointment(subject)}                 // Um agendamento pertence a uma igreja
-  Appointment{member(name)} to Member{appointment(subject)}                 // Agendamento vinculado a um membro
-  Appointment{service(title)} to WorshipEvent{appointment(subject)}         // Agendamento vinculado a um culto
-  Appointment{group(name)} to MinistryGroup{appointment(subject)}           // Agendamento vinculado a um grupo ministerial
+  Appointment{church(name)} to Church{appointment(subject)}                  // Um agendamento pertence a uma igreja
+  Appointment{member(name)} to Member{appointment(subject)}                  // Agendamento vinculado a um membro
+  Appointment{service(title)} to WorshipEvent{appointment(subject)}          // Agendamento vinculado a um culto
+  Appointment{group(name)} to MinistryGroup{appointment(subject)}            // Agendamento vinculado a um grupo ministerial
   Appointment{counselingSession(subject)} to CounselingSession{appointment(subject)} // Agendamento vinculado a uma sessão de aconselhamento
 
-  MinistryGroup{church(name)} to Church{ministryGroup(name)} // Um grupo pertence a uma igreja
-  MinistryGroup{president(name)} to Member{presidentOf(name)} // Presidente do grupo
-  MinistryGroup{supervisor(name)} to Member{supervisorOf(name)} // Supervisor do grupo
+  MinistryGroup{church(name)} to Church{ministryGroup(name)}                 // Um grupo pertence a uma igreja
+  MinistryGroup{president(name)} to Member{presidentOf(name)}                // Presidente do grupo
+  MinistryGroup{supervisor(name)} to Member{supervisorOf(name)}              // Supervisor do grupo
 
-  Transaction{user(name)} to ApplicationUser   // Transação vinculada a um usuário
-  Task{user(name)} to ApplicationUser // Tarefa atribuída a um usuário
-  PlanSubscription{user(name)} to ApplicationUser // Assinatura vinculada a um usuário
-  CounselingSession{user(name)} to ApplicationUser // Sessão de aconselhamento vinculada a um usuário
-  Appointment{user(name)} to ApplicationUser // Agendamento vinculado a um usuário
+  Transaction{user(name)} to ApplicationUser                                 // Transação vinculada a um usuário
+  Task{user(name)} to ApplicationUser                                        // Tarefa atribuída a um usuário
+  PlanSubscription{user(name)} to ApplicationUser                            // Assinatura vinculada a um usuário
+  CounselingSession{user(name)} to ApplicationUser                           // Sessão de aconselhamento vinculada a um usuário
+  Appointment{user(name)} to ApplicationUser                                 // Agendamento vinculado a um usuário
 }
 
 relationship ManyToMany {
-  WorshipEvent{hymns(title)} to Hymn{services(title)}                     // Relacionamento de 1 para N entre Culto e Hinos
-  WorshipEvent{musicians(name)} to Member{playIn(title)}                  // Músicos do culto
-  WorshipEvent{participants(name)} to Member{participateIn(title)}        // Participantes do culto
+  WorshipEvent{hymns(title)} to Hymn{services(title)}                        // Relacionamento de 1 para N entre Culto e Hinos
+  WorshipEvent{musicians(name)} to Member{playIn(title)}                     // Músicos do culto
+  WorshipEvent{participants(name)} to Member{participateIn(title)}           // Participantes do culto
 
-  MinistryGroup{members(name)} to Member{memberOf(name)}                  // Membros do grupo
+  MinistryGroup{members(name)} to Member{memberOf(name)}                     // Membros do grupo
 }
 
 relationship OneToMany {
-  Transaction{invoices(number)} to Invoice{transaction(description)}                  // Relacionamento de 1 para N entre Transação e Nota Fiscal
-  Church{user(name)} to ApplicationUser                                               // Uma igreja pode ter vários usuários
+  Transaction{invoices(number)} to Invoice{transaction(description)}         // Relacionamento de 1 para N entre Transação e Nota Fiscal
+  Church{user(name)} to ApplicationUser                                      // Uma igreja pode ter vários usuários
 }
 
 // Paginação das entidades (definindo como os dados serão carregados)
