@@ -1,0 +1,336 @@
+application {
+  config {
+    applicationType monolith
+    authenticationType jwt
+    baseName poimen
+    buildTool maven
+    cacheProvider ehcache
+    clientFramework angular
+    clientTheme zephyr
+    clientThemeVariant primary
+    creationTimestamp 1734561678528
+    databaseType sql
+    devDatabaseType h2Disk
+    enableHibernateCache true
+    enableSwaggerCodegen false
+    enableTranslation true
+    jhipsterVersion "8.7.3"
+    jwtSecretKey "NGY4YjY1ZmY0ZWM3MzIyZjU5M2E4YzU1Y2RjNzBiMjUxYzI4YTJiMDQ2OTllNzNkYmFiM2E3YjI3ZmFiNzc4NGVjNDJkNjlmZTU0MDY3NzIzMTA4MWVjNTIzYWEyYTFmMDFjNWE2OTkxYWM1YzYxYjIyMzgxZGIwYzkxMmFjZjg="
+    languages [en, pt-br]
+    microfrontends []
+    nativeLanguage en
+    packageName br.com.poimen
+    prodDatabaseType postgresql
+    reactive false
+    searchEngine elasticsearch
+    serviceDiscoveryType false
+    testFrameworks [cucumber, cypress]
+    websocket false
+    withAdminUi true
+  }
+
+  entities ApplicationUser, Appointment, Church, CounselingSession, Hymn, Invoice, Member, MinistryGroup, Plan, PlanSubscription, Task, Transaction, WorshipEvent
+}
+
+@ChangelogDate("20241219001241")
+entity ApplicationUser {
+  name String required
+  description TextBlob
+  status UserStatus required
+}
+@ChangelogDate("20241219001242")
+entity Appointment {
+  subject String required
+  startTime Instant required
+  endTime Instant
+  notes TextBlob
+  local String
+  appointmentType AppointmentType required
+}
+@ChangelogDate("20241219001243")
+entity Church {
+  name String required
+  cnpj String pattern(/^\d{14}$/) required
+  address String required
+  city String required
+  dateFoundation LocalDate required
+  phone String
+  email String
+  website String
+  facebook String
+  instagram String
+  twitter String
+  youtube String
+  about TextBlob
+}
+@ChangelogDate("20241219001244")
+entity CounselingSession {
+  subject String required
+  date LocalDate required
+  startTime Instant required
+  endTime Instant
+  notes TextBlob
+  counselingTasks TextBlob
+  status StatusCounseling required
+}
+@ChangelogDate("20241219001245")
+entity Hymn {
+  title String required
+  lyricsAuthor String
+  musicAuthor String
+  hymnary String
+  hymnNumber String
+  link String
+  youtubeLink String
+  sheetMusic AnyBlob maxbytes(5242880)
+  midi AnyBlob maxbytes(5242880)
+  tone String maxlength(5)
+  lyrics String
+}
+@ChangelogDate("20241219001246")
+entity Invoice {
+  number String required
+  issueDate Instant required
+  totalAmount BigDecimal required
+  type String required
+  supplier String
+  invoiceFile AnyBlob maxbytes(5242880)
+}
+@ChangelogDate("20241219001247")
+entity Member {
+  name String required
+  photo ImageBlob maxbytes(2097152)
+  email String
+  phoneNumber String
+  dateOfBirth LocalDate required
+  address String
+  city String
+  state String
+  zipCode String
+  cityOfBirth String
+  previousReligion String
+  maritalStatus MaritalStatus required
+  spouseName String
+  dateOfMarriage LocalDate
+  status MemberStatus required
+  cpf String pattern(/^\d{11}$/) required
+  rg String required
+  dateOfBaptism LocalDate
+  churchOfBaptism String
+  dateOfMembership LocalDate
+  typeOfMembership MembershipType
+  associationMeetingMinutes String
+  dateOfDeath LocalDate
+  dateOfExit LocalDate
+  exitDestination String
+  exitReason ExitReason
+  exitMeetingMinutes String
+  notes TextBlob
+}
+@ChangelogDate("20241219001248")
+entity MinistryGroup {
+  name String required
+  description String
+  establishedDate LocalDate
+  type GroupType required
+}
+@ChangelogDate("20241219001249")
+entity Plan {
+  name String required
+  price String required
+  description String
+  features TextBlob
+  renewalPeriod String
+}
+@ChangelogDate("20241219001250")
+entity PlanSubscription {
+  description String required
+  startDate LocalDate required
+  endDate LocalDate
+  status PlanSubscriptionStatus required
+  paymentProvider PaymentProvider required
+  paymentStatus PaymentStatus required
+  paymentReference String
+}
+@ChangelogDate("20241219001251")
+entity Task {
+  title String required
+  description String
+  dueDate LocalDate
+  status StatusTask required
+  priority PriorityTask required
+  notes TextBlob
+}
+@ChangelogDate("20241219001252")
+entity Transaction {
+  description String required
+  amount BigDecimal required
+  date Instant required
+  paymentMethod String
+  type String required
+  supplierOrClient String
+  invoiceFile String
+}
+@ChangelogDate("20241219001253")
+entity WorshipEvent {
+  date Instant required
+  title String
+  guestPreacher String
+  description TextBlob
+  callToWorshipText String
+  confessionOfSinText String
+  assuranceOfPardonText String
+  lordSupperText String
+  benedictionText String
+  confessionalText String
+  sermonText TextBlob
+  sermonFile AnyBlob maxbytes(5242880)
+  sermonLink String
+  youtubeLink String
+  bulletinFile AnyBlob maxbytes(5242880)
+  worshipType WorshipType required
+}
+
+enum UserStatus {
+  ACTIVE (Active),
+  INACTIVE (Inactive),
+  BLOCKED (Blocked)
+}
+enum AppointmentType {
+  SERVICE (Worship Service),
+  MEETING (Meeting),
+  EVENT (Event),
+  REHEARSAL (Rehearsal),
+  VISIT (Visit),
+  COUNSELING (Counseling),
+  DISCIPLESHIP (Discipleship),
+  SMALL_GROUP (Small Group),
+  OTHER (Other)
+}
+enum StatusCounseling {
+  SCHEDULED (Scheduled),
+  IN_PROGRESS (In Progress),
+  DONE (Done),
+  CANCELED (Canceled)
+}
+enum MaritalStatus {
+  SINGLE (Single),
+  MARRIED (Married),
+  DIVORCED (Divorced),
+  WIDOWED (Widowed)
+}
+enum MemberStatus {
+  COMUNGANT_MEMBER (Comungant),
+  NON_COMUNGANT_MEMBER (Non-Comungant),
+  VISITOR (Visitor),
+  INACTIVE (Inactive),
+  EXCOMMUNICATED (Excommunicated),
+  DECEASED (Deceased),
+  TRANSFERED (Transfered),
+  CATECHUMENS (Catechumens),
+  PASTOR (Pastor),
+  SEMINARIST (Seminarist)
+}
+enum MembershipType {
+  PROFESSION_OF_FAITH (Profession of Faith),
+  TRANSFER (Transfer),
+  BAPTISM (Baptism),
+  BAPTISM_AND_PROFESSION_OF_FAITH (Baptism and Profession of Faith),
+  JURISDICTION (Jurisdiction),
+  JURISDICTION_ON_REQUEST (Jurisdiction on Request),
+  PASTOR (Pastor)
+}
+enum ExitReason {
+  TRANSFER (Transfer),
+  EXCOMMUNICATION (Excommunication),
+  DEATH (Death),
+  DISMISSAL (Dismissal),
+  ORDENATION (Ordenation),
+  OTHER (Other)
+}
+enum GroupType {
+  DEPARTMENT (Department),
+  INTERNAL_SOCIETY (Internal Society),
+  DEACON_BOARD (Deacon Board),
+  CHURCH_COUNCIL (Church Council)
+}
+enum PlanSubscriptionStatus {
+  ACTIVE (Active),
+  INACTIVE (Inactive),
+  CANCELED (Canceled),
+  PAUSED (Paused)
+}
+enum PaymentProvider {
+  STRIPE (Stripe),
+  PAYPAL (PayPal),
+  OTHER (Other)
+}
+enum PaymentStatus {
+  PENDING (Pending),
+  COMPLETED (Completed),
+  FAILED (Failed),
+  REFUNDED (Refunded)
+}
+enum StatusTask {
+  PENDING (Pending),
+  IN_PROGRESS (In Progress),
+  DONE (Done)
+}
+enum PriorityTask {
+  LOW (Low),
+  MEDIUM (Medium),
+  HIGH (High)
+}
+enum WorshipType {
+  SUNDAY_SERVICE (Sunday Service),
+  PRAYER_MEETING (Prayer Meeting),
+  BIBLE_STUDY (Bible Study),
+  SPECIAL_EVENT (Special Event),
+  OTHER (Other)
+}
+
+relationship OneToOne {
+  @Id @OnDelete(SET NULL) ApplicationUser{internalUser(login)} to User with builtInEntity
+}
+relationship OneToMany {
+  Church{user(name)} to ApplicationUser
+  Transaction{invoices(number)} to Invoice{transaction(description)}
+}
+relationship ManyToOne {
+  Appointment{church(name)} to Church{appointment(subject)}
+  Appointment{member(name)} to Member{appointment(subject)}
+  Appointment{service(title)} to WorshipEvent{appointment(subject)}
+  Appointment{group(name)} to MinistryGroup{appointment(subject)}
+  Appointment{counselingSession(subject)} to CounselingSession{appointment(subject)}
+  Appointment{user(name)} to ApplicationUser
+  CounselingSession{church(name)} to Church{counselingSession(subject)}
+  CounselingSession{member(name)} to Member{counseling(subject)}
+  CounselingSession{user(name)} to ApplicationUser
+  Invoice{church(name)} to Church{invoice(number)}
+  Member{church(name)} to Church{member(name)}
+  MinistryGroup{church(name)} to Church{ministryGroup(name)}
+  MinistryGroup{president(name)} to Member{presidentOf(name)}
+  MinistryGroup{supervisor(name)} to Member{supervisorOf(name)}
+  PlanSubscription{church(name)} to Church{subscription(description)}
+  PlanSubscription{plan(name)} to Plan{subscription(description)}
+  PlanSubscription{user(name)} to ApplicationUser
+  Task{church(name)} to Church{task(title)}
+  Task{member(name)} to Member{tasks(title)}
+  Task{user(name)} to ApplicationUser
+  Transaction{church(name)} to Church{transaction(description)}
+  Transaction{member(name)} to Member
+  Transaction{user(name)} to ApplicationUser
+  WorshipEvent{church(name)} to Church{worshipEvent(title)}
+  WorshipEvent{preacher(name)} to Member{preachIn(title)}
+  WorshipEvent{liturgist(name)} to Member{liturgyIn(title)}
+}
+relationship ManyToMany {
+  MinistryGroup{members(name)} to Member{memberOf(name)}
+  WorshipEvent{hymns(title)} to Hymn{services(title)}
+  WorshipEvent{musicians(name)} to Member{playIn(title)}
+  WorshipEvent{participants(name)} to Member{participateIn(title)}
+}
+
+service ApplicationUser, Appointment, Church, CounselingSession, Hymn, Invoice, Member, MinistryGroup, Plan, PlanSubscription, Task, Transaction, WorshipEvent with serviceClass
+paginate Appointment, Invoice, Member, MinistryGroup, Transaction, WorshipEvent with pagination
+paginate CounselingSession with infinite-scroll
