@@ -7,6 +7,16 @@ const routes: Routes = [
     loadChildren: () => import('./admin/authority/authority.routes'),
   },
   {
+    path: 'application-user',
+    data: { pageTitle: 'poimenApp.applicationUser.home.title' },
+    loadChildren: () => import('./application-user/application-user.routes'),
+  },
+  {
+    path: 'appointment',
+    data: { pageTitle: 'poimenApp.appointment.home.title' },
+    loadChildren: () => import('./appointment/appointment.routes'),
+  },
+  {
     path: 'church',
     data: { pageTitle: 'poimenApp.church.home.title' },
     loadChildren: () => import('./church/church.routes'),
@@ -37,11 +47,6 @@ const routes: Routes = [
     loadChildren: () => import('./ministry-group/ministry-group.routes'),
   },
   {
-    path: 'ministry-membership',
-    data: { pageTitle: 'poimenApp.ministryMembership.home.title' },
-    loadChildren: () => import('./ministry-membership/ministry-membership.routes'),
-  },
-  {
     path: 'plan',
     data: { pageTitle: 'poimenApp.plan.home.title' },
     loadChildren: () => import('./plan/plan.routes'),
@@ -50,11 +55,6 @@ const routes: Routes = [
     path: 'plan-subscription',
     data: { pageTitle: 'poimenApp.planSubscription.home.title' },
     loadChildren: () => import('./plan-subscription/plan-subscription.routes'),
-  },
-  {
-    path: 'schedule',
-    data: { pageTitle: 'poimenApp.schedule.home.title' },
-    loadChildren: () => import('./schedule/schedule.routes'),
   },
   {
     path: 'task',

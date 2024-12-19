@@ -1,23 +1,23 @@
 {
   "annotations": {
-    "changelogDate": "20241218011227"
+    "changelogDate": "20241219001247"
   },
   "applications": "*",
   "fields": [
     {
-      "fieldName": "firstName",
+      "fieldName": "name",
       "fieldType": "String",
       "fieldValidateRules": ["required"]
     },
     {
-      "fieldName": "lastName",
-      "fieldType": "String",
-      "fieldValidateRules": ["required"]
+      "fieldName": "photo",
+      "fieldType": "ImageBlob",
+      "fieldValidateRules": ["maxbytes"],
+      "fieldValidateRulesMaxbytes": "2097152"
     },
     {
       "fieldName": "email",
-      "fieldType": "String",
-      "fieldValidateRules": ["unique"]
+      "fieldType": "String"
     },
     {
       "fieldName": "phoneNumber",
@@ -25,17 +25,116 @@
     },
     {
       "fieldName": "dateOfBirth",
-      "fieldType": "Instant"
+      "fieldType": "LocalDate",
+      "fieldValidateRules": ["required"]
     },
     {
       "fieldName": "address",
       "fieldType": "String"
+    },
+    {
+      "fieldName": "city",
+      "fieldType": "String"
+    },
+    {
+      "fieldName": "state",
+      "fieldType": "String"
+    },
+    {
+      "fieldName": "zipCode",
+      "fieldType": "String"
+    },
+    {
+      "fieldName": "cityOfBirth",
+      "fieldType": "String"
+    },
+    {
+      "fieldName": "previousReligion",
+      "fieldType": "String"
+    },
+    {
+      "fieldName": "maritalStatus",
+      "fieldType": "MaritalStatus",
+      "fieldValidateRules": ["required"],
+      "fieldValues": "SINGLE (Single),MARRIED (Married),DIVORCED (Divorced),WIDOWED (Widowed)"
+    },
+    {
+      "fieldName": "spouseName",
+      "fieldType": "String"
+    },
+    {
+      "fieldName": "dateOfMarriage",
+      "fieldType": "LocalDate"
+    },
+    {
+      "fieldName": "status",
+      "fieldType": "MemberStatus",
+      "fieldValidateRules": ["required"],
+      "fieldValues": "COMUNGANT_MEMBER (Comungant),NON_COMUNGANT_MEMBER (Non-Comungant),VISITOR (Visitor),INACTIVE (Inactive),EXCOMMUNICATED (Excommunicated),DECEASED (Deceased),TRANSFERED (Transfered),CATECHUMENS (Catechumens),PASTOR (Pastor),SEMINARIST (Seminarist)"
+    },
+    {
+      "fieldName": "cpf",
+      "fieldType": "String",
+      "fieldValidateRules": ["pattern", "required"],
+      "fieldValidateRulesPattern": "^\\d{11}$"
+    },
+    {
+      "fieldName": "rg",
+      "fieldType": "String",
+      "fieldValidateRules": ["required"]
+    },
+    {
+      "fieldName": "dateOfBaptism",
+      "fieldType": "LocalDate"
+    },
+    {
+      "fieldName": "churchOfBaptism",
+      "fieldType": "String"
+    },
+    {
+      "fieldName": "dateOfMembership",
+      "fieldType": "LocalDate"
+    },
+    {
+      "fieldName": "typeOfMembership",
+      "fieldType": "MembershipType",
+      "fieldValues": "PROFESSION_OF_FAITH (Profession of Faith),TRANSFER (Transfer),BAPTISM (Baptism),BAPTISM_AND_PROFESSION_OF_FAITH (Baptism and Profession of Faith),JURISDICTION (Jurisdiction),JURISDICTION_ON_REQUEST (Jurisdiction on Request),PASTOR (Pastor)"
+    },
+    {
+      "fieldName": "associationMeetingMinutes",
+      "fieldType": "String"
+    },
+    {
+      "fieldName": "dateOfDeath",
+      "fieldType": "LocalDate"
+    },
+    {
+      "fieldName": "dateOfExit",
+      "fieldType": "LocalDate"
+    },
+    {
+      "fieldName": "exitDestination",
+      "fieldType": "String"
+    },
+    {
+      "fieldName": "exitReason",
+      "fieldType": "ExitReason",
+      "fieldValues": "TRANSFER (Transfer),EXCOMMUNICATION (Excommunication),DEATH (Death),DISMISSAL (Dismissal),ORDENATION (Ordenation),OTHER (Other)"
+    },
+    {
+      "fieldName": "exitMeetingMinutes",
+      "fieldType": "String"
+    },
+    {
+      "fieldName": "notes",
+      "fieldType": "TextBlob"
     }
   ],
   "name": "Member",
   "pagination": "pagination",
   "relationships": [
     {
+      "otherEntityField": "name",
       "otherEntityName": "church",
       "otherEntityRelationshipName": "member",
       "relationshipName": "church",
@@ -43,41 +142,85 @@
       "relationshipType": "many-to-one"
     },
     {
+      "otherEntityField": "subject",
       "otherEntityName": "counselingSession",
       "otherEntityRelationshipName": "member",
-      "relationshipName": "counselingSession",
+      "relationshipName": "counseling",
       "relationshipSide": "right",
       "relationshipType": "one-to-many"
     },
     {
-      "otherEntityName": "ministryMembership",
-      "otherEntityRelationshipName": "member",
-      "relationshipName": "ministryMembership",
-      "relationshipSide": "right",
-      "relationshipType": "one-to-many"
-    },
-    {
+      "otherEntityField": "title",
       "otherEntityName": "task",
       "otherEntityRelationshipName": "member",
-      "relationshipName": "task",
+      "relationshipName": "tasks",
       "relationshipSide": "right",
       "relationshipType": "one-to-many"
     },
     {
-      "otherEntityName": "transaction",
-      "otherEntityRelationshipName": "member",
-      "relationshipName": "transaction",
+      "otherEntityField": "title",
+      "otherEntityName": "worshipEvent",
+      "otherEntityRelationshipName": "preacher",
+      "relationshipName": "preachIn",
       "relationshipSide": "right",
       "relationshipType": "one-to-many"
     },
     {
-      "otherEntityName": "schedule",
+      "otherEntityField": "title",
+      "otherEntityName": "worshipEvent",
+      "otherEntityRelationshipName": "liturgist",
+      "relationshipName": "liturgyIn",
+      "relationshipSide": "right",
+      "relationshipType": "one-to-many"
+    },
+    {
+      "otherEntityField": "subject",
+      "otherEntityName": "appointment",
       "otherEntityRelationshipName": "member",
-      "relationshipName": "schedule",
+      "relationshipName": "appointment",
+      "relationshipSide": "right",
+      "relationshipType": "one-to-many"
+    },
+    {
+      "otherEntityField": "name",
+      "otherEntityName": "ministryGroup",
+      "otherEntityRelationshipName": "president",
+      "relationshipName": "presidentOf",
+      "relationshipSide": "right",
+      "relationshipType": "one-to-many"
+    },
+    {
+      "otherEntityField": "name",
+      "otherEntityName": "ministryGroup",
+      "otherEntityRelationshipName": "supervisor",
+      "relationshipName": "supervisorOf",
+      "relationshipSide": "right",
+      "relationshipType": "one-to-many"
+    },
+    {
+      "otherEntityField": "title",
+      "otherEntityName": "worshipEvent",
+      "otherEntityRelationshipName": "musicians",
+      "relationshipName": "playIn",
+      "relationshipSide": "right",
+      "relationshipType": "many-to-many"
+    },
+    {
+      "otherEntityField": "title",
+      "otherEntityName": "worshipEvent",
+      "otherEntityRelationshipName": "participants",
+      "relationshipName": "participateIn",
+      "relationshipSide": "right",
+      "relationshipType": "many-to-many"
+    },
+    {
+      "otherEntityField": "name",
+      "otherEntityName": "ministryGroup",
+      "otherEntityRelationshipName": "members",
+      "relationshipName": "memberOf",
       "relationshipSide": "right",
       "relationshipType": "many-to-many"
     }
   ],
-  "searchEngine": "no",
   "service": "serviceClass"
 }

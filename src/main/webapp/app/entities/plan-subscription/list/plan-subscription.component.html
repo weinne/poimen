@@ -15,7 +15,7 @@
         [routerLink]="['/plan-subscription/new']"
       >
         <fa-icon icon="plus"></fa-icon>
-        <span jhiTranslate="poimenApp.planSubscription.home.createLabel">Create a new Plan Subscription</span>
+        <span class="hidden-sm-down" jhiTranslate="poimenApp.planSubscription.home.createLabel">Create a new Plan Subscription</span>
       </button>
     </div>
   </h2>
@@ -23,6 +23,34 @@
   <jhi-alert-error></jhi-alert-error>
 
   <jhi-alert></jhi-alert>
+
+  <form name="searchForm" class="row row-cols-sm-auto align-items-center">
+    <div class="col-sm-12">
+      <div class="input-group w-100 mt-3">
+        <label class="visually-hidden" for="currentSearch" jhiTranslate="poimenApp.planSubscription.home.search"
+          >Search for Plan Subscription</label
+        >
+        <input
+          type="text"
+          class="form-control"
+          [(ngModel)]="currentSearch"
+          id="currentSearch"
+          name="currentSearch"
+          placeholder="{{ 'poimenApp.planSubscription.home.search' | translate }}"
+        />
+
+        <button class="btn btn-info" (click)="search(currentSearch)">
+          <fa-icon icon="search"></fa-icon>
+        </button>
+
+        @if (currentSearch) {
+          <button class="btn btn-danger" (click)="search('')">
+            <fa-icon icon="trash-alt"></fa-icon>
+          </button>
+        }
+      </div>
+    </div>
+  </form>
 
   @if (planSubscriptions?.length === 0) {
     <div class="alert alert-warning" id="no-result">
@@ -42,6 +70,14 @@
                 <fa-icon class="p-1" icon="sort"></fa-icon>
               </div>
             </th>
+            <th scope="col" jhiSortBy="description">
+              <div class="d-flex">
+                <span jhiTranslate="poimenApp.planSubscription.description">Description</span>
+                @if (!currentSearch) {
+                  <fa-icon class="p-1" icon="sort"></fa-icon>
+                }
+              </div>
+            </th>
             <th scope="col" jhiSortBy="startDate">
               <div class="d-flex">
                 <span jhiTranslate="poimenApp.planSubscription.startDate">Start Date</span>
@@ -56,33 +92,51 @@
                 <fa-icon class="p-1" icon="sort"></fa-icon>
               </div>
             </th>
-            <th scope="col" jhiSortBy="active">
+            <th scope="col" jhiSortBy="status">
               <div class="d-flex">
-                <span jhiTranslate="poimenApp.planSubscription.active">Active</span>
-
-                <fa-icon class="p-1" icon="sort"></fa-icon>
+                <span jhiTranslate="poimenApp.planSubscription.status">Status</span>
+                @if (!currentSearch) {
+                  <fa-icon class="p-1" icon="sort"></fa-icon>
+                }
               </div>
             </th>
-            <th scope="col" jhiSortBy="planName">
+            <th scope="col" jhiSortBy="paymentProvider">
               <div class="d-flex">
-                <span jhiTranslate="poimenApp.planSubscription.planName">Plan Name</span>
-
-                <fa-icon class="p-1" icon="sort"></fa-icon>
+                <span jhiTranslate="poimenApp.planSubscription.paymentProvider">Payment Provider</span>
+                @if (!currentSearch) {
+                  <fa-icon class="p-1" icon="sort"></fa-icon>
+                }
               </div>
             </th>
-            <th scope="col" jhiSortBy="plan.id">
+            <th scope="col" jhiSortBy="paymentStatus">
               <div class="d-flex">
-                <span jhiTranslate="poimenApp.planSubscription.plan">Plan</span>
-                <fa-icon class="p-1" icon="sort"></fa-icon>
+                <span jhiTranslate="poimenApp.planSubscription.paymentStatus">Payment Status</span>
+                @if (!currentSearch) {
+                  <fa-icon class="p-1" icon="sort"></fa-icon>
+                }
               </div>
             </th>
-            <th scope="col" jhiSortBy="church.id">
+            <th scope="col" jhiSortBy="paymentReference">
+              <div class="d-flex">
+                <span jhiTranslate="poimenApp.planSubscription.paymentReference">Payment Reference</span>
+                @if (!currentSearch) {
+                  <fa-icon class="p-1" icon="sort"></fa-icon>
+                }
+              </div>
+            </th>
+            <th scope="col" jhiSortBy="church.name">
               <div class="d-flex">
                 <span jhiTranslate="poimenApp.planSubscription.church">Church</span>
                 <fa-icon class="p-1" icon="sort"></fa-icon>
               </div>
             </th>
-            <th scope="col" jhiSortBy="user.id">
+            <th scope="col" jhiSortBy="plan.name">
+              <div class="d-flex">
+                <span jhiTranslate="poimenApp.planSubscription.plan">Plan</span>
+                <fa-icon class="p-1" icon="sort"></fa-icon>
+              </div>
+            </th>
+            <th scope="col" jhiSortBy="user.name">
               <div class="d-flex">
                 <span jhiTranslate="poimenApp.planSubscription.user">User</span>
                 <fa-icon class="p-1" icon="sort"></fa-icon>
@@ -97,26 +151,47 @@
               <td>
                 <a [routerLink]="['/plan-subscription', planSubscription.id, 'view']">{{ planSubscription.id }}</a>
               </td>
-              <td>{{ planSubscription.startDate | formatMediumDatetime }}</td>
-              <td>{{ planSubscription.endDate | formatMediumDatetime }}</td>
-              <td>{{ planSubscription.active }}</td>
-              <td>{{ planSubscription.planName }}</td>
-              <td>
-                @if (planSubscription.plan) {
-                  <div>
-                    <a [routerLink]="['/plan', planSubscription.plan.id, 'view']">{{ planSubscription.plan.id }}</a>
-                  </div>
-                }
+              <td>{{ planSubscription.description }}</td>
+              <td>{{ planSubscription.startDate | formatMediumDate }}</td>
+              <td>{{ planSubscription.endDate | formatMediumDate }}</td>
+              <td [jhiTranslate]="'poimenApp.PlanSubscriptionStatus.' + (planSubscription.status ?? 'null')">
+                {{
+                  { null: '', ACTIVE: 'Active', INACTIVE: 'Inactive', CANCELED: 'Canceled', PAUSED: 'Paused' }[
+                    planSubscription.status ?? 'null'
+                  ]
+                }}
               </td>
+              <td [jhiTranslate]="'poimenApp.PaymentProvider.' + (planSubscription.paymentProvider ?? 'null')">
+                {{ { null: '', STRIPE: 'Stripe', PAYPAL: 'PayPal', OTHER: 'Other' }[planSubscription.paymentProvider ?? 'null'] }}
+              </td>
+              <td [jhiTranslate]="'poimenApp.PaymentStatus.' + (planSubscription.paymentStatus ?? 'null')">
+                {{
+                  { null: '', PENDING: 'Pending', COMPLETED: 'Completed', FAILED: 'Failed', REFUNDED: 'Refunded' }[
+                    planSubscription.paymentStatus ?? 'null'
+                  ]
+                }}
+              </td>
+              <td>{{ planSubscription.paymentReference }}</td>
               <td>
                 @if (planSubscription.church) {
                   <div>
-                    <a [routerLink]="['/church', planSubscription.church.id, 'view']">{{ planSubscription.church.id }}</a>
+                    <a [routerLink]="['/church', planSubscription.church.id, 'view']">{{ planSubscription.church.name }}</a>
                   </div>
                 }
               </td>
               <td>
-                {{ planSubscription.user?.id }}
+                @if (planSubscription.plan) {
+                  <div>
+                    <a [routerLink]="['/plan', planSubscription.plan.id, 'view']">{{ planSubscription.plan.name }}</a>
+                  </div>
+                }
+              </td>
+              <td>
+                @if (planSubscription.user) {
+                  <div>
+                    <a [routerLink]="['/application-user', planSubscription.user.id, 'view']">{{ planSubscription.user.name }}</a>
+                  </div>
+                }
               </td>
               <td class="text-end">
                 <div class="btn-group">

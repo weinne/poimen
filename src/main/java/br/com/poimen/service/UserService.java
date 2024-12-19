@@ -5,6 +5,7 @@ import br.com.poimen.domain.Authority;
 import br.com.poimen.domain.User;
 import br.com.poimen.repository.AuthorityRepository;
 import br.com.poimen.repository.UserRepository;
+import br.com.poimen.repository.search.UserSearchRepository;
 import br.com.poimen.security.AuthoritiesConstants;
 import br.com.poimen.security.SecurityUtils;
 import br.com.poimen.service.dto.AdminUserDTO;
@@ -37,6 +38,8 @@ public class UserService {
 
     private final PasswordEncoder passwordEncoder;
 
+    private final UserSearchRepository userSearchRepository;
+
     private final AuthorityRepository authorityRepository;
 
     private final CacheManager cacheManager;
@@ -44,11 +47,13 @@ public class UserService {
     public UserService(
         UserRepository userRepository,
         PasswordEncoder passwordEncoder,
+        UserSearchRepository userSearchRepository,
         AuthorityRepository authorityRepository,
         CacheManager cacheManager
     ) {
         this.userRepository = userRepository;
         this.passwordEncoder = passwordEncoder;
+        this.userSearchRepository = userSearchRepository;
         this.authorityRepository = authorityRepository;
         this.cacheManager = cacheManager;
     }
@@ -61,6 +66,7 @@ public class UserService {
                 // activate given user for the registration key.
                 user.setActivated(true);
                 user.setActivationKey(null);
+                userSearchRepository.save(user);
                 this.clearUserCaches(user);
                 LOG.debug("Activated user: {}", user);
                 return user;
@@ -130,6 +136,7 @@ public class UserService {
         authorityRepository.findById(AuthoritiesConstants.USER).ifPresent(authorities::add);
         newUser.setAuthorities(authorities);
         userRepository.save(newUser);
+        userSearchRepository.save(newUser);
         this.clearUserCaches(newUser);
         LOG.debug("Created Information for User: {}", newUser);
         return newUser;
@@ -175,6 +182,7 @@ public class UserService {
             user.setAuthorities(authorities);
         }
         userRepository.save(user);
+        userSearchRepository.index(user);
         this.clearUserCaches(user);
         LOG.debug("Created Information for User: {}", user);
         return user;
@@ -211,6 +219,7 @@ public class UserService {
                     .map(Optional::get)
                     .forEach(managedAuthorities::add);
                 userRepository.save(user);
+                userSearchRepository.index(user);
                 this.clearUserCaches(user);
                 LOG.debug("Changed Information for User: {}", user);
                 return user;
@@ -223,6 +232,7 @@ public class UserService {
             .findOneByLogin(login)
             .ifPresent(user -> {
                 userRepository.delete(user);
+                userSearchRepository.deleteFromIndex(user);
                 this.clearUserCaches(user);
                 LOG.debug("Deleted User: {}", user);
             });
@@ -249,6 +259,7 @@ public class UserService {
                 user.setLangKey(langKey);
                 user.setImageUrl(imageUrl);
                 userRepository.save(user);
+                userSearchRepository.index(user);
                 this.clearUserCaches(user);
                 LOG.debug("Changed Information for User: {}", user);
             });
@@ -302,6 +313,7 @@ public class UserService {
             .forEach(user -> {
                 LOG.debug("Deleting not activated user {}", user.getLogin());
                 userRepository.delete(user);
+                userSearchRepository.deleteFromIndex(user);
                 this.clearUserCaches(user);
             });
     }

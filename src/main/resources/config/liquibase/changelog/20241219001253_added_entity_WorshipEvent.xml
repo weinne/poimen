@@ -1,0 +1,159 @@
+<?xml version="1.0" encoding="utf-8"?>
+<databaseChangeLog
+    xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+    xmlns:ext="http://www.liquibase.org/xml/ns/dbchangelog-ext"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-latest.xsd
+                        http://www.liquibase.org/xml/ns/dbchangelog-ext http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-ext.xsd">
+
+    <!--
+        Added the entity WorshipEvent.
+    -->
+    <changeSet id="20241219001253-1" author="jhipster">
+        <createTable tableName="worship_event">
+            <column name="id" type="bigint">
+                <constraints primaryKey="true" nullable="false"/>
+            </column>
+            <column name="date" type="${datetimeType}">
+                <constraints nullable="false" />
+            </column>
+            <column name="title" type="varchar(255)">
+                <constraints nullable="true" />
+            </column>
+            <column name="guest_preacher" type="varchar(255)">
+                <constraints nullable="true" />
+            </column>
+            <column name="description" type="${clobType}">
+                <constraints nullable="true" />
+            </column>
+            <column name="call_to_worship_text" type="varchar(255)">
+                <constraints nullable="true" />
+            </column>
+            <column name="confession_of_sin_text" type="varchar(255)">
+                <constraints nullable="true" />
+            </column>
+            <column name="assurance_of_pardon_text" type="varchar(255)">
+                <constraints nullable="true" />
+            </column>
+            <column name="lord_supper_text" type="varchar(255)">
+                <constraints nullable="true" />
+            </column>
+            <column name="benediction_text" type="varchar(255)">
+                <constraints nullable="true" />
+            </column>
+            <column name="confessional_text" type="varchar(255)">
+                <constraints nullable="true" />
+            </column>
+            <column name="sermon_text" type="${clobType}">
+                <constraints nullable="true" />
+            </column>
+            <column name="sermon_file" type="${blobType}">
+                <constraints nullable="true" />
+            </column>
+            <column name="sermon_file_content_type" type="varchar(255)">
+                <constraints nullable="true" />
+            </column>
+            <column name="sermon_link" type="varchar(255)">
+                <constraints nullable="true" />
+            </column>
+            <column name="youtube_link" type="varchar(255)">
+                <constraints nullable="true" />
+            </column>
+            <column name="bulletin_file" type="${blobType}">
+                <constraints nullable="true" />
+            </column>
+            <column name="bulletin_file_content_type" type="varchar(255)">
+                <constraints nullable="true" />
+            </column>
+            <column name="worship_type" type="varchar(255)">
+                <constraints nullable="false" />
+            </column>
+            <column name="church_id" type="bigint">
+                <constraints nullable="true" />
+            </column>
+            <column name="preacher_id" type="bigint">
+                <constraints nullable="true" />
+            </column>
+            <column name="liturgist_id" type="bigint">
+                <constraints nullable="true" />
+            </column>
+            <!-- jhipster-needle-liquibase-add-column - JHipster will add columns here -->
+        </createTable>
+        <dropDefaultValue tableName="worship_event" columnName="date" columnDataType="${datetimeType}"/>
+    </changeSet>
+
+    <changeSet id="20241219001253-1-relations" author="jhipster">
+
+        <createTable tableName="rel_worship_event__hymns">
+            <column name="hymns_id" type="bigint">
+                <constraints nullable="false"/>
+            </column>
+            <column name="worship_event_id" type="bigint">
+                <constraints nullable="false"/>
+            </column>
+        </createTable>
+
+        <addPrimaryKey columnNames="worship_event_id, hymns_id" tableName="rel_worship_event__hymns"/>
+
+        <createTable tableName="rel_worship_event__musicians">
+            <column name="musicians_id" type="bigint">
+                <constraints nullable="false"/>
+            </column>
+            <column name="worship_event_id" type="bigint">
+                <constraints nullable="false"/>
+            </column>
+        </createTable>
+
+        <addPrimaryKey columnNames="worship_event_id, musicians_id" tableName="rel_worship_event__musicians"/>
+
+        <createTable tableName="rel_worship_event__participants">
+            <column name="participants_id" type="bigint">
+                <constraints nullable="false"/>
+            </column>
+            <column name="worship_event_id" type="bigint">
+                <constraints nullable="false"/>
+            </column>
+        </createTable>
+
+        <addPrimaryKey columnNames="worship_event_id, participants_id" tableName="rel_worship_event__participants"/>
+    </changeSet>
+
+    <!-- jhipster-needle-liquibase-add-changeset - JHipster will add changesets here -->
+
+    <!--
+        Load sample data generated with Faker.js
+        - This data can be easily edited using a CSV editor (or even MS Excel) and
+          is located in the 'src/main/resources/config/liquibase/fake-data' directory
+        - By default this data is applied when running with the JHipster 'dev' profile.
+          This can be customized by adding or removing 'faker' in the 'spring.liquibase.contexts'
+          Spring Boot configuration key.
+    -->
+    <changeSet id="20241219001253-1-data" author="jhipster" context="faker">
+        <loadData
+                  file="config/liquibase/fake-data/worship_event.csv"
+                  separator=";"
+                  tableName="worship_event"
+                  usePreparedStatements="true">
+            <column name="id" type="numeric"/>
+            <column name="date" type="date"/>
+            <column name="title" type="string"/>
+            <column name="guest_preacher" type="string"/>
+            <column name="description" type="clob"/>
+            <column name="call_to_worship_text" type="string"/>
+            <column name="confession_of_sin_text" type="string"/>
+            <column name="assurance_of_pardon_text" type="string"/>
+            <column name="lord_supper_text" type="string"/>
+            <column name="benediction_text" type="string"/>
+            <column name="confessional_text" type="string"/>
+            <column name="sermon_text" type="clob"/>
+            <column name="sermon_file" type="blob"/>
+            <column name="sermon_file_content_type" type="string"/>
+            <column name="sermon_link" type="string"/>
+            <column name="youtube_link" type="string"/>
+            <column name="bulletin_file" type="blob"/>
+            <column name="bulletin_file_content_type" type="string"/>
+            <column name="worship_type" type="string"/>
+            <!-- jhipster-needle-liquibase-add-loadcolumn - JHipster (and/or extensions) can add load columns here -->
+        </loadData>
+    </changeSet>
+</databaseChangeLog>

@@ -5,7 +5,7 @@ import { IInvoice, NewInvoice } from './invoice.model';
 export const sampleWithRequiredData: IInvoice = {
   id: 500,
   number: 'successfully psst requirement',
-  issueDate: dayjs('2024-12-17T13:11'),
+  issueDate: dayjs('2024-12-18T12:11'),
   totalAmount: 16400.67,
   type: 'oh er',
 };
@@ -13,27 +13,29 @@ export const sampleWithRequiredData: IInvoice = {
 export const sampleWithPartialData: IInvoice = {
   id: 16551,
   number: 'as',
-  issueDate: dayjs('2024-12-17T03:13'),
+  issueDate: dayjs('2024-12-18T02:14'),
   totalAmount: 13999.36,
   type: 'that yuck anenst',
-  invoiceFile: 'ouch creator',
+  invoiceFile: '../fake-data/blob/hipster.png',
+  invoiceFileContentType: 'unknown',
 };
 
 export const sampleWithFullData: IInvoice = {
-  id: 17304,
-  number: 'square likewise option',
-  issueDate: dayjs('2024-12-17T05:24'),
-  totalAmount: 973.55,
-  type: 'than first secrecy',
-  supplier: 'exempt',
-  invoiceFile: 'luck',
+  id: 11631,
+  number: 'guide noisily before',
+  issueDate: dayjs('2024-12-18T20:49'),
+  totalAmount: 8529.08,
+  type: 'when although importance',
+  supplier: 'first secrecy beside',
+  invoiceFile: '../fake-data/blob/hipster.png',
+  invoiceFileContentType: 'unknown',
 };
 
 export const sampleWithNewData: NewInvoice = {
-  number: 'now exhaust',
-  issueDate: dayjs('2024-12-17T08:42'),
-  totalAmount: 29663.05,
-  type: 'the',
+  number: 'flimsy',
+  issueDate: dayjs('2024-12-18T13:06'),
+  totalAmount: 14089.62,
+  type: 'kissingly besides',
   id: null,
 };
 

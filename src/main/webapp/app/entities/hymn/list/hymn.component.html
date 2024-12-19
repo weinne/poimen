@@ -15,7 +15,7 @@
         [routerLink]="['/hymn/new']"
       >
         <fa-icon icon="plus"></fa-icon>
-        <span jhiTranslate="poimenApp.hymn.home.createLabel">Create a new Hymn</span>
+        <span class="hidden-sm-down" jhiTranslate="poimenApp.hymn.home.createLabel">Create a new Hymn</span>
       </button>
     </div>
   </h2>
@@ -23,6 +23,32 @@
   <jhi-alert-error></jhi-alert-error>
 
   <jhi-alert></jhi-alert>
+
+  <form name="searchForm" class="row row-cols-sm-auto align-items-center">
+    <div class="col-sm-12">
+      <div class="input-group w-100 mt-3">
+        <label class="visually-hidden" for="currentSearch" jhiTranslate="poimenApp.hymn.home.search">Search for Hymn</label>
+        <input
+          type="text"
+          class="form-control"
+          [(ngModel)]="currentSearch"
+          id="currentSearch"
+          name="currentSearch"
+          placeholder="{{ 'poimenApp.hymn.home.search' | translate }}"
+        />
+
+        <button class="btn btn-info" (click)="search(currentSearch)">
+          <fa-icon icon="search"></fa-icon>
+        </button>
+
+        @if (currentSearch) {
+          <button class="btn btn-danger" (click)="search('')">
+            <fa-icon icon="trash-alt"></fa-icon>
+          </button>
+        }
+      </div>
+    </div>
+  </form>
 
   @if (hymns?.length === 0) {
     <div class="alert alert-warning" id="no-result">
@@ -45,34 +71,94 @@
             <th scope="col" jhiSortBy="title">
               <div class="d-flex">
                 <span jhiTranslate="poimenApp.hymn.title">Title</span>
-
-                <fa-icon class="p-1" icon="sort"></fa-icon>
+                @if (!currentSearch) {
+                  <fa-icon class="p-1" icon="sort"></fa-icon>
+                }
               </div>
             </th>
-            <th scope="col" jhiSortBy="author">
+            <th scope="col" jhiSortBy="lyricsAuthor">
               <div class="d-flex">
-                <span jhiTranslate="poimenApp.hymn.author">Author</span>
-
-                <fa-icon class="p-1" icon="sort"></fa-icon>
+                <span jhiTranslate="poimenApp.hymn.lyricsAuthor">Lyrics Author</span>
+                @if (!currentSearch) {
+                  <fa-icon class="p-1" icon="sort"></fa-icon>
+                }
+              </div>
+            </th>
+            <th scope="col" jhiSortBy="musicAuthor">
+              <div class="d-flex">
+                <span jhiTranslate="poimenApp.hymn.musicAuthor">Music Author</span>
+                @if (!currentSearch) {
+                  <fa-icon class="p-1" icon="sort"></fa-icon>
+                }
+              </div>
+            </th>
+            <th scope="col" jhiSortBy="hymnary">
+              <div class="d-flex">
+                <span jhiTranslate="poimenApp.hymn.hymnary">Hymnary</span>
+                @if (!currentSearch) {
+                  <fa-icon class="p-1" icon="sort"></fa-icon>
+                }
               </div>
             </th>
             <th scope="col" jhiSortBy="hymnNumber">
               <div class="d-flex">
                 <span jhiTranslate="poimenApp.hymn.hymnNumber">Hymn Number</span>
-
-                <fa-icon class="p-1" icon="sort"></fa-icon>
+                @if (!currentSearch) {
+                  <fa-icon class="p-1" icon="sort"></fa-icon>
+                }
+              </div>
+            </th>
+            <th scope="col" jhiSortBy="link">
+              <div class="d-flex">
+                <span jhiTranslate="poimenApp.hymn.link">Link</span>
+                @if (!currentSearch) {
+                  <fa-icon class="p-1" icon="sort"></fa-icon>
+                }
+              </div>
+            </th>
+            <th scope="col" jhiSortBy="youtubeLink">
+              <div class="d-flex">
+                <span jhiTranslate="poimenApp.hymn.youtubeLink">Youtube Link</span>
+                @if (!currentSearch) {
+                  <fa-icon class="p-1" icon="sort"></fa-icon>
+                }
+              </div>
+            </th>
+            <th scope="col" jhiSortBy="sheetMusic">
+              <div class="d-flex">
+                <span jhiTranslate="poimenApp.hymn.sheetMusic">Sheet Music</span>
+                @if (!currentSearch) {
+                  <fa-icon class="p-1" icon="sort"></fa-icon>
+                }
+              </div>
+            </th>
+            <th scope="col" jhiSortBy="midi">
+              <div class="d-flex">
+                <span jhiTranslate="poimenApp.hymn.midi">Midi</span>
+                @if (!currentSearch) {
+                  <fa-icon class="p-1" icon="sort"></fa-icon>
+                }
+              </div>
+            </th>
+            <th scope="col" jhiSortBy="tone">
+              <div class="d-flex">
+                <span jhiTranslate="poimenApp.hymn.tone">Tone</span>
+                @if (!currentSearch) {
+                  <fa-icon class="p-1" icon="sort"></fa-icon>
+                }
               </div>
             </th>
             <th scope="col" jhiSortBy="lyrics">
               <div class="d-flex">
                 <span jhiTranslate="poimenApp.hymn.lyrics">Lyrics</span>
-
-                <fa-icon class="p-1" icon="sort"></fa-icon>
+                @if (!currentSearch) {
+                  <fa-icon class="p-1" icon="sort"></fa-icon>
+                }
               </div>
             </th>
-            <th scope="col" jhiSortBy="worshipEvent.id">
+            <th scope="col" jhiSortBy="services.title">
               <div class="d-flex">
-                <span jhiTranslate="poimenApp.hymn.worshipEvent">Worship Event</span>
+                <span jhiTranslate="poimenApp.hymn.services">Services</span>
                 <fa-icon class="p-1" icon="sort"></fa-icon>
               </div>
             </th>
@@ -86,13 +172,30 @@
                 <a [routerLink]="['/hymn', hymn.id, 'view']">{{ hymn.id }}</a>
               </td>
               <td>{{ hymn.title }}</td>
-              <td>{{ hymn.author }}</td>
+              <td>{{ hymn.lyricsAuthor }}</td>
+              <td>{{ hymn.musicAuthor }}</td>
+              <td>{{ hymn.hymnary }}</td>
               <td>{{ hymn.hymnNumber }}</td>
+              <td>{{ hymn.link }}</td>
+              <td>{{ hymn.youtubeLink }}</td>
+              <td>
+                @if (hymn.sheetMusic) {
+                  <a (click)="openFile(hymn.sheetMusic, hymn.sheetMusicContentType)" jhiTranslate="entity.action.open">Open</a>
+                  <span>{{ hymn.sheetMusicContentType }}, {{ byteSize(hymn.sheetMusic) }}</span>
+                }
+              </td>
+              <td>
+                @if (hymn.midi) {
+                  <a (click)="openFile(hymn.midi, hymn.midiContentType)" jhiTranslate="entity.action.open">Open</a>
+                  <span>{{ hymn.midiContentType }}, {{ byteSize(hymn.midi) }}</span>
+                }
+              </td>
+              <td>{{ hymn.tone }}</td>
               <td>{{ hymn.lyrics }}</td>
               <td>
-                @for (worshipEvent of hymn.worshipEvents; track $index; let last = $last) {
+                @for (services of hymn.services; track $index; let last = $last) {
                   <span>
-                    <a class="form-control-static" [routerLink]="['/worship-event', worshipEvent.id, 'view']">{{ worshipEvent.id }}</a
+                    <a class="form-control-static" [routerLink]="['/worship-event', services.id, 'view']">{{ services.title }}</a
                     >{{ last ? '' : ', ' }}
                   </span>
                 }

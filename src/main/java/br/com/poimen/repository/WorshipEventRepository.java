@@ -6,6 +6,7 @@ import java.util.Optional;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.*;
+import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
 /**
@@ -17,14 +18,30 @@ import org.springframework.stereotype.Repository;
 @Repository
 public interface WorshipEventRepository extends WorshipEventRepositoryWithBagRelationships, JpaRepository<WorshipEvent, Long> {
     default Optional<WorshipEvent> findOneWithEagerRelationships(Long id) {
-        return this.fetchBagRelationships(this.findById(id));
+        return this.fetchBagRelationships(this.findOneWithToOneRelationships(id));
     }
 
     default List<WorshipEvent> findAllWithEagerRelationships() {
-        return this.fetchBagRelationships(this.findAll());
+        return this.fetchBagRelationships(this.findAllWithToOneRelationships());
     }
 
     default Page<WorshipEvent> findAllWithEagerRelationships(Pageable pageable) {
-        return this.fetchBagRelationships(this.findAll(pageable));
+        return this.fetchBagRelationships(this.findAllWithToOneRelationships(pageable));
     }
+
+    @Query(
+        value = "select worshipEvent from WorshipEvent worshipEvent left join fetch worshipEvent.church left join fetch worshipEvent.preacher left join fetch worshipEvent.liturgist",
+        countQuery = "select count(worshipEvent) from WorshipEvent worshipEvent"
+    )
+    Page<WorshipEvent> findAllWithToOneRelationships(Pageable pageable);
+
+    @Query(
+        "select worshipEvent from WorshipEvent worshipEvent left join fetch worshipEvent.church left join fetch worshipEvent.preacher left join fetch worshipEvent.liturgist"
+    )
+    List<WorshipEvent> findAllWithToOneRelationships();
+
+    @Query(
+        "select worshipEvent from WorshipEvent worshipEvent left join fetch worshipEvent.church left join fetch worshipEvent.preacher left join fetch worshipEvent.liturgist where worshipEvent.id =:id"
+    )
+    Optional<WorshipEvent> findOneWithToOneRelationships(@Param("id") Long id);
 }

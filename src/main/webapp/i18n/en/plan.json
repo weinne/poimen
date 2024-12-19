@@ -6,6 +6,7 @@
         "refreshListLabel": "Refresh list",
         "createLabel": "Create a new Plan",
         "createOrEditLabel": "Create or edit a Plan",
+        "search": "Search for Plan",
         "notFound": "No Plans found"
       },
       "created": "A new Plan is created with identifier {{ param }}",
@@ -20,7 +21,10 @@
       "id": "ID",
       "name": "Name",
       "price": "Price",
-      "planSubscription": "Plan Subscription"
+      "description": "Description",
+      "features": "Features",
+      "renewalPeriod": "Renewal Period",
+      "subscription": "Subscription"
     }
   }
 }

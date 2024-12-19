@@ -53,10 +53,10 @@ describe('Invoice Management Update Component', () => {
   describe('ngOnInit', () => {
     it('Should call Church query and add missing value', () => {
       const invoice: IInvoice = { id: 456 };
-      const church: IChurch = { id: 13638 };
+      const church: IChurch = { id: 4602 };
       invoice.church = church;
 
-      const churchCollection: IChurch[] = [{ id: 27968 }];
+      const churchCollection: IChurch[] = [{ id: 15223 }];
       jest.spyOn(churchService, 'query').mockReturnValue(of(new HttpResponse({ body: churchCollection })));
       const additionalChurches = [church];
       const expectedCollection: IChurch[] = [...additionalChurches, ...churchCollection];
@@ -97,7 +97,7 @@ describe('Invoice Management Update Component', () => {
 
     it('Should update editForm', () => {
       const invoice: IInvoice = { id: 456 };
-      const church: IChurch = { id: 14242 };
+      const church: IChurch = { id: 7405 };
       invoice.church = church;
       const transaction: ITransaction = { id: 24896 };
       invoice.transaction = transaction;

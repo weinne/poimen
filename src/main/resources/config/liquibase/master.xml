@@ -17,55 +17,30 @@
     <property name="datetimeType" value="datetime" dbms="postgresql"/>
 
     <include file="config/liquibase/changelog/00000000000000_initial_schema.xml" relativeToChangelogFile="false"/>
-<!--     <include file="config/liquibase/changelog/20241216194333_added_entity_Church.xml" relativeToChangelogFile="false"/>
-    <include file="config/liquibase/changelog/20241216194334_added_entity_CounselingSession.xml" relativeToChangelogFile="false"/>
-    <include file="config/liquibase/changelog/20241216194335_added_entity_Hymn.xml" relativeToChangelogFile="false"/>
-    <include file="config/liquibase/changelog/20241216194336_added_entity_Invoice.xml" relativeToChangelogFile="false"/>
-    <include file="config/liquibase/changelog/20241216194337_added_entity_Member.xml" relativeToChangelogFile="false"/>
-    <include file="config/liquibase/changelog/20241216194338_added_entity_MinistryGroup.xml" relativeToChangelogFile="false"/>
-    <include file="config/liquibase/changelog/20241216194339_added_entity_MinistryMembership.xml" relativeToChangelogFile="false"/>
-    <include file="config/liquibase/changelog/20241216194340_added_entity_Plan.xml" relativeToChangelogFile="false"/>
-    <include file="config/liquibase/changelog/20241216194341_added_entity_PlanSubscription.xml" relativeToChangelogFile="false"/>
-    <include file="config/liquibase/changelog/20241216194342_added_entity_Schedule.xml" relativeToChangelogFile="false"/>
-    <include file="config/liquibase/changelog/20241216194343_added_entity_Task.xml" relativeToChangelogFile="false"/>
-    <include file="config/liquibase/changelog/20241216194344_added_entity_Transaction.xml" relativeToChangelogFile="false"/>
-    <include file="config/liquibase/changelog/20241216194345_added_entity_WorshipEvent.xml" relativeToChangelogFile="false"/> -->
-    <include file="config/liquibase/changelog/20241218011223_added_entity_Church.xml" relativeToChangelogFile="false"/>
-    <include file="config/liquibase/changelog/20241218011224_added_entity_CounselingSession.xml" relativeToChangelogFile="false"/>
-    <include file="config/liquibase/changelog/20241218011225_added_entity_Hymn.xml" relativeToChangelogFile="false"/>
-    <include file="config/liquibase/changelog/20241218011226_added_entity_Invoice.xml" relativeToChangelogFile="false"/>
-    <include file="config/liquibase/changelog/20241218011227_added_entity_Member.xml" relativeToChangelogFile="false"/>
-    <include file="config/liquibase/changelog/20241218011228_added_entity_MinistryGroup.xml" relativeToChangelogFile="false"/>
-    <include file="config/liquibase/changelog/20241218011229_added_entity_MinistryMembership.xml" relativeToChangelogFile="false"/>
-    <include file="config/liquibase/changelog/20241218011230_added_entity_Plan.xml" relativeToChangelogFile="false"/>
-    <include file="config/liquibase/changelog/20241218011231_added_entity_PlanSubscription.xml" relativeToChangelogFile="false"/>
-    <include file="config/liquibase/changelog/20241218011232_added_entity_Schedule.xml" relativeToChangelogFile="false"/>
-    <include file="config/liquibase/changelog/20241218011233_added_entity_Task.xml" relativeToChangelogFile="false"/>
-    <include file="config/liquibase/changelog/20241218011234_added_entity_Transaction.xml" relativeToChangelogFile="false"/>
-    <include file="config/liquibase/changelog/20241218011235_added_entity_WorshipEvent.xml" relativeToChangelogFile="false"/>
+    <include file="config/liquibase/changelog/20241219001241_added_entity_ApplicationUser.xml" relativeToChangelogFile="false"/>
+    <include file="config/liquibase/changelog/20241219001242_added_entity_Appointment.xml" relativeToChangelogFile="false"/>
+    <include file="config/liquibase/changelog/20241219001243_added_entity_Church.xml" relativeToChangelogFile="false"/>
+    <include file="config/liquibase/changelog/20241219001244_added_entity_CounselingSession.xml" relativeToChangelogFile="false"/>
+    <include file="config/liquibase/changelog/20241219001245_added_entity_Hymn.xml" relativeToChangelogFile="false"/>
+    <include file="config/liquibase/changelog/20241219001246_added_entity_Invoice.xml" relativeToChangelogFile="false"/>
+    <include file="config/liquibase/changelog/20241219001247_added_entity_Member.xml" relativeToChangelogFile="false"/>
+    <include file="config/liquibase/changelog/20241219001248_added_entity_MinistryGroup.xml" relativeToChangelogFile="false"/>
+    <include file="config/liquibase/changelog/20241219001249_added_entity_Plan.xml" relativeToChangelogFile="false"/>
+    <include file="config/liquibase/changelog/20241219001250_added_entity_PlanSubscription.xml" relativeToChangelogFile="false"/>
+    <include file="config/liquibase/changelog/20241219001251_added_entity_Task.xml" relativeToChangelogFile="false"/>
+    <include file="config/liquibase/changelog/20241219001252_added_entity_Transaction.xml" relativeToChangelogFile="false"/>
+    <include file="config/liquibase/changelog/20241219001253_added_entity_WorshipEvent.xml" relativeToChangelogFile="false"/>
     <!-- jhipster-needle-liquibase-add-changelog - JHipster will add liquibase changelogs here -->
-<!--     <include file="config/liquibase/changelog/20241216194333_added_entity_constraints_Church.xml" relativeToChangelogFile="false"/>
-    <include file="config/liquibase/changelog/20241216194334_added_entity_constraints_CounselingSession.xml" relativeToChangelogFile="false"/>
-    <include file="config/liquibase/changelog/20241216194336_added_entity_constraints_Invoice.xml" relativeToChangelogFile="false"/>
-    <include file="config/liquibase/changelog/20241216194337_added_entity_constraints_Member.xml" relativeToChangelogFile="false"/>
-    <include file="config/liquibase/changelog/20241216194338_added_entity_constraints_MinistryGroup.xml" relativeToChangelogFile="false"/>
-    <include file="config/liquibase/changelog/20241216194339_added_entity_constraints_MinistryMembership.xml" relativeToChangelogFile="false"/>
-    <include file="config/liquibase/changelog/20241216194341_added_entity_constraints_PlanSubscription.xml" relativeToChangelogFile="false"/>
-    <include file="config/liquibase/changelog/20241216194342_added_entity_constraints_Schedule.xml" relativeToChangelogFile="false"/>
-    <include file="config/liquibase/changelog/20241216194343_added_entity_constraints_Task.xml" relativeToChangelogFile="false"/>
-    <include file="config/liquibase/changelog/20241216194344_added_entity_constraints_Transaction.xml" relativeToChangelogFile="false"/>
-    <include file="config/liquibase/changelog/20241216194345_added_entity_constraints_WorshipEvent.xml" relativeToChangelogFile="false"/> -->
-    <include file="config/liquibase/changelog/20241218011223_added_entity_constraints_Church.xml" relativeToChangelogFile="false"/>
-    <include file="config/liquibase/changelog/20241218011224_added_entity_constraints_CounselingSession.xml" relativeToChangelogFile="false"/>
-    <include file="config/liquibase/changelog/20241218011226_added_entity_constraints_Invoice.xml" relativeToChangelogFile="false"/>
-    <include file="config/liquibase/changelog/20241218011227_added_entity_constraints_Member.xml" relativeToChangelogFile="false"/>
-    <include file="config/liquibase/changelog/20241218011228_added_entity_constraints_MinistryGroup.xml" relativeToChangelogFile="false"/>
-    <include file="config/liquibase/changelog/20241218011229_added_entity_constraints_MinistryMembership.xml" relativeToChangelogFile="false"/>
-    <include file="config/liquibase/changelog/20241218011231_added_entity_constraints_PlanSubscription.xml" relativeToChangelogFile="false"/>
-    <include file="config/liquibase/changelog/20241218011232_added_entity_constraints_Schedule.xml" relativeToChangelogFile="false"/>
-    <include file="config/liquibase/changelog/20241218011233_added_entity_constraints_Task.xml" relativeToChangelogFile="false"/>
-    <include file="config/liquibase/changelog/20241218011234_added_entity_constraints_Transaction.xml" relativeToChangelogFile="false"/>
-    <include file="config/liquibase/changelog/20241218011235_added_entity_constraints_WorshipEvent.xml" relativeToChangelogFile="false"/>
+    <include file="config/liquibase/changelog/20241219001241_added_entity_constraints_ApplicationUser.xml" relativeToChangelogFile="false"/>
+    <include file="config/liquibase/changelog/20241219001242_added_entity_constraints_Appointment.xml" relativeToChangelogFile="false"/>
+    <include file="config/liquibase/changelog/20241219001244_added_entity_constraints_CounselingSession.xml" relativeToChangelogFile="false"/>
+    <include file="config/liquibase/changelog/20241219001246_added_entity_constraints_Invoice.xml" relativeToChangelogFile="false"/>
+    <include file="config/liquibase/changelog/20241219001247_added_entity_constraints_Member.xml" relativeToChangelogFile="false"/>
+    <include file="config/liquibase/changelog/20241219001248_added_entity_constraints_MinistryGroup.xml" relativeToChangelogFile="false"/>
+    <include file="config/liquibase/changelog/20241219001250_added_entity_constraints_PlanSubscription.xml" relativeToChangelogFile="false"/>
+    <include file="config/liquibase/changelog/20241219001251_added_entity_constraints_Task.xml" relativeToChangelogFile="false"/>
+    <include file="config/liquibase/changelog/20241219001252_added_entity_constraints_Transaction.xml" relativeToChangelogFile="false"/>
+    <include file="config/liquibase/changelog/20241219001253_added_entity_constraints_WorshipEvent.xml" relativeToChangelogFile="false"/>
     <!-- jhipster-needle-liquibase-add-constraints-changelog - JHipster will add liquibase constraints changelogs here -->
     <!-- jhipster-needle-liquibase-add-incremental-changelog - JHipster will add incremental liquibase changelogs here -->
 </databaseChangeLog>

@@ -19,28 +19,66 @@
           </div>
         }
 
+        @let subjectRef = editForm.get('subject')!;
+        <div class="mb-3">
+          <label class="form-label" for="field_subject" jhiTranslate="poimenApp.counselingSession.subject">Subject</label>
+          <input type="text" class="form-control" name="subject" id="field_subject" data-cy="subject" formControlName="subject" />
+          @if (subjectRef.invalid && (subjectRef.dirty || subjectRef.touched)) {
+            <div>
+              @if (editForm.get('subject')?.errors?.required) {
+                <small class="form-text text-danger" jhiTranslate="entity.validation.required">This field is required.</small>
+              }
+            </div>
+          }
+        </div>
+
         @let dateRef = editForm.get('date')!;
         <div class="mb-3">
           <label class="form-label" for="field_date" jhiTranslate="poimenApp.counselingSession.date">Date</label>
-          <div class="d-flex">
+          <div class="input-group">
             <input
               id="field_date"
               data-cy="date"
-              type="datetime-local"
+              type="text"
               class="form-control"
               name="date"
+              ngbDatepicker
+              #dateDp="ngbDatepicker"
               formControlName="date"
-              placeholder="YYYY-MM-DD HH:mm"
             />
+            <button type="button" class="btn btn-secondary" (click)="dateDp.toggle()"><fa-icon icon="calendar-alt"></fa-icon></button>
           </div>
           @if (dateRef.invalid && (dateRef.dirty || dateRef.touched)) {
             <div>
               @if (editForm.get('date')?.errors?.required) {
                 <small class="form-text text-danger" jhiTranslate="entity.validation.required">This field is required.</small>
               }
+            </div>
+          }
+        </div>
+
+        @let startTimeRef = editForm.get('startTime')!;
+        <div class="mb-3">
+          <label class="form-label" for="field_startTime" jhiTranslate="poimenApp.counselingSession.startTime">Start Time</label>
+          <div class="d-flex">
+            <input
+              id="field_startTime"
+              data-cy="startTime"
+              type="datetime-local"
+              class="form-control"
+              name="startTime"
+              formControlName="startTime"
+              placeholder="YYYY-MM-DD HH:mm"
+            />
+          </div>
+          @if (startTimeRef.invalid && (startTimeRef.dirty || startTimeRef.touched)) {
+            <div>
+              @if (editForm.get('startTime')?.errors?.required) {
+                <small class="form-text text-danger" jhiTranslate="entity.validation.required">This field is required.</small>
+              }
               <small
                 class="form-text text-danger"
-                [hidden]="!editForm.get('date')?.errors?.datetimelocal"
+                [hidden]="!editForm.get('startTime')?.errors?.datetimelocal"
                 jhiTranslate="entity.validation.datetimelocal"
                 >This field should be a date and time.</small
               >
@@ -49,8 +87,54 @@
         </div>
 
         <div class="mb-3">
+          <label class="form-label" for="field_endTime" jhiTranslate="poimenApp.counselingSession.endTime">End Time</label>
+          <div class="d-flex">
+            <input
+              id="field_endTime"
+              data-cy="endTime"
+              type="datetime-local"
+              class="form-control"
+              name="endTime"
+              formControlName="endTime"
+              placeholder="YYYY-MM-DD HH:mm"
+            />
+          </div>
+        </div>
+
+        <div class="mb-3">
           <label class="form-label" for="field_notes" jhiTranslate="poimenApp.counselingSession.notes">Notes</label>
           <textarea class="form-control" name="notes" id="field_notes" data-cy="notes" formControlName="notes"></textarea>
+        </div>
+
+        <div class="mb-3">
+          <label class="form-label" for="field_counselingTasks" jhiTranslate="poimenApp.counselingSession.counselingTasks"
+            >Counseling Tasks</label
+          >
+          <textarea
+            class="form-control"
+            name="counselingTasks"
+            id="field_counselingTasks"
+            data-cy="counselingTasks"
+            formControlName="counselingTasks"
+          ></textarea>
+        </div>
+
+        @let statusRef = editForm.get('status')!;
+        <div class="mb-3">
+          <label class="form-label" for="field_status" jhiTranslate="poimenApp.counselingSession.status">Status</label>
+          <select class="form-control" name="status" formControlName="status" id="field_status" data-cy="status">
+            <option [ngValue]="null">{{ 'poimenApp.StatusCounseling.null' | translate }}</option>
+            @for (statusCounseling of statusCounselingValues; track $index) {
+              <option [value]="statusCounseling">{{ 'poimenApp.StatusCounseling.' + statusCounseling | translate }}</option>
+            }
+          </select>
+          @if (statusRef.invalid && (statusRef.dirty || statusRef.touched)) {
+            <div>
+              @if (editForm.get('status')?.errors?.required) {
+                <small class="form-text text-danger" jhiTranslate="entity.validation.required">This field is required.</small>
+              }
+            </div>
+          }
         </div>
 
         <div class="mb-3">
@@ -65,7 +149,7 @@
           >
             <option [ngValue]="null"></option>
             @for (churchOption of churchesSharedCollection; track $index) {
-              <option [ngValue]="churchOption">{{ churchOption.id }}</option>
+              <option [ngValue]="churchOption">{{ churchOption.name }}</option>
             }
           </select>
         </div>
@@ -82,17 +166,24 @@
           >
             <option [ngValue]="null"></option>
             @for (memberOption of membersSharedCollection; track $index) {
-              <option [ngValue]="memberOption">{{ memberOption.id }}</option>
+              <option [ngValue]="memberOption">{{ memberOption.name }}</option>
             }
           </select>
         </div>
 
         <div class="mb-3">
           <label class="form-label" for="field_user" jhiTranslate="poimenApp.counselingSession.user">User</label>
-          <select class="form-control" id="field_user" data-cy="user" name="user" formControlName="user" [compareWith]="compareUser">
+          <select
+            class="form-control"
+            id="field_user"
+            data-cy="user"
+            name="user"
+            formControlName="user"
+            [compareWith]="compareApplicationUser"
+          >
             <option [ngValue]="null"></option>
-            @for (userOption of usersSharedCollection; track $index) {
-              <option [ngValue]="userOption">{{ userOption.id }}</option>
+            @for (applicationUserOption of applicationUsersSharedCollection; track $index) {
+              <option [ngValue]="applicationUserOption">{{ applicationUserOption.name }}</option>
             }
           </select>
         </div>

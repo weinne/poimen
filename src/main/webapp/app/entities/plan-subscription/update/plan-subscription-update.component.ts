@@ -7,12 +7,15 @@ import { finalize, map } from 'rxjs/operators';
 import SharedModule from 'app/shared/shared.module';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 
-import { IPlan } from 'app/entities/plan/plan.model';
-import { PlanService } from 'app/entities/plan/service/plan.service';
 import { IChurch } from 'app/entities/church/church.model';
 import { ChurchService } from 'app/entities/church/service/church.service';
-import { IUser } from 'app/entities/user/user.model';
-import { UserService } from 'app/entities/user/service/user.service';
+import { IPlan } from 'app/entities/plan/plan.model';
+import { PlanService } from 'app/entities/plan/service/plan.service';
+import { IApplicationUser } from 'app/entities/application-user/application-user.model';
+import { ApplicationUserService } from 'app/entities/application-user/service/application-user.service';
+import { PlanSubscriptionStatus } from 'app/entities/enumerations/plan-subscription-status.model';
+import { PaymentProvider } from 'app/entities/enumerations/payment-provider.model';
+import { PaymentStatus } from 'app/entities/enumerations/payment-status.model';
 import { PlanSubscriptionService } from '../service/plan-subscription.service';
 import { IPlanSubscription } from '../plan-subscription.model';
 import { PlanSubscriptionFormGroup, PlanSubscriptionFormService } from './plan-subscription-form.service';
@@ -26,26 +29,30 @@ import { PlanSubscriptionFormGroup, PlanSubscriptionFormService } from './plan-s
 export class PlanSubscriptionUpdateComponent implements OnInit {
   isSaving = false;
   planSubscription: IPlanSubscription | null = null;
+  planSubscriptionStatusValues = Object.keys(PlanSubscriptionStatus);
+  paymentProviderValues = Object.keys(PaymentProvider);
+  paymentStatusValues = Object.keys(PaymentStatus);
 
-  plansSharedCollection: IPlan[] = [];
   churchesSharedCollection: IChurch[] = [];
-  usersSharedCollection: IUser[] = [];
+  plansSharedCollection: IPlan[] = [];
+  applicationUsersSharedCollection: IApplicationUser[] = [];
 
   protected planSubscriptionService = inject(PlanSubscriptionService);
   protected planSubscriptionFormService = inject(PlanSubscriptionFormService);
-  protected planService = inject(PlanService);
   protected churchService = inject(ChurchService);
-  protected userService = inject(UserService);
+  protected planService = inject(PlanService);
+  protected applicationUserService = inject(ApplicationUserService);
   protected activatedRoute = inject(ActivatedRoute);
 
   // eslint-disable-next-line @typescript-eslint/member-ordering
   editForm: PlanSubscriptionFormGroup = this.planSubscriptionFormService.createPlanSubscriptionFormGroup();
 
-  comparePlan = (o1: IPlan | null, o2: IPlan | null): boolean => this.planService.comparePlan(o1, o2);
-
   compareChurch = (o1: IChurch | null, o2: IChurch | null): boolean => this.churchService.compareChurch(o1, o2);
 
-  compareUser = (o1: IUser | null, o2: IUser | null): boolean => this.userService.compareUser(o1, o2);
+  comparePlan = (o1: IPlan | null, o2: IPlan | null): boolean => this.planService.comparePlan(o1, o2);
+
+  compareApplicationUser = (o1: IApplicationUser | null, o2: IApplicationUser | null): boolean =>
+    this.applicationUserService.compareApplicationUser(o1, o2);
 
   ngOnInit(): void {
     this.activatedRoute.data.subscribe(({ planSubscription }) => {
@@ -95,21 +102,18 @@ export class PlanSubscriptionUpdateComponent implements OnInit {
     this.planSubscription = planSubscription;
     this.planSubscriptionFormService.resetForm(this.editForm, planSubscription);
 
-    this.plansSharedCollection = this.planService.addPlanToCollectionIfMissing<IPlan>(this.plansSharedCollection, planSubscription.plan);
     this.churchesSharedCollection = this.churchService.addChurchToCollectionIfMissing<IChurch>(
       this.churchesSharedCollection,
       planSubscription.church,
     );
-    this.usersSharedCollection = this.userService.addUserToCollectionIfMissing<IUser>(this.usersSharedCollection, planSubscription.user);
+    this.plansSharedCollection = this.planService.addPlanToCollectionIfMissing<IPlan>(this.plansSharedCollection, planSubscription.plan);
+    this.applicationUsersSharedCollection = this.applicationUserService.addApplicationUserToCollectionIfMissing<IApplicationUser>(
+      this.applicationUsersSharedCollection,
+      planSubscription.user,
+    );
   }
 
   protected loadRelationshipsOptions(): void {
-    this.planService
-      .query()
-      .pipe(map((res: HttpResponse<IPlan[]>) => res.body ?? []))
-      .pipe(map((plans: IPlan[]) => this.planService.addPlanToCollectionIfMissing<IPlan>(plans, this.planSubscription?.plan)))
-      .subscribe((plans: IPlan[]) => (this.plansSharedCollection = plans));
-
     this.churchService
       .query()
       .pipe(map((res: HttpResponse<IChurch[]>) => res.body ?? []))
@@ -118,10 +122,23 @@ export class PlanSubscriptionUpdateComponent implements OnInit {
       )
       .subscribe((churches: IChurch[]) => (this.churchesSharedCollection = churches));
 
-    this.userService
+    this.planService
       .query()
-      .pipe(map((res: HttpResponse<IUser[]>) => res.body ?? []))
-      .pipe(map((users: IUser[]) => this.userService.addUserToCollectionIfMissing<IUser>(users, this.planSubscription?.user)))
-      .subscribe((users: IUser[]) => (this.usersSharedCollection = users));
+      .pipe(map((res: HttpResponse<IPlan[]>) => res.body ?? []))
+      .pipe(map((plans: IPlan[]) => this.planService.addPlanToCollectionIfMissing<IPlan>(plans, this.planSubscription?.plan)))
+      .subscribe((plans: IPlan[]) => (this.plansSharedCollection = plans));
+
+    this.applicationUserService
+      .query()
+      .pipe(map((res: HttpResponse<IApplicationUser[]>) => res.body ?? []))
+      .pipe(
+        map((applicationUsers: IApplicationUser[]) =>
+          this.applicationUserService.addApplicationUserToCollectionIfMissing<IApplicationUser>(
+            applicationUsers,
+            this.planSubscription?.user,
+          ),
+        ),
+      )
+      .subscribe((applicationUsers: IApplicationUser[]) => (this.applicationUsersSharedCollection = applicationUsers));
   }
 }

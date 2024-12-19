@@ -19,23 +19,61 @@
           <dd>
             <span>{{ hymnRef.title }}</span>
           </dd>
-          <dt><span jhiTranslate="poimenApp.hymn.author">Author</span></dt>
+          <dt><span jhiTranslate="poimenApp.hymn.lyricsAuthor">Lyrics Author</span></dt>
           <dd>
-            <span>{{ hymnRef.author }}</span>
+            <span>{{ hymnRef.lyricsAuthor }}</span>
+          </dd>
+          <dt><span jhiTranslate="poimenApp.hymn.musicAuthor">Music Author</span></dt>
+          <dd>
+            <span>{{ hymnRef.musicAuthor }}</span>
+          </dd>
+          <dt><span jhiTranslate="poimenApp.hymn.hymnary">Hymnary</span></dt>
+          <dd>
+            <span>{{ hymnRef.hymnary }}</span>
           </dd>
           <dt><span jhiTranslate="poimenApp.hymn.hymnNumber">Hymn Number</span></dt>
           <dd>
             <span>{{ hymnRef.hymnNumber }}</span>
           </dd>
+          <dt><span jhiTranslate="poimenApp.hymn.link">Link</span></dt>
+          <dd>
+            <span>{{ hymnRef.link }}</span>
+          </dd>
+          <dt><span jhiTranslate="poimenApp.hymn.youtubeLink">Youtube Link</span></dt>
+          <dd>
+            <span>{{ hymnRef.youtubeLink }}</span>
+          </dd>
+          <dt><span jhiTranslate="poimenApp.hymn.sheetMusic">Sheet Music</span></dt>
+          <dd>
+            @if (hymnRef.sheetMusic) {
+              <div>
+                <a (click)="openFile(hymnRef.sheetMusic ?? '', hymnRef.sheetMusicContentType)" jhiTranslate="entity.action.open">Open</a>
+                {{ hymnRef.sheetMusicContentType }}, {{ byteSize(hymnRef.sheetMusic ?? '') }}
+              </div>
+            }
+          </dd>
+          <dt><span jhiTranslate="poimenApp.hymn.midi">Midi</span></dt>
+          <dd>
+            @if (hymnRef.midi) {
+              <div>
+                <a (click)="openFile(hymnRef.midi ?? '', hymnRef.midiContentType)" jhiTranslate="entity.action.open">Open</a>
+                {{ hymnRef.midiContentType }}, {{ byteSize(hymnRef.midi ?? '') }}
+              </div>
+            }
+          </dd>
+          <dt><span jhiTranslate="poimenApp.hymn.tone">Tone</span></dt>
+          <dd>
+            <span>{{ hymnRef.tone }}</span>
+          </dd>
           <dt><span jhiTranslate="poimenApp.hymn.lyrics">Lyrics</span></dt>
           <dd>
             <span>{{ hymnRef.lyrics }}</span>
           </dd>
-          <dt><span jhiTranslate="poimenApp.hymn.worshipEvent">Worship Event</span></dt>
+          <dt><span jhiTranslate="poimenApp.hymn.services">Services</span></dt>
           <dd>
-            @for (worshipEvent of hymnRef.worshipEvents; track $index; let last = $last) {
+            @for (services of hymnRef.services; track $index; let last = $last) {
               <span>
-                <a [routerLink]="['/worship-event', worshipEvent.id, 'view']">{{ worshipEvent?.id }}</a
+                <a [routerLink]="['/worship-event', services.id, 'view']">{{ services?.title }}</a
                 >{{ last ? '' : ', ' }}
               </span>
             }

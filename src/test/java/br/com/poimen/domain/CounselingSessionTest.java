@@ -1,11 +1,15 @@
 package br.com.poimen.domain;
 
+import static br.com.poimen.domain.ApplicationUserTestSamples.*;
+import static br.com.poimen.domain.AppointmentTestSamples.*;
 import static br.com.poimen.domain.ChurchTestSamples.*;
 import static br.com.poimen.domain.CounselingSessionTestSamples.*;
 import static br.com.poimen.domain.MemberTestSamples.*;
 import static org.assertj.core.api.Assertions.assertThat;
 
 import br.com.poimen.web.rest.TestUtil;
+import java.util.HashSet;
+import java.util.Set;
 import org.junit.jupiter.api.Test;
 
 class CounselingSessionTest {
@@ -46,5 +50,39 @@ class CounselingSessionTest {
 
         counselingSession.member(null);
         assertThat(counselingSession.getMember()).isNull();
+    }
+
+    @Test
+    void userTest() {
+        CounselingSession counselingSession = getCounselingSessionRandomSampleGenerator();
+        ApplicationUser applicationUserBack = getApplicationUserRandomSampleGenerator();
+
+        counselingSession.setUser(applicationUserBack);
+        assertThat(counselingSession.getUser()).isEqualTo(applicationUserBack);
+
+        counselingSession.user(null);
+        assertThat(counselingSession.getUser()).isNull();
+    }
+
+    @Test
+    void appointmentTest() {
+        CounselingSession counselingSession = getCounselingSessionRandomSampleGenerator();
+        Appointment appointmentBack = getAppointmentRandomSampleGenerator();
+
+        counselingSession.addAppointment(appointmentBack);
+        assertThat(counselingSession.getAppointments()).containsOnly(appointmentBack);
+        assertThat(appointmentBack.getCounselingSession()).isEqualTo(counselingSession);
+
+        counselingSession.removeAppointment(appointmentBack);
+        assertThat(counselingSession.getAppointments()).doesNotContain(appointmentBack);
+        assertThat(appointmentBack.getCounselingSession()).isNull();
+
+        counselingSession.appointments(new HashSet<>(Set.of(appointmentBack)));
+        assertThat(counselingSession.getAppointments()).containsOnly(appointmentBack);
+        assertThat(appointmentBack.getCounselingSession()).isEqualTo(counselingSession);
+
+        counselingSession.setAppointments(new HashSet<>());
+        assertThat(counselingSession.getAppointments()).doesNotContain(appointmentBack);
+        assertThat(appointmentBack.getCounselingSession()).isNull();
     }
 }

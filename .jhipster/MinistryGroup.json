@@ -1,6 +1,6 @@
 {
   "annotations": {
-    "changelogDate": "20241218011228"
+    "changelogDate": "20241219001248"
   },
   "applications": "*",
   "fields": [
@@ -15,23 +15,20 @@
     },
     {
       "fieldName": "establishedDate",
-      "fieldType": "Instant"
-    },
-    {
-      "fieldName": "leader",
-      "fieldType": "String"
+      "fieldType": "LocalDate"
     },
     {
       "fieldName": "type",
       "fieldType": "GroupType",
       "fieldValidateRules": ["required"],
-      "fieldValues": "DEPARTMENT,INTERNAL_SOCIETY,DEACON_BOARD,CHURCH_COUNCIL"
+      "fieldValues": "DEPARTMENT (Department),INTERNAL_SOCIETY (Internal Society),DEACON_BOARD (Deacon Board),CHURCH_COUNCIL (Church Council)"
     }
   ],
   "name": "MinistryGroup",
   "pagination": "pagination",
   "relationships": [
     {
+      "otherEntityField": "name",
       "otherEntityName": "church",
       "otherEntityRelationshipName": "ministryGroup",
       "relationshipName": "church",
@@ -39,13 +36,37 @@
       "relationshipType": "many-to-one"
     },
     {
-      "otherEntityName": "ministryMembership",
-      "otherEntityRelationshipName": "ministryGroup",
-      "relationshipName": "ministryMembership",
+      "otherEntityField": "name",
+      "otherEntityName": "member",
+      "otherEntityRelationshipName": "presidentOf",
+      "relationshipName": "president",
+      "relationshipSide": "left",
+      "relationshipType": "many-to-one"
+    },
+    {
+      "otherEntityField": "name",
+      "otherEntityName": "member",
+      "otherEntityRelationshipName": "supervisorOf",
+      "relationshipName": "supervisor",
+      "relationshipSide": "left",
+      "relationshipType": "many-to-one"
+    },
+    {
+      "otherEntityField": "name",
+      "otherEntityName": "member",
+      "otherEntityRelationshipName": "memberOf",
+      "relationshipName": "members",
+      "relationshipSide": "left",
+      "relationshipType": "many-to-many"
+    },
+    {
+      "otherEntityField": "subject",
+      "otherEntityName": "appointment",
+      "otherEntityRelationshipName": "group",
+      "relationshipName": "appointment",
       "relationshipSide": "right",
       "relationshipType": "one-to-many"
     }
   ],
-  "searchEngine": "no",
   "service": "serviceClass"
 }

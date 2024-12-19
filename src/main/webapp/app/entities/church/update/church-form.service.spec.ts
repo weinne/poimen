@@ -25,7 +25,14 @@ describe('Church Form Service', () => {
             address: expect.any(Object),
             city: expect.any(Object),
             dateFoundation: expect.any(Object),
-            users: expect.any(Object),
+            phone: expect.any(Object),
+            email: expect.any(Object),
+            website: expect.any(Object),
+            facebook: expect.any(Object),
+            instagram: expect.any(Object),
+            twitter: expect.any(Object),
+            youtube: expect.any(Object),
+            about: expect.any(Object),
           }),
         );
       });
@@ -41,7 +48,14 @@ describe('Church Form Service', () => {
             address: expect.any(Object),
             city: expect.any(Object),
             dateFoundation: expect.any(Object),
-            users: expect.any(Object),
+            phone: expect.any(Object),
+            email: expect.any(Object),
+            website: expect.any(Object),
+            facebook: expect.any(Object),
+            instagram: expect.any(Object),
+            twitter: expect.any(Object),
+            youtube: expect.any(Object),
+            about: expect.any(Object),
           }),
         );
       });

@@ -9,10 +9,11 @@ import { SortByDirective, SortDirective, SortService, type SortState, sortStateS
 import { DurationPipe, FormatMediumDatePipe, FormatMediumDatetimePipe } from 'app/shared/date';
 import { ItemCountComponent } from 'app/shared/pagination';
 import { FormsModule } from '@angular/forms';
-
 import { ITEMS_PER_PAGE, PAGE_HEADER, TOTAL_COUNT_RESPONSE_HEADER } from 'app/config/pagination.constants';
 import { DEFAULT_SORT_DATA, ITEM_DELETED_EVENT, SORT } from 'app/config/navigation.constants';
+import { DataUtils } from 'app/core/util/data-util.service';
 import { IInvoice } from '../invoice.model';
+
 import { EntityArrayResponseType, InvoiceService } from '../service/invoice.service';
 import { InvoiceDeleteDialogComponent } from '../delete/invoice-delete-dialog.component';
 
@@ -33,11 +34,14 @@ import { InvoiceDeleteDialogComponent } from '../delete/invoice-delete-dialog.co
   ],
 })
 export class InvoiceComponent implements OnInit {
+  private static readonly NOT_SORTABLE_FIELDS_AFTER_SEARCH = ['number', 'type', 'supplier', 'invoiceFile'];
+
   subscription: Subscription | null = null;
   invoices?: IInvoice[];
   isLoading = false;
 
   sortState = sortStateSignal({});
+  currentSearch = '';
 
   itemsPerPage = ITEMS_PER_PAGE;
   totalItems = 0;
@@ -47,6 +51,7 @@ export class InvoiceComponent implements OnInit {
   protected readonly invoiceService = inject(InvoiceService);
   protected readonly activatedRoute = inject(ActivatedRoute);
   protected readonly sortService = inject(SortService);
+  protected dataUtils = inject(DataUtils);
   protected modalService = inject(NgbModal);
   protected ngZone = inject(NgZone);
 
@@ -59,6 +64,28 @@ export class InvoiceComponent implements OnInit {
         tap(() => this.load()),
       )
       .subscribe();
+  }
+
+  search(query: string): void {
+    const { predicate } = this.sortState();
+    if (query && predicate && InvoiceComponent.NOT_SORTABLE_FIELDS_AFTER_SEARCH.includes(predicate)) {
+      this.loadDefaultSortState();
+    }
+    this.page = 1;
+    this.currentSearch = query;
+    this.navigateToWithComponentValues(this.sortState());
+  }
+
+  loadDefaultSortState(): void {
+    this.sortState.set(this.sortService.parseSortParam(this.activatedRoute.snapshot.data[DEFAULT_SORT_DATA]));
+  }
+
+  byteSize(base64String: string): string {
+    return this.dataUtils.byteSize(base64String);
+  }
+
+  openFile(base64String: string, contentType: string | null | undefined): void {
+    return this.dataUtils.openFile(base64String, contentType);
   }
 
   delete(invoice: IInvoice): void {
@@ -82,17 +109,24 @@ export class InvoiceComponent implements OnInit {
   }
 
   navigateToWithComponentValues(event: SortState): void {
-    this.handleNavigation(this.page, event);
+    this.handleNavigation(this.page, event, this.currentSearch);
   }
 
   navigateToPage(page: number): void {
-    this.handleNavigation(page, this.sortState());
+    this.handleNavigation(page, this.sortState(), this.currentSearch);
   }
 
   protected fillComponentAttributeFromRoute(params: ParamMap, data: Data): void {
     const page = params.get(PAGE_HEADER);
     this.page = +(page ?? 1);
     this.sortState.set(this.sortService.parseSortParam(params.get(SORT) ?? data[DEFAULT_SORT_DATA]));
+    if (params.has('search') && params.get('search') !== '') {
+      this.currentSearch = params.get('search') as string;
+      const { predicate } = this.sortState();
+      if (predicate && InvoiceComponent.NOT_SORTABLE_FIELDS_AFTER_SEARCH.includes(predicate)) {
+        this.sortState.set({});
+      }
+    }
   }
 
   protected onResponseSuccess(response: EntityArrayResponseType): void {
@@ -110,20 +144,26 @@ export class InvoiceComponent implements OnInit {
   }
 
   protected queryBackend(): Observable<EntityArrayResponseType> {
-    const { page } = this;
+    const { page, currentSearch } = this;
 
     this.isLoading = true;
     const pageToLoad: number = page;
     const queryObject: any = {
       page: pageToLoad - 1,
       size: this.itemsPerPage,
+      eagerload: true,
+      query: currentSearch,
       sort: this.sortService.buildSortParam(this.sortState()),
     };
+    if (this.currentSearch && this.currentSearch !== '') {
+      return this.invoiceService.search(queryObject).pipe(tap(() => (this.isLoading = false)));
+    }
     return this.invoiceService.query(queryObject).pipe(tap(() => (this.isLoading = false)));
   }
 
-  protected handleNavigation(page: number, sortState: SortState): void {
+  protected handleNavigation(page: number, sortState: SortState, currentSearch?: string): void {
     const queryParamsObj = {
+      search: currentSearch,
       page,
       size: this.itemsPerPage,
       sort: this.sortService.buildSortParam(sortState),

@@ -1,8 +1,6 @@
 import { Injectable } from '@angular/core';
 import { FormControl, FormGroup, Validators } from '@angular/forms';
 
-import dayjs from 'dayjs/esm';
-import { DATE_TIME_FORMAT } from 'app/config/input.constants';
 import { ITask, NewTask } from '../task.model';
 
 /**
@@ -16,28 +14,19 @@ type PartialWithRequiredKeyOf<T extends { id: unknown }> = Partial<Omit<T, 'id'>
  */
 type TaskFormGroupInput = ITask | PartialWithRequiredKeyOf<NewTask>;
 
-/**
- * Type that converts some properties for forms.
- */
-type FormValueOf<T extends ITask | NewTask> = Omit<T, 'dueDate'> & {
-  dueDate?: string | null;
-};
-
-type TaskFormRawValue = FormValueOf<ITask>;
-
-type NewTaskFormRawValue = FormValueOf<NewTask>;
-
-type TaskFormDefaults = Pick<NewTask, 'id' | 'dueDate' | 'completed'>;
+type TaskFormDefaults = Pick<NewTask, 'id'>;
 
 type TaskFormGroupContent = {
-  id: FormControl<TaskFormRawValue['id'] | NewTask['id']>;
-  title: FormControl<TaskFormRawValue['title']>;
-  description: FormControl<TaskFormRawValue['description']>;
-  dueDate: FormControl<TaskFormRawValue['dueDate']>;
-  completed: FormControl<TaskFormRawValue['completed']>;
-  church: FormControl<TaskFormRawValue['church']>;
-  member: FormControl<TaskFormRawValue['member']>;
-  user: FormControl<TaskFormRawValue['user']>;
+  id: FormControl<ITask['id'] | NewTask['id']>;
+  title: FormControl<ITask['title']>;
+  description: FormControl<ITask['description']>;
+  dueDate: FormControl<ITask['dueDate']>;
+  status: FormControl<ITask['status']>;
+  priority: FormControl<ITask['priority']>;
+  notes: FormControl<ITask['notes']>;
+  church: FormControl<ITask['church']>;
+  member: FormControl<ITask['member']>;
+  user: FormControl<ITask['user']>;
 };
 
 export type TaskFormGroup = FormGroup<TaskFormGroupContent>;
@@ -45,10 +34,10 @@ export type TaskFormGroup = FormGroup<TaskFormGroupContent>;
 @Injectable({ providedIn: 'root' })
 export class TaskFormService {
   createTaskFormGroup(task: TaskFormGroupInput = { id: null }): TaskFormGroup {
-    const taskRawValue = this.convertTaskToTaskRawValue({
+    const taskRawValue = {
       ...this.getFormDefaults(),
       ...task,
-    });
+    };
     return new FormGroup<TaskFormGroupContent>({
       id: new FormControl(
         { value: taskRawValue.id, disabled: true },
@@ -62,7 +51,13 @@ export class TaskFormService {
       }),
       description: new FormControl(taskRawValue.description),
       dueDate: new FormControl(taskRawValue.dueDate),
-      completed: new FormControl(taskRawValue.completed),
+      status: new FormControl(taskRawValue.status, {
+        validators: [Validators.required],
+      }),
+      priority: new FormControl(taskRawValue.priority, {
+        validators: [Validators.required],
+      }),
+      notes: new FormControl(taskRawValue.notes),
       church: new FormControl(taskRawValue.church),
       member: new FormControl(taskRawValue.member),
       user: new FormControl(taskRawValue.user),
@@ -70,11 +65,11 @@ export class TaskFormService {
   }
 
   getTask(form: TaskFormGroup): ITask | NewTask {
-    return this.convertTaskRawValueToTask(form.getRawValue() as TaskFormRawValue | NewTaskFormRawValue);
+    return form.getRawValue() as ITask | NewTask;
   }
 
   resetForm(form: TaskFormGroup, task: TaskFormGroupInput): void {
-    const taskRawValue = this.convertTaskToTaskRawValue({ ...this.getFormDefaults(), ...task });
+    const taskRawValue = { ...this.getFormDefaults(), ...task };
     form.reset(
       {
         ...taskRawValue,
@@ -84,28 +79,8 @@ export class TaskFormService {
   }
 
   private getFormDefaults(): TaskFormDefaults {
-    const currentTime = dayjs();
-
     return {
       id: null,
-      dueDate: currentTime,
-      completed: false,
-    };
-  }
-
-  private convertTaskRawValueToTask(rawTask: TaskFormRawValue | NewTaskFormRawValue): ITask | NewTask {
-    return {
-      ...rawTask,
-      dueDate: dayjs(rawTask.dueDate, DATE_TIME_FORMAT),
-    };
-  }
-
-  private convertTaskToTaskRawValue(
-    task: ITask | (Partial<NewTask> & TaskFormDefaults),
-  ): TaskFormRawValue | PartialWithRequiredKeyOf<NewTaskFormRawValue> {
-    return {
-      ...task,
-      dueDate: task.dueDate ? task.dueDate.format(DATE_TIME_FORMAT) : undefined,
     };
   }
 }

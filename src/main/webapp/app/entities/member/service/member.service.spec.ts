@@ -2,6 +2,7 @@ import { TestBed } from '@angular/core/testing';
 import { HttpTestingController, provideHttpClientTesting } from '@angular/common/http/testing';
 import { provideHttpClient } from '@angular/common/http';
 
+import { DATE_FORMAT } from 'app/config/input.constants';
 import { IMember } from '../member.model';
 import { sampleWithFullData, sampleWithNewData, sampleWithPartialData, sampleWithRequiredData } from '../member.test-samples';
 
@@ -9,7 +10,12 @@ import { MemberService, RestMember } from './member.service';
 
 const requireRestSample: RestMember = {
   ...sampleWithRequiredData,
-  dateOfBirth: sampleWithRequiredData.dateOfBirth?.toJSON(),
+  dateOfBirth: sampleWithRequiredData.dateOfBirth?.format(DATE_FORMAT),
+  dateOfMarriage: sampleWithRequiredData.dateOfMarriage?.format(DATE_FORMAT),
+  dateOfBaptism: sampleWithRequiredData.dateOfBaptism?.format(DATE_FORMAT),
+  dateOfMembership: sampleWithRequiredData.dateOfMembership?.format(DATE_FORMAT),
+  dateOfDeath: sampleWithRequiredData.dateOfDeath?.format(DATE_FORMAT),
+  dateOfExit: sampleWithRequiredData.dateOfExit?.format(DATE_FORMAT),
 };
 
 describe('Member Service', () => {
@@ -95,6 +101,20 @@ describe('Member Service', () => {
       const req = httpMock.expectOne({ method: 'DELETE' });
       req.flush({ status: 200 });
       expect(expectedResult).toBe(expected);
+    });
+
+    it('should handle exceptions for searching a Member', () => {
+      const queryObject: any = {
+        page: 0,
+        size: 20,
+        query: '',
+        sort: [],
+      };
+      service.search(queryObject).subscribe(() => expectedResult);
+
+      const req = httpMock.expectOne({ method: 'GET' });
+      req.flush(null, { status: 500, statusText: 'Internal Server Error' });
+      expect(expectedResult).toBe(null);
     });
 
     describe('addMemberToCollectionIfMissing', () => {

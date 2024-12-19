@@ -23,20 +23,86 @@
           <dd>
             <span>{{ worshipEventRef.title }}</span>
           </dd>
+          <dt><span jhiTranslate="poimenApp.worshipEvent.guestPreacher">Guest Preacher</span></dt>
+          <dd>
+            <span>{{ worshipEventRef.guestPreacher }}</span>
+          </dd>
           <dt><span jhiTranslate="poimenApp.worshipEvent.description">Description</span></dt>
           <dd>
             <span>{{ worshipEventRef.description }}</span>
+          </dd>
+          <dt><span jhiTranslate="poimenApp.worshipEvent.callToWorshipText">Call To Worship Text</span></dt>
+          <dd>
+            <span>{{ worshipEventRef.callToWorshipText }}</span>
+          </dd>
+          <dt><span jhiTranslate="poimenApp.worshipEvent.confessionOfSinText">Confession Of Sin Text</span></dt>
+          <dd>
+            <span>{{ worshipEventRef.confessionOfSinText }}</span>
+          </dd>
+          <dt><span jhiTranslate="poimenApp.worshipEvent.assuranceOfPardonText">Assurance Of Pardon Text</span></dt>
+          <dd>
+            <span>{{ worshipEventRef.assuranceOfPardonText }}</span>
+          </dd>
+          <dt><span jhiTranslate="poimenApp.worshipEvent.lordSupperText">Lord Supper Text</span></dt>
+          <dd>
+            <span>{{ worshipEventRef.lordSupperText }}</span>
+          </dd>
+          <dt><span jhiTranslate="poimenApp.worshipEvent.benedictionText">Benediction Text</span></dt>
+          <dd>
+            <span>{{ worshipEventRef.benedictionText }}</span>
+          </dd>
+          <dt><span jhiTranslate="poimenApp.worshipEvent.confessionalText">Confessional Text</span></dt>
+          <dd>
+            <span>{{ worshipEventRef.confessionalText }}</span>
+          </dd>
+          <dt><span jhiTranslate="poimenApp.worshipEvent.sermonText">Sermon Text</span></dt>
+          <dd>
+            <span>{{ worshipEventRef.sermonText }}</span>
+          </dd>
+          <dt><span jhiTranslate="poimenApp.worshipEvent.sermonFile">Sermon File</span></dt>
+          <dd>
+            @if (worshipEventRef.sermonFile) {
+              <div>
+                <a
+                  (click)="openFile(worshipEventRef.sermonFile ?? '', worshipEventRef.sermonFileContentType)"
+                  jhiTranslate="entity.action.open"
+                  >Open</a
+                >
+                {{ worshipEventRef.sermonFileContentType }}, {{ byteSize(worshipEventRef.sermonFile ?? '') }}
+              </div>
+            }
+          </dd>
+          <dt><span jhiTranslate="poimenApp.worshipEvent.sermonLink">Sermon Link</span></dt>
+          <dd>
+            <span>{{ worshipEventRef.sermonLink }}</span>
+          </dd>
+          <dt><span jhiTranslate="poimenApp.worshipEvent.youtubeLink">Youtube Link</span></dt>
+          <dd>
+            <span>{{ worshipEventRef.youtubeLink }}</span>
+          </dd>
+          <dt><span jhiTranslate="poimenApp.worshipEvent.bulletinFile">Bulletin File</span></dt>
+          <dd>
+            @if (worshipEventRef.bulletinFile) {
+              <div>
+                <a
+                  (click)="openFile(worshipEventRef.bulletinFile ?? '', worshipEventRef.bulletinFileContentType)"
+                  jhiTranslate="entity.action.open"
+                  >Open</a
+                >
+                {{ worshipEventRef.bulletinFileContentType }}, {{ byteSize(worshipEventRef.bulletinFile ?? '') }}
+              </div>
+            }
           </dd>
           <dt><span jhiTranslate="poimenApp.worshipEvent.worshipType">Worship Type</span></dt>
           <dd>
             <span [jhiTranslate]="'poimenApp.WorshipType.' + (worshipEventRef.worshipType ?? 'null')">{{
               {
                 null: '',
-                SUNDAY_SERVICE: 'SUNDAY_SERVICE',
-                PRAYER_MEETING: 'PRAYER_MEETING',
-                BIBLE_STUDY: 'BIBLE_STUDY',
-                YOUTH_SERVICE: 'YOUTH_SERVICE',
-                SPECIAL_EVENT: 'SPECIAL_EVENT',
+                SUNDAY_SERVICE: 'Sunday Service',
+                PRAYER_MEETING: 'Prayer Meeting',
+                BIBLE_STUDY: 'Bible Study',
+                SPECIAL_EVENT: 'Special Event',
+                OTHER: 'Other',
               }[worshipEventRef.worshipType ?? 'null']
             }}</span>
           </dd>
@@ -44,7 +110,7 @@
           <dd>
             @if (worshipEvent()!.church) {
               <div>
-                <a [routerLink]="['/church', worshipEvent()!.church?.id, 'view']">{{ worshipEventRef.church?.id }}</a>
+                <a [routerLink]="['/church', worshipEvent()!.church?.id, 'view']">{{ worshipEventRef.church?.name }}</a>
               </div>
             }
           </dd>
@@ -52,7 +118,7 @@
           <dd>
             @if (worshipEvent()!.preacher) {
               <div>
-                <a [routerLink]="['/member', worshipEvent()!.preacher?.id, 'view']">{{ worshipEventRef.preacher?.id }}</a>
+                <a [routerLink]="['/member', worshipEvent()!.preacher?.id, 'view']">{{ worshipEventRef.preacher?.name }}</a>
               </div>
             }
           </dd>
@@ -60,15 +126,15 @@
           <dd>
             @if (worshipEvent()!.liturgist) {
               <div>
-                <a [routerLink]="['/member', worshipEvent()!.liturgist?.id, 'view']">{{ worshipEventRef.liturgist?.id }}</a>
+                <a [routerLink]="['/member', worshipEvent()!.liturgist?.id, 'view']">{{ worshipEventRef.liturgist?.name }}</a>
               </div>
             }
           </dd>
-          <dt><span jhiTranslate="poimenApp.worshipEvent.hymn">Hymn</span></dt>
+          <dt><span jhiTranslate="poimenApp.worshipEvent.hymns">Hymns</span></dt>
           <dd>
-            @for (hymn of worshipEventRef.hymns; track $index; let last = $last) {
+            @for (hymns of worshipEventRef.hymns; track $index; let last = $last) {
               <span>
-                <a [routerLink]="['/hymn', hymn.id, 'view']">{{ hymn?.id }}</a
+                <a [routerLink]="['/hymn', hymns.id, 'view']">{{ hymns?.title }}</a
                 >{{ last ? '' : ', ' }}
               </span>
             }
@@ -77,7 +143,16 @@
           <dd>
             @for (musicians of worshipEventRef.musicians; track $index; let last = $last) {
               <span>
-                <a [routerLink]="['/member', musicians.id, 'view']">{{ musicians?.id }}</a
+                <a [routerLink]="['/member', musicians.id, 'view']">{{ musicians?.name }}</a
+                >{{ last ? '' : ', ' }}
+              </span>
+            }
+          </dd>
+          <dt><span jhiTranslate="poimenApp.worshipEvent.participants">Participants</span></dt>
+          <dd>
+            @for (participants of worshipEventRef.participants; track $index; let last = $last) {
+              <span>
+                <a [routerLink]="['/member', participants.id, 'view']">{{ participants?.name }}</a
                 >{{ last ? '' : ', ' }}
               </span>
             }

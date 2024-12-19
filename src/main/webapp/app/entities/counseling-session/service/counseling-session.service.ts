@@ -1,18 +1,24 @@
 import { Injectable, inject } from '@angular/core';
 import { HttpClient, HttpResponse } from '@angular/common/http';
-import { Observable, map } from 'rxjs';
+import { Observable, asapScheduler, map, scheduled } from 'rxjs';
+
+import { catchError } from 'rxjs/operators';
 
 import dayjs from 'dayjs/esm';
 
 import { isPresent } from 'app/core/util/operators';
+import { DATE_FORMAT } from 'app/config/input.constants';
 import { ApplicationConfigService } from 'app/core/config/application-config.service';
 import { createRequestOption } from 'app/core/request/request-util';
+import { SearchWithPagination } from 'app/core/request/request.model';
 import { ICounselingSession, NewCounselingSession } from '../counseling-session.model';
 
 export type PartialUpdateCounselingSession = Partial<ICounselingSession> & Pick<ICounselingSession, 'id'>;
 
-type RestOf<T extends ICounselingSession | NewCounselingSession> = Omit<T, 'date'> & {
+type RestOf<T extends ICounselingSession | NewCounselingSession> = Omit<T, 'date' | 'startTime' | 'endTime'> & {
   date?: string | null;
+  startTime?: string | null;
+  endTime?: string | null;
 };
 
 export type RestCounselingSession = RestOf<ICounselingSession>;
@@ -30,6 +36,7 @@ export class CounselingSessionService {
   protected readonly applicationConfigService = inject(ApplicationConfigService);
 
   protected resourceUrl = this.applicationConfigService.getEndpointFor('api/counseling-sessions');
+  protected resourceSearchUrl = this.applicationConfigService.getEndpointFor('api/counseling-sessions/_search');
 
   create(counselingSession: NewCounselingSession): Observable<EntityResponseType> {
     const copy = this.convertDateFromClient(counselingSession);
@@ -73,6 +80,15 @@ export class CounselingSessionService {
     return this.http.delete(`${this.resourceUrl}/${id}`, { observe: 'response' });
   }
 
+  search(req: SearchWithPagination): Observable<EntityArrayResponseType> {
+    const options = createRequestOption(req);
+    return this.http.get<RestCounselingSession[]>(this.resourceSearchUrl, { params: options, observe: 'response' }).pipe(
+      map(res => this.convertResponseArrayFromServer(res)),
+
+      catchError(() => scheduled([new HttpResponse<ICounselingSession[]>()], asapScheduler)),
+    );
+  }
+
   getCounselingSessionIdentifier(counselingSession: Pick<ICounselingSession, 'id'>): number {
     return counselingSession.id;
   }
@@ -108,7 +124,9 @@ export class CounselingSessionService {
   ): RestOf<T> {
     return {
       ...counselingSession,
-      date: counselingSession.date?.toJSON() ?? null,
+      date: counselingSession.date?.format(DATE_FORMAT) ?? null,
+      startTime: counselingSession.startTime?.toJSON() ?? null,
+      endTime: counselingSession.endTime?.toJSON() ?? null,
     };
   }
 
@@ -116,6 +134,8 @@ export class CounselingSessionService {
     return {
       ...restCounselingSession,
       date: restCounselingSession.date ? dayjs(restCounselingSession.date) : undefined,
+      startTime: restCounselingSession.startTime ? dayjs(restCounselingSession.startTime) : undefined,
+      endTime: restCounselingSession.endTime ? dayjs(restCounselingSession.endTime) : undefined,
     };
   }
 

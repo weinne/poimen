@@ -47,7 +47,7 @@
           <dd>
             @if (transaction()!.church) {
               <div>
-                <a [routerLink]="['/church', transaction()!.church?.id, 'view']">{{ transactionRef.church?.id }}</a>
+                <a [routerLink]="['/church', transaction()!.church?.id, 'view']">{{ transactionRef.church?.name }}</a>
               </div>
             }
           </dd>
@@ -55,13 +55,17 @@
           <dd>
             @if (transaction()!.member) {
               <div>
-                <a [routerLink]="['/member', transaction()!.member?.id, 'view']">{{ transactionRef.member?.id }}</a>
+                <a [routerLink]="['/member', transaction()!.member?.id, 'view']">{{ transactionRef.member?.name }}</a>
               </div>
             }
           </dd>
           <dt><span jhiTranslate="poimenApp.transaction.user">User</span></dt>
           <dd>
-            <span>{{ transactionRef.user?.id }}</span>
+            @if (transaction()!.user) {
+              <div>
+                <a [routerLink]="['/application-user', transaction()!.user?.id, 'view']">{{ transactionRef.user?.name }}</a>
+              </div>
+            }
           </dd>
         </dl>
 

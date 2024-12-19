@@ -23,9 +23,11 @@ describe('MinistryGroup Form Service', () => {
             name: expect.any(Object),
             description: expect.any(Object),
             establishedDate: expect.any(Object),
-            leader: expect.any(Object),
             type: expect.any(Object),
             church: expect.any(Object),
+            president: expect.any(Object),
+            supervisor: expect.any(Object),
+            members: expect.any(Object),
           }),
         );
       });
@@ -39,9 +41,11 @@ describe('MinistryGroup Form Service', () => {
             name: expect.any(Object),
             description: expect.any(Object),
             establishedDate: expect.any(Object),
-            leader: expect.any(Object),
             type: expect.any(Object),
             church: expect.any(Object),
+            president: expect.any(Object),
+            supervisor: expect.any(Object),
+            members: expect.any(Object),
           }),
         );
       });

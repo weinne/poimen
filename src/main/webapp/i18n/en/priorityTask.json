@@ -1,0 +1,10 @@
+{
+  "poimenApp": {
+    "PriorityTask": {
+      "null": "",
+      "LOW": "Low",
+      "MEDIUM": "Medium",
+      "HIGH": "High"
+    }
+  }
+}

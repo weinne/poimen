@@ -4,26 +4,39 @@ import static br.com.poimen.domain.TransactionAsserts.*;
 import static br.com.poimen.web.rest.TestUtil.createUpdateProxyForBean;
 import static br.com.poimen.web.rest.TestUtil.sameNumber;
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.awaitility.Awaitility.await;
 import static org.hamcrest.Matchers.hasItem;
+import static org.mockito.Mockito.*;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
 import br.com.poimen.IntegrationTest;
 import br.com.poimen.domain.Transaction;
 import br.com.poimen.repository.TransactionRepository;
-import br.com.poimen.repository.UserRepository;
+import br.com.poimen.repository.search.TransactionSearchRepository;
+import br.com.poimen.service.TransactionService;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import jakarta.persistence.EntityManager;
 import java.math.BigDecimal;
 import java.time.Instant;
 import java.time.temporal.ChronoUnit;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Random;
+import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicLong;
+import org.assertj.core.util.IterableUtil;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.Mock;
+import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.util.Streamable;
 import org.springframework.http.MediaType;
 import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.web.servlet.MockMvc;
@@ -33,6 +46,7 @@ import org.springframework.transaction.annotation.Transactional;
  * Integration tests for the {@link TransactionResource} REST controller.
  */
 @IntegrationTest
+@ExtendWith(MockitoExtension.class)
 @AutoConfigureMockMvc
 @WithMockUser
 class TransactionResourceIT {
@@ -60,6 +74,7 @@ class TransactionResourceIT {
 
     private static final String ENTITY_API_URL = "/api/transactions";
     private static final String ENTITY_API_URL_ID = ENTITY_API_URL + "/{id}";
+    private static final String ENTITY_SEARCH_API_URL = "/api/transactions/_search";
 
     private static Random random = new Random();
     private static AtomicLong longCount = new AtomicLong(random.nextInt() + (2 * Integer.MAX_VALUE));
@@ -70,8 +85,14 @@ class TransactionResourceIT {
     @Autowired
     private TransactionRepository transactionRepository;
 
+    @Mock
+    private TransactionRepository transactionRepositoryMock;
+
+    @Mock
+    private TransactionService transactionServiceMock;
+
     @Autowired
-    private UserRepository userRepository;
+    private TransactionSearchRepository transactionSearchRepository;
 
     @Autowired
     private EntityManager em;
@@ -126,6 +147,7 @@ class TransactionResourceIT {
     public void cleanup() {
         if (insertedTransaction != null) {
             transactionRepository.delete(insertedTransaction);
+            transactionSearchRepository.delete(insertedTransaction);
             insertedTransaction = null;
         }
     }
@@ -134,6 +156,7 @@ class TransactionResourceIT {
     @Transactional
     void createTransaction() throws Exception {
         long databaseSizeBeforeCreate = getRepositoryCount();
+        int searchDatabaseSizeBefore = IterableUtil.sizeOf(transactionSearchRepository.findAll());
         // Create the Transaction
         var returnedTransaction = om.readValue(
             restTransactionMockMvc
@@ -149,6 +172,13 @@ class TransactionResourceIT {
         assertIncrementedRepositoryCount(databaseSizeBeforeCreate);
         assertTransactionUpdatableFieldsEquals(returnedTransaction, getPersistedTransaction(returnedTransaction));
 
+        await()
+            .atMost(5, TimeUnit.SECONDS)
+            .untilAsserted(() -> {
+                int searchDatabaseSizeAfter = IterableUtil.sizeOf(transactionSearchRepository.findAll());
+                assertThat(searchDatabaseSizeAfter).isEqualTo(searchDatabaseSizeBefore + 1);
+            });
+
         insertedTransaction = returnedTransaction;
     }
 
@@ -159,6 +189,7 @@ class TransactionResourceIT {
         transaction.setId(1L);
 
         long databaseSizeBeforeCreate = getRepositoryCount();
+        int searchDatabaseSizeBefore = IterableUtil.sizeOf(transactionSearchRepository.findAll());
 
         // An entity with an existing ID cannot be created, so this API call must fail
         restTransactionMockMvc
@@ -167,12 +198,15 @@ class TransactionResourceIT {
 
         // Validate the Transaction in the database
         assertSameRepositoryCount(databaseSizeBeforeCreate);
+        int searchDatabaseSizeAfter = IterableUtil.sizeOf(transactionSearchRepository.findAll());
+        assertThat(searchDatabaseSizeAfter).isEqualTo(searchDatabaseSizeBefore);
     }
 
     @Test
     @Transactional
     void checkDescriptionIsRequired() throws Exception {
         long databaseSizeBeforeTest = getRepositoryCount();
+        int searchDatabaseSizeBefore = IterableUtil.sizeOf(transactionSearchRepository.findAll());
         // set the field null
         transaction.setDescription(null);
 
@@ -183,12 +217,16 @@ class TransactionResourceIT {
             .andExpect(status().isBadRequest());
 
         assertSameRepositoryCount(databaseSizeBeforeTest);
+
+        int searchDatabaseSizeAfter = IterableUtil.sizeOf(transactionSearchRepository.findAll());
+        assertThat(searchDatabaseSizeAfter).isEqualTo(searchDatabaseSizeBefore);
     }
 
     @Test
     @Transactional
     void checkAmountIsRequired() throws Exception {
         long databaseSizeBeforeTest = getRepositoryCount();
+        int searchDatabaseSizeBefore = IterableUtil.sizeOf(transactionSearchRepository.findAll());
         // set the field null
         transaction.setAmount(null);
 
@@ -199,12 +237,16 @@ class TransactionResourceIT {
             .andExpect(status().isBadRequest());
 
         assertSameRepositoryCount(databaseSizeBeforeTest);
+
+        int searchDatabaseSizeAfter = IterableUtil.sizeOf(transactionSearchRepository.findAll());
+        assertThat(searchDatabaseSizeAfter).isEqualTo(searchDatabaseSizeBefore);
     }
 
     @Test
     @Transactional
     void checkDateIsRequired() throws Exception {
         long databaseSizeBeforeTest = getRepositoryCount();
+        int searchDatabaseSizeBefore = IterableUtil.sizeOf(transactionSearchRepository.findAll());
         // set the field null
         transaction.setDate(null);
 
@@ -215,12 +257,16 @@ class TransactionResourceIT {
             .andExpect(status().isBadRequest());
 
         assertSameRepositoryCount(databaseSizeBeforeTest);
+
+        int searchDatabaseSizeAfter = IterableUtil.sizeOf(transactionSearchRepository.findAll());
+        assertThat(searchDatabaseSizeAfter).isEqualTo(searchDatabaseSizeBefore);
     }
 
     @Test
     @Transactional
     void checkTypeIsRequired() throws Exception {
         long databaseSizeBeforeTest = getRepositoryCount();
+        int searchDatabaseSizeBefore = IterableUtil.sizeOf(transactionSearchRepository.findAll());
         // set the field null
         transaction.setType(null);
 
@@ -231,6 +277,9 @@ class TransactionResourceIT {
             .andExpect(status().isBadRequest());
 
         assertSameRepositoryCount(databaseSizeBeforeTest);
+
+        int searchDatabaseSizeAfter = IterableUtil.sizeOf(transactionSearchRepository.findAll());
+        assertThat(searchDatabaseSizeAfter).isEqualTo(searchDatabaseSizeBefore);
     }
 
     @Test
@@ -252,6 +301,23 @@ class TransactionResourceIT {
             .andExpect(jsonPath("$.[*].type").value(hasItem(DEFAULT_TYPE)))
             .andExpect(jsonPath("$.[*].supplierOrClient").value(hasItem(DEFAULT_SUPPLIER_OR_CLIENT)))
             .andExpect(jsonPath("$.[*].invoiceFile").value(hasItem(DEFAULT_INVOICE_FILE)));
+    }
+
+    @SuppressWarnings({ "unchecked" })
+    void getAllTransactionsWithEagerRelationshipsIsEnabled() throws Exception {
+        when(transactionServiceMock.findAllWithEagerRelationships(any())).thenReturn(new PageImpl(new ArrayList<>()));
+
+        restTransactionMockMvc.perform(get(ENTITY_API_URL + "?eagerload=true")).andExpect(status().isOk());
+
+        verify(transactionServiceMock, times(1)).findAllWithEagerRelationships(any());
+    }
+
+    @SuppressWarnings({ "unchecked" })
+    void getAllTransactionsWithEagerRelationshipsIsNotEnabled() throws Exception {
+        when(transactionServiceMock.findAllWithEagerRelationships(any())).thenReturn(new PageImpl(new ArrayList<>()));
+
+        restTransactionMockMvc.perform(get(ENTITY_API_URL + "?eagerload=false")).andExpect(status().isOk());
+        verify(transactionRepositoryMock, times(1)).findAll(any(Pageable.class));
     }
 
     @Test
@@ -289,6 +355,8 @@ class TransactionResourceIT {
         insertedTransaction = transactionRepository.saveAndFlush(transaction);
 
         long databaseSizeBeforeUpdate = getRepositoryCount();
+        transactionSearchRepository.save(transaction);
+        int searchDatabaseSizeBefore = IterableUtil.sizeOf(transactionSearchRepository.findAll());
 
         // Update the transaction
         Transaction updatedTransaction = transactionRepository.findById(transaction.getId()).orElseThrow();
@@ -314,12 +382,24 @@ class TransactionResourceIT {
         // Validate the Transaction in the database
         assertSameRepositoryCount(databaseSizeBeforeUpdate);
         assertPersistedTransactionToMatchAllProperties(updatedTransaction);
+
+        await()
+            .atMost(5, TimeUnit.SECONDS)
+            .untilAsserted(() -> {
+                int searchDatabaseSizeAfter = IterableUtil.sizeOf(transactionSearchRepository.findAll());
+                assertThat(searchDatabaseSizeAfter).isEqualTo(searchDatabaseSizeBefore);
+                List<Transaction> transactionSearchList = Streamable.of(transactionSearchRepository.findAll()).toList();
+                Transaction testTransactionSearch = transactionSearchList.get(searchDatabaseSizeAfter - 1);
+
+                assertTransactionAllPropertiesEquals(testTransactionSearch, updatedTransaction);
+            });
     }
 
     @Test
     @Transactional
     void putNonExistingTransaction() throws Exception {
         long databaseSizeBeforeUpdate = getRepositoryCount();
+        int searchDatabaseSizeBefore = IterableUtil.sizeOf(transactionSearchRepository.findAll());
         transaction.setId(longCount.incrementAndGet());
 
         // If the entity doesn't have an ID, it will throw BadRequestAlertException
@@ -333,12 +413,15 @@ class TransactionResourceIT {
 
         // Validate the Transaction in the database
         assertSameRepositoryCount(databaseSizeBeforeUpdate);
+        int searchDatabaseSizeAfter = IterableUtil.sizeOf(transactionSearchRepository.findAll());
+        assertThat(searchDatabaseSizeAfter).isEqualTo(searchDatabaseSizeBefore);
     }
 
     @Test
     @Transactional
     void putWithIdMismatchTransaction() throws Exception {
         long databaseSizeBeforeUpdate = getRepositoryCount();
+        int searchDatabaseSizeBefore = IterableUtil.sizeOf(transactionSearchRepository.findAll());
         transaction.setId(longCount.incrementAndGet());
 
         // If url ID doesn't match entity ID, it will throw BadRequestAlertException
@@ -352,12 +435,15 @@ class TransactionResourceIT {
 
         // Validate the Transaction in the database
         assertSameRepositoryCount(databaseSizeBeforeUpdate);
+        int searchDatabaseSizeAfter = IterableUtil.sizeOf(transactionSearchRepository.findAll());
+        assertThat(searchDatabaseSizeAfter).isEqualTo(searchDatabaseSizeBefore);
     }
 
     @Test
     @Transactional
     void putWithMissingIdPathParamTransaction() throws Exception {
         long databaseSizeBeforeUpdate = getRepositoryCount();
+        int searchDatabaseSizeBefore = IterableUtil.sizeOf(transactionSearchRepository.findAll());
         transaction.setId(longCount.incrementAndGet());
 
         // If url ID doesn't match entity ID, it will throw BadRequestAlertException
@@ -367,6 +453,8 @@ class TransactionResourceIT {
 
         // Validate the Transaction in the database
         assertSameRepositoryCount(databaseSizeBeforeUpdate);
+        int searchDatabaseSizeAfter = IterableUtil.sizeOf(transactionSearchRepository.findAll());
+        assertThat(searchDatabaseSizeAfter).isEqualTo(searchDatabaseSizeBefore);
     }
 
     @Test
@@ -443,6 +531,7 @@ class TransactionResourceIT {
     @Transactional
     void patchNonExistingTransaction() throws Exception {
         long databaseSizeBeforeUpdate = getRepositoryCount();
+        int searchDatabaseSizeBefore = IterableUtil.sizeOf(transactionSearchRepository.findAll());
         transaction.setId(longCount.incrementAndGet());
 
         // If the entity doesn't have an ID, it will throw BadRequestAlertException
@@ -456,12 +545,15 @@ class TransactionResourceIT {
 
         // Validate the Transaction in the database
         assertSameRepositoryCount(databaseSizeBeforeUpdate);
+        int searchDatabaseSizeAfter = IterableUtil.sizeOf(transactionSearchRepository.findAll());
+        assertThat(searchDatabaseSizeAfter).isEqualTo(searchDatabaseSizeBefore);
     }
 
     @Test
     @Transactional
     void patchWithIdMismatchTransaction() throws Exception {
         long databaseSizeBeforeUpdate = getRepositoryCount();
+        int searchDatabaseSizeBefore = IterableUtil.sizeOf(transactionSearchRepository.findAll());
         transaction.setId(longCount.incrementAndGet());
 
         // If url ID doesn't match entity ID, it will throw BadRequestAlertException
@@ -475,12 +567,15 @@ class TransactionResourceIT {
 
         // Validate the Transaction in the database
         assertSameRepositoryCount(databaseSizeBeforeUpdate);
+        int searchDatabaseSizeAfter = IterableUtil.sizeOf(transactionSearchRepository.findAll());
+        assertThat(searchDatabaseSizeAfter).isEqualTo(searchDatabaseSizeBefore);
     }
 
     @Test
     @Transactional
     void patchWithMissingIdPathParamTransaction() throws Exception {
         long databaseSizeBeforeUpdate = getRepositoryCount();
+        int searchDatabaseSizeBefore = IterableUtil.sizeOf(transactionSearchRepository.findAll());
         transaction.setId(longCount.incrementAndGet());
 
         // If url ID doesn't match entity ID, it will throw BadRequestAlertException
@@ -490,6 +585,8 @@ class TransactionResourceIT {
 
         // Validate the Transaction in the database
         assertSameRepositoryCount(databaseSizeBeforeUpdate);
+        int searchDatabaseSizeAfter = IterableUtil.sizeOf(transactionSearchRepository.findAll());
+        assertThat(searchDatabaseSizeAfter).isEqualTo(searchDatabaseSizeBefore);
     }
 
     @Test
@@ -497,8 +594,12 @@ class TransactionResourceIT {
     void deleteTransaction() throws Exception {
         // Initialize the database
         insertedTransaction = transactionRepository.saveAndFlush(transaction);
+        transactionRepository.save(transaction);
+        transactionSearchRepository.save(transaction);
 
         long databaseSizeBeforeDelete = getRepositoryCount();
+        int searchDatabaseSizeBefore = IterableUtil.sizeOf(transactionSearchRepository.findAll());
+        assertThat(searchDatabaseSizeBefore).isEqualTo(databaseSizeBeforeDelete);
 
         // Delete the transaction
         restTransactionMockMvc
@@ -507,6 +608,30 @@ class TransactionResourceIT {
 
         // Validate the database contains one less item
         assertDecrementedRepositoryCount(databaseSizeBeforeDelete);
+        int searchDatabaseSizeAfter = IterableUtil.sizeOf(transactionSearchRepository.findAll());
+        assertThat(searchDatabaseSizeAfter).isEqualTo(searchDatabaseSizeBefore - 1);
+    }
+
+    @Test
+    @Transactional
+    void searchTransaction() throws Exception {
+        // Initialize the database
+        insertedTransaction = transactionRepository.saveAndFlush(transaction);
+        transactionSearchRepository.save(transaction);
+
+        // Search the transaction
+        restTransactionMockMvc
+            .perform(get(ENTITY_SEARCH_API_URL + "?query=id:" + transaction.getId()))
+            .andExpect(status().isOk())
+            .andExpect(content().contentType(MediaType.APPLICATION_JSON_VALUE))
+            .andExpect(jsonPath("$.[*].id").value(hasItem(transaction.getId().intValue())))
+            .andExpect(jsonPath("$.[*].description").value(hasItem(DEFAULT_DESCRIPTION)))
+            .andExpect(jsonPath("$.[*].amount").value(hasItem(sameNumber(DEFAULT_AMOUNT))))
+            .andExpect(jsonPath("$.[*].date").value(hasItem(DEFAULT_DATE.toString())))
+            .andExpect(jsonPath("$.[*].paymentMethod").value(hasItem(DEFAULT_PAYMENT_METHOD)))
+            .andExpect(jsonPath("$.[*].type").value(hasItem(DEFAULT_TYPE)))
+            .andExpect(jsonPath("$.[*].supplierOrClient").value(hasItem(DEFAULT_SUPPLIER_OR_CLIENT)))
+            .andExpect(jsonPath("$.[*].invoiceFile").value(hasItem(DEFAULT_INVOICE_FILE)));
     }
 
     protected long getRepositoryCount() {

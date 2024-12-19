@@ -3,29 +3,50 @@ import dayjs from 'dayjs/esm';
 import { IWorshipEvent, NewWorshipEvent } from './worship-event.model';
 
 export const sampleWithRequiredData: IWorshipEvent = {
-  id: 326,
-  date: dayjs('2024-12-17T11:42'),
-  worshipType: 'BIBLE_STUDY',
+  id: 26775,
+  date: dayjs('2024-12-18T01:22'),
+  worshipType: 'SPECIAL_EVENT',
 };
 
 export const sampleWithPartialData: IWorshipEvent = {
-  id: 11000,
-  date: dayjs('2024-12-17T07:40'),
-  description: 'barring adrenalin',
-  worshipType: 'BIBLE_STUDY',
+  id: 14953,
+  date: dayjs('2024-12-18T20:34'),
+  title: 'place rigidly',
+  description: '../fake-data/blob/hipster.txt',
+  callToWorshipText: 'unless than',
+  sermonText: '../fake-data/blob/hipster.txt',
+  sermonFile: '../fake-data/blob/hipster.png',
+  sermonFileContentType: 'unknown',
+  bulletinFile: '../fake-data/blob/hipster.png',
+  bulletinFileContentType: 'unknown',
+  worshipType: 'OTHER',
 };
 
 export const sampleWithFullData: IWorshipEvent = {
-  id: 29049,
-  date: dayjs('2024-12-17T02:05'),
-  title: 'nerve how',
-  description: 'severe',
-  worshipType: 'SUNDAY_SERVICE',
+  id: 12599,
+  date: dayjs('2024-12-18T22:12'),
+  title: 'fat lucky',
+  guestPreacher: 'safeguard',
+  description: '../fake-data/blob/hipster.txt',
+  callToWorshipText: 'provided',
+  confessionOfSinText: 'mostly',
+  assuranceOfPardonText: 'congregate unruly wretched',
+  lordSupperText: 'soon',
+  benedictionText: 'drive charming uh-huh',
+  confessionalText: 'lest provided',
+  sermonText: '../fake-data/blob/hipster.txt',
+  sermonFile: '../fake-data/blob/hipster.png',
+  sermonFileContentType: 'unknown',
+  sermonLink: 'accredit',
+  youtubeLink: 'whether for incidentally',
+  bulletinFile: '../fake-data/blob/hipster.png',
+  bulletinFileContentType: 'unknown',
+  worshipType: 'PRAYER_MEETING',
 };
 
 export const sampleWithNewData: NewWorshipEvent = {
-  date: dayjs('2024-12-17T04:17'),
-  worshipType: 'PRAYER_MEETING',
+  date: dayjs('2024-12-18T11:37'),
+  worshipType: 'SUNDAY_SERVICE',
   id: null,
 };
 

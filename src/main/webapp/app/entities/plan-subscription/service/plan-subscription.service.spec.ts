@@ -2,6 +2,7 @@ import { TestBed } from '@angular/core/testing';
 import { HttpTestingController, provideHttpClientTesting } from '@angular/common/http/testing';
 import { provideHttpClient } from '@angular/common/http';
 
+import { DATE_FORMAT } from 'app/config/input.constants';
 import { IPlanSubscription } from '../plan-subscription.model';
 import { sampleWithFullData, sampleWithNewData, sampleWithPartialData, sampleWithRequiredData } from '../plan-subscription.test-samples';
 
@@ -9,8 +10,8 @@ import { PlanSubscriptionService, RestPlanSubscription } from './plan-subscripti
 
 const requireRestSample: RestPlanSubscription = {
   ...sampleWithRequiredData,
-  startDate: sampleWithRequiredData.startDate?.toJSON(),
-  endDate: sampleWithRequiredData.endDate?.toJSON(),
+  startDate: sampleWithRequiredData.startDate?.format(DATE_FORMAT),
+  endDate: sampleWithRequiredData.endDate?.format(DATE_FORMAT),
 };
 
 describe('PlanSubscription Service', () => {
@@ -96,6 +97,20 @@ describe('PlanSubscription Service', () => {
       const req = httpMock.expectOne({ method: 'DELETE' });
       req.flush({ status: 200 });
       expect(expectedResult).toBe(expected);
+    });
+
+    it('should handle exceptions for searching a PlanSubscription', () => {
+      const queryObject: any = {
+        page: 0,
+        size: 20,
+        query: '',
+        sort: [],
+      };
+      service.search(queryObject).subscribe(() => expectedResult);
+
+      const req = httpMock.expectOne({ method: 'GET' });
+      req.flush(null, { status: 500, statusText: 'Internal Server Error' });
+      expect(expectedResult).toBe(null);
     });
 
     describe('addPlanSubscriptionToCollectionIfMissing', () => {

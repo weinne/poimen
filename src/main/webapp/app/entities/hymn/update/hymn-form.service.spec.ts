@@ -21,10 +21,17 @@ describe('Hymn Form Service', () => {
           expect.objectContaining({
             id: expect.any(Object),
             title: expect.any(Object),
-            author: expect.any(Object),
+            lyricsAuthor: expect.any(Object),
+            musicAuthor: expect.any(Object),
+            hymnary: expect.any(Object),
             hymnNumber: expect.any(Object),
+            link: expect.any(Object),
+            youtubeLink: expect.any(Object),
+            sheetMusic: expect.any(Object),
+            midi: expect.any(Object),
+            tone: expect.any(Object),
             lyrics: expect.any(Object),
-            worshipEvents: expect.any(Object),
+            services: expect.any(Object),
           }),
         );
       });
@@ -36,10 +43,17 @@ describe('Hymn Form Service', () => {
           expect.objectContaining({
             id: expect.any(Object),
             title: expect.any(Object),
-            author: expect.any(Object),
+            lyricsAuthor: expect.any(Object),
+            musicAuthor: expect.any(Object),
+            hymnary: expect.any(Object),
             hymnNumber: expect.any(Object),
+            link: expect.any(Object),
+            youtubeLink: expect.any(Object),
+            sheetMusic: expect.any(Object),
+            midi: expect.any(Object),
+            tone: expect.any(Object),
             lyrics: expect.any(Object),
-            worshipEvents: expect.any(Object),
+            services: expect.any(Object),
           }),
         );
       });

@@ -1,12 +1,16 @@
 import { Injectable, inject } from '@angular/core';
 import { HttpClient, HttpResponse } from '@angular/common/http';
-import { Observable, map } from 'rxjs';
+import { Observable, asapScheduler, map, scheduled } from 'rxjs';
+
+import { catchError } from 'rxjs/operators';
 
 import dayjs from 'dayjs/esm';
 
 import { isPresent } from 'app/core/util/operators';
+import { DATE_FORMAT } from 'app/config/input.constants';
 import { ApplicationConfigService } from 'app/core/config/application-config.service';
 import { createRequestOption } from 'app/core/request/request-util';
+import { SearchWithPagination } from 'app/core/request/request.model';
 import { IMinistryGroup, NewMinistryGroup } from '../ministry-group.model';
 
 export type PartialUpdateMinistryGroup = Partial<IMinistryGroup> & Pick<IMinistryGroup, 'id'>;
@@ -30,6 +34,7 @@ export class MinistryGroupService {
   protected readonly applicationConfigService = inject(ApplicationConfigService);
 
   protected resourceUrl = this.applicationConfigService.getEndpointFor('api/ministry-groups');
+  protected resourceSearchUrl = this.applicationConfigService.getEndpointFor('api/ministry-groups/_search');
 
   create(ministryGroup: NewMinistryGroup): Observable<EntityResponseType> {
     const copy = this.convertDateFromClient(ministryGroup);
@@ -69,6 +74,15 @@ export class MinistryGroupService {
     return this.http.delete(`${this.resourceUrl}/${id}`, { observe: 'response' });
   }
 
+  search(req: SearchWithPagination): Observable<EntityArrayResponseType> {
+    const options = createRequestOption(req);
+    return this.http.get<RestMinistryGroup[]>(this.resourceSearchUrl, { params: options, observe: 'response' }).pipe(
+      map(res => this.convertResponseArrayFromServer(res)),
+
+      catchError(() => scheduled([new HttpResponse<IMinistryGroup[]>()], asapScheduler)),
+    );
+  }
+
   getMinistryGroupIdentifier(ministryGroup: Pick<IMinistryGroup, 'id'>): number {
     return ministryGroup.id;
   }
@@ -102,7 +116,7 @@ export class MinistryGroupService {
   protected convertDateFromClient<T extends IMinistryGroup | NewMinistryGroup | PartialUpdateMinistryGroup>(ministryGroup: T): RestOf<T> {
     return {
       ...ministryGroup,
-      establishedDate: ministryGroup.establishedDate?.toJSON() ?? null,
+      establishedDate: ministryGroup.establishedDate?.format(DATE_FORMAT) ?? null,
     };
   }
 

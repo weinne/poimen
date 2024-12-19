@@ -58,7 +58,12 @@ public class InvoiceAsserts {
             )
             .satisfies(e -> assertThat(e.getType()).as("check type").isEqualTo(actual.getType()))
             .satisfies(e -> assertThat(e.getSupplier()).as("check supplier").isEqualTo(actual.getSupplier()))
-            .satisfies(e -> assertThat(e.getInvoiceFile()).as("check invoiceFile").isEqualTo(actual.getInvoiceFile()));
+            .satisfies(e -> assertThat(e.getInvoiceFile()).as("check invoiceFile").isEqualTo(actual.getInvoiceFile()))
+            .satisfies(e ->
+                assertThat(e.getInvoiceFileContentType())
+                    .as("check invoiceFile contenty type")
+                    .isEqualTo(actual.getInvoiceFileContentType())
+            );
     }
 
     /**

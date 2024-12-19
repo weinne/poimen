@@ -8,16 +8,16 @@
       "entities": {
         "main": "Entidades",
         "jhipster-needle-menu-add-entry": "JHipster will add additional entities here (do not translate!)",
+        "applicationUser": "Application User",
+        "appointment": "Appointment",
         "church": "Church",
         "counselingSession": "Counseling Session",
         "hymn": "Hymn",
         "invoice": "Invoice",
         "member": "Member",
         "ministryGroup": "Ministry Group",
-        "ministryMembership": "Ministry Membership",
         "plan": "Plan",
         "planSubscription": "Plan Subscription",
-        "schedule": "Schedule",
         "task": "Task",
         "transaction": "Transaction",
         "worshipEvent": "Worship Event"

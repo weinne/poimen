@@ -25,21 +25,17 @@
           </dd>
           <dt><span jhiTranslate="poimenApp.ministryGroup.establishedDate">Established Date</span></dt>
           <dd>
-            <span>{{ ministryGroupRef.establishedDate | formatMediumDatetime }}</span>
-          </dd>
-          <dt><span jhiTranslate="poimenApp.ministryGroup.leader">Leader</span></dt>
-          <dd>
-            <span>{{ ministryGroupRef.leader }}</span>
+            <span>{{ ministryGroupRef.establishedDate | formatMediumDate }}</span>
           </dd>
           <dt><span jhiTranslate="poimenApp.ministryGroup.type">Type</span></dt>
           <dd>
             <span [jhiTranslate]="'poimenApp.GroupType.' + (ministryGroupRef.type ?? 'null')">{{
               {
                 null: '',
-                DEPARTMENT: 'DEPARTMENT',
-                INTERNAL_SOCIETY: 'INTERNAL_SOCIETY',
-                DEACON_BOARD: 'DEACON_BOARD',
-                CHURCH_COUNCIL: 'CHURCH_COUNCIL',
+                DEPARTMENT: 'Department',
+                INTERNAL_SOCIETY: 'Internal Society',
+                DEACON_BOARD: 'Deacon Board',
+                CHURCH_COUNCIL: 'Church Council',
               }[ministryGroupRef.type ?? 'null']
             }}</span>
           </dd>
@@ -47,8 +43,33 @@
           <dd>
             @if (ministryGroup()!.church) {
               <div>
-                <a [routerLink]="['/church', ministryGroup()!.church?.id, 'view']">{{ ministryGroupRef.church?.id }}</a>
+                <a [routerLink]="['/church', ministryGroup()!.church?.id, 'view']">{{ ministryGroupRef.church?.name }}</a>
               </div>
+            }
+          </dd>
+          <dt><span jhiTranslate="poimenApp.ministryGroup.president">President</span></dt>
+          <dd>
+            @if (ministryGroup()!.president) {
+              <div>
+                <a [routerLink]="['/member', ministryGroup()!.president?.id, 'view']">{{ ministryGroupRef.president?.name }}</a>
+              </div>
+            }
+          </dd>
+          <dt><span jhiTranslate="poimenApp.ministryGroup.supervisor">Supervisor</span></dt>
+          <dd>
+            @if (ministryGroup()!.supervisor) {
+              <div>
+                <a [routerLink]="['/member', ministryGroup()!.supervisor?.id, 'view']">{{ ministryGroupRef.supervisor?.name }}</a>
+              </div>
+            }
+          </dd>
+          <dt><span jhiTranslate="poimenApp.ministryGroup.members">Members</span></dt>
+          <dd>
+            @for (members of ministryGroupRef.members; track $index; let last = $last) {
+              <span>
+                <a [routerLink]="['/member', members.id, 'view']">{{ members?.name }}</a
+                >{{ last ? '' : ', ' }}
+              </span>
             }
           </dd>
         </dl>

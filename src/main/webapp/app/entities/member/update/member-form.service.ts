@@ -1,8 +1,6 @@
 import { Injectable } from '@angular/core';
 import { FormControl, FormGroup, Validators } from '@angular/forms';
 
-import dayjs from 'dayjs/esm';
-import { DATE_TIME_FORMAT } from 'app/config/input.constants';
 import { IMember, NewMember } from '../member.model';
 
 /**
@@ -16,30 +14,43 @@ type PartialWithRequiredKeyOf<T extends { id: unknown }> = Partial<Omit<T, 'id'>
  */
 type MemberFormGroupInput = IMember | PartialWithRequiredKeyOf<NewMember>;
 
-/**
- * Type that converts some properties for forms.
- */
-type FormValueOf<T extends IMember | NewMember> = Omit<T, 'dateOfBirth'> & {
-  dateOfBirth?: string | null;
-};
-
-type MemberFormRawValue = FormValueOf<IMember>;
-
-type NewMemberFormRawValue = FormValueOf<NewMember>;
-
-type MemberFormDefaults = Pick<NewMember, 'id' | 'dateOfBirth' | 'schedules' | 'worshipEvents'>;
+type MemberFormDefaults = Pick<NewMember, 'id' | 'playIns' | 'participateIns' | 'memberOfs'>;
 
 type MemberFormGroupContent = {
-  id: FormControl<MemberFormRawValue['id'] | NewMember['id']>;
-  firstName: FormControl<MemberFormRawValue['firstName']>;
-  lastName: FormControl<MemberFormRawValue['lastName']>;
-  email: FormControl<MemberFormRawValue['email']>;
-  phoneNumber: FormControl<MemberFormRawValue['phoneNumber']>;
-  dateOfBirth: FormControl<MemberFormRawValue['dateOfBirth']>;
-  address: FormControl<MemberFormRawValue['address']>;
-  church: FormControl<MemberFormRawValue['church']>;
-  schedules: FormControl<MemberFormRawValue['schedules']>;
-  worshipEvents: FormControl<MemberFormRawValue['worshipEvents']>;
+  id: FormControl<IMember['id'] | NewMember['id']>;
+  name: FormControl<IMember['name']>;
+  photo: FormControl<IMember['photo']>;
+  photoContentType: FormControl<IMember['photoContentType']>;
+  email: FormControl<IMember['email']>;
+  phoneNumber: FormControl<IMember['phoneNumber']>;
+  dateOfBirth: FormControl<IMember['dateOfBirth']>;
+  address: FormControl<IMember['address']>;
+  city: FormControl<IMember['city']>;
+  state: FormControl<IMember['state']>;
+  zipCode: FormControl<IMember['zipCode']>;
+  cityOfBirth: FormControl<IMember['cityOfBirth']>;
+  previousReligion: FormControl<IMember['previousReligion']>;
+  maritalStatus: FormControl<IMember['maritalStatus']>;
+  spouseName: FormControl<IMember['spouseName']>;
+  dateOfMarriage: FormControl<IMember['dateOfMarriage']>;
+  status: FormControl<IMember['status']>;
+  cpf: FormControl<IMember['cpf']>;
+  rg: FormControl<IMember['rg']>;
+  dateOfBaptism: FormControl<IMember['dateOfBaptism']>;
+  churchOfBaptism: FormControl<IMember['churchOfBaptism']>;
+  dateOfMembership: FormControl<IMember['dateOfMembership']>;
+  typeOfMembership: FormControl<IMember['typeOfMembership']>;
+  associationMeetingMinutes: FormControl<IMember['associationMeetingMinutes']>;
+  dateOfDeath: FormControl<IMember['dateOfDeath']>;
+  dateOfExit: FormControl<IMember['dateOfExit']>;
+  exitDestination: FormControl<IMember['exitDestination']>;
+  exitReason: FormControl<IMember['exitReason']>;
+  exitMeetingMinutes: FormControl<IMember['exitMeetingMinutes']>;
+  notes: FormControl<IMember['notes']>;
+  church: FormControl<IMember['church']>;
+  playIns: FormControl<IMember['playIns']>;
+  participateIns: FormControl<IMember['participateIns']>;
+  memberOfs: FormControl<IMember['memberOfs']>;
 };
 
 export type MemberFormGroup = FormGroup<MemberFormGroupContent>;
@@ -47,10 +58,10 @@ export type MemberFormGroup = FormGroup<MemberFormGroupContent>;
 @Injectable({ providedIn: 'root' })
 export class MemberFormService {
   createMemberFormGroup(member: MemberFormGroupInput = { id: null }): MemberFormGroup {
-    const memberRawValue = this.convertMemberToMemberRawValue({
+    const memberRawValue = {
       ...this.getFormDefaults(),
       ...member,
-    });
+    };
     return new FormGroup<MemberFormGroupContent>({
       id: new FormControl(
         { value: memberRawValue.id, disabled: true },
@@ -59,28 +70,60 @@ export class MemberFormService {
           validators: [Validators.required],
         },
       ),
-      firstName: new FormControl(memberRawValue.firstName, {
+      name: new FormControl(memberRawValue.name, {
         validators: [Validators.required],
       }),
-      lastName: new FormControl(memberRawValue.lastName, {
-        validators: [Validators.required],
-      }),
+      photo: new FormControl(memberRawValue.photo),
+      photoContentType: new FormControl(memberRawValue.photoContentType),
       email: new FormControl(memberRawValue.email),
       phoneNumber: new FormControl(memberRawValue.phoneNumber),
-      dateOfBirth: new FormControl(memberRawValue.dateOfBirth),
+      dateOfBirth: new FormControl(memberRawValue.dateOfBirth, {
+        validators: [Validators.required],
+      }),
       address: new FormControl(memberRawValue.address),
+      city: new FormControl(memberRawValue.city),
+      state: new FormControl(memberRawValue.state),
+      zipCode: new FormControl(memberRawValue.zipCode),
+      cityOfBirth: new FormControl(memberRawValue.cityOfBirth),
+      previousReligion: new FormControl(memberRawValue.previousReligion),
+      maritalStatus: new FormControl(memberRawValue.maritalStatus, {
+        validators: [Validators.required],
+      }),
+      spouseName: new FormControl(memberRawValue.spouseName),
+      dateOfMarriage: new FormControl(memberRawValue.dateOfMarriage),
+      status: new FormControl(memberRawValue.status, {
+        validators: [Validators.required],
+      }),
+      cpf: new FormControl(memberRawValue.cpf, {
+        validators: [Validators.required, Validators.pattern('^\\d{11}$')],
+      }),
+      rg: new FormControl(memberRawValue.rg, {
+        validators: [Validators.required],
+      }),
+      dateOfBaptism: new FormControl(memberRawValue.dateOfBaptism),
+      churchOfBaptism: new FormControl(memberRawValue.churchOfBaptism),
+      dateOfMembership: new FormControl(memberRawValue.dateOfMembership),
+      typeOfMembership: new FormControl(memberRawValue.typeOfMembership),
+      associationMeetingMinutes: new FormControl(memberRawValue.associationMeetingMinutes),
+      dateOfDeath: new FormControl(memberRawValue.dateOfDeath),
+      dateOfExit: new FormControl(memberRawValue.dateOfExit),
+      exitDestination: new FormControl(memberRawValue.exitDestination),
+      exitReason: new FormControl(memberRawValue.exitReason),
+      exitMeetingMinutes: new FormControl(memberRawValue.exitMeetingMinutes),
+      notes: new FormControl(memberRawValue.notes),
       church: new FormControl(memberRawValue.church),
-      schedules: new FormControl(memberRawValue.schedules ?? []),
-      worshipEvents: new FormControl(memberRawValue.worshipEvents ?? []),
+      playIns: new FormControl(memberRawValue.playIns ?? []),
+      participateIns: new FormControl(memberRawValue.participateIns ?? []),
+      memberOfs: new FormControl(memberRawValue.memberOfs ?? []),
     });
   }
 
   getMember(form: MemberFormGroup): IMember | NewMember {
-    return this.convertMemberRawValueToMember(form.getRawValue() as MemberFormRawValue | NewMemberFormRawValue);
+    return form.getRawValue() as IMember | NewMember;
   }
 
   resetForm(form: MemberFormGroup, member: MemberFormGroupInput): void {
-    const memberRawValue = this.convertMemberToMemberRawValue({ ...this.getFormDefaults(), ...member });
+    const memberRawValue = { ...this.getFormDefaults(), ...member };
     form.reset(
       {
         ...memberRawValue,
@@ -90,31 +133,11 @@ export class MemberFormService {
   }
 
   private getFormDefaults(): MemberFormDefaults {
-    const currentTime = dayjs();
-
     return {
       id: null,
-      dateOfBirth: currentTime,
-      schedules: [],
-      worshipEvents: [],
-    };
-  }
-
-  private convertMemberRawValueToMember(rawMember: MemberFormRawValue | NewMemberFormRawValue): IMember | NewMember {
-    return {
-      ...rawMember,
-      dateOfBirth: dayjs(rawMember.dateOfBirth, DATE_TIME_FORMAT),
-    };
-  }
-
-  private convertMemberToMemberRawValue(
-    member: IMember | (Partial<NewMember> & MemberFormDefaults),
-  ): MemberFormRawValue | PartialWithRequiredKeyOf<NewMemberFormRawValue> {
-    return {
-      ...member,
-      dateOfBirth: member.dateOfBirth ? member.dateOfBirth.format(DATE_TIME_FORMAT) : undefined,
-      schedules: member.schedules ?? [],
-      worshipEvents: member.worshipEvents ?? [],
+      playIns: [],
+      participateIns: [],
+      memberOfs: [],
     };
   }
 }

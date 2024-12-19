@@ -7,12 +7,17 @@ import { finalize, map } from 'rxjs/operators';
 import SharedModule from 'app/shared/shared.module';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 
+import { AlertError } from 'app/shared/alert/alert-error.model';
+import { EventManager, EventWithContent } from 'app/core/util/event-manager.service';
+import { DataUtils, FileLoadError } from 'app/core/util/data-util.service';
 import { IChurch } from 'app/entities/church/church.model';
 import { ChurchService } from 'app/entities/church/service/church.service';
 import { IMember } from 'app/entities/member/member.model';
 import { MemberService } from 'app/entities/member/service/member.service';
-import { IUser } from 'app/entities/user/user.model';
-import { UserService } from 'app/entities/user/service/user.service';
+import { IApplicationUser } from 'app/entities/application-user/application-user.model';
+import { ApplicationUserService } from 'app/entities/application-user/service/application-user.service';
+import { StatusTask } from 'app/entities/enumerations/status-task.model';
+import { PriorityTask } from 'app/entities/enumerations/priority-task.model';
 import { TaskService } from '../service/task.service';
 import { ITask } from '../task.model';
 import { TaskFormGroup, TaskFormService } from './task-form.service';
@@ -26,16 +31,20 @@ import { TaskFormGroup, TaskFormService } from './task-form.service';
 export class TaskUpdateComponent implements OnInit {
   isSaving = false;
   task: ITask | null = null;
+  statusTaskValues = Object.keys(StatusTask);
+  priorityTaskValues = Object.keys(PriorityTask);
 
   churchesSharedCollection: IChurch[] = [];
   membersSharedCollection: IMember[] = [];
-  usersSharedCollection: IUser[] = [];
+  applicationUsersSharedCollection: IApplicationUser[] = [];
 
+  protected dataUtils = inject(DataUtils);
+  protected eventManager = inject(EventManager);
   protected taskService = inject(TaskService);
   protected taskFormService = inject(TaskFormService);
   protected churchService = inject(ChurchService);
   protected memberService = inject(MemberService);
-  protected userService = inject(UserService);
+  protected applicationUserService = inject(ApplicationUserService);
   protected activatedRoute = inject(ActivatedRoute);
 
   // eslint-disable-next-line @typescript-eslint/member-ordering
@@ -45,7 +54,8 @@ export class TaskUpdateComponent implements OnInit {
 
   compareMember = (o1: IMember | null, o2: IMember | null): boolean => this.memberService.compareMember(o1, o2);
 
-  compareUser = (o1: IUser | null, o2: IUser | null): boolean => this.userService.compareUser(o1, o2);
+  compareApplicationUser = (o1: IApplicationUser | null, o2: IApplicationUser | null): boolean =>
+    this.applicationUserService.compareApplicationUser(o1, o2);
 
   ngOnInit(): void {
     this.activatedRoute.data.subscribe(({ task }) => {
@@ -55,6 +65,21 @@ export class TaskUpdateComponent implements OnInit {
       }
 
       this.loadRelationshipsOptions();
+    });
+  }
+
+  byteSize(base64String: string): string {
+    return this.dataUtils.byteSize(base64String);
+  }
+
+  openFile(base64String: string, contentType: string | null | undefined): void {
+    this.dataUtils.openFile(base64String, contentType);
+  }
+
+  setFileData(event: Event, field: string, isImage: boolean): void {
+    this.dataUtils.loadFileToForm(event, this.editForm, field, isImage).subscribe({
+      error: (err: FileLoadError) =>
+        this.eventManager.broadcast(new EventWithContent<AlertError>('poimenApp.error', { ...err, key: `error.file.${err.key}` })),
     });
   }
 
@@ -97,7 +122,10 @@ export class TaskUpdateComponent implements OnInit {
 
     this.churchesSharedCollection = this.churchService.addChurchToCollectionIfMissing<IChurch>(this.churchesSharedCollection, task.church);
     this.membersSharedCollection = this.memberService.addMemberToCollectionIfMissing<IMember>(this.membersSharedCollection, task.member);
-    this.usersSharedCollection = this.userService.addUserToCollectionIfMissing<IUser>(this.usersSharedCollection, task.user);
+    this.applicationUsersSharedCollection = this.applicationUserService.addApplicationUserToCollectionIfMissing<IApplicationUser>(
+      this.applicationUsersSharedCollection,
+      task.user,
+    );
   }
 
   protected loadRelationshipsOptions(): void {
@@ -113,10 +141,14 @@ export class TaskUpdateComponent implements OnInit {
       .pipe(map((members: IMember[]) => this.memberService.addMemberToCollectionIfMissing<IMember>(members, this.task?.member)))
       .subscribe((members: IMember[]) => (this.membersSharedCollection = members));
 
-    this.userService
+    this.applicationUserService
       .query()
-      .pipe(map((res: HttpResponse<IUser[]>) => res.body ?? []))
-      .pipe(map((users: IUser[]) => this.userService.addUserToCollectionIfMissing<IUser>(users, this.task?.user)))
-      .subscribe((users: IUser[]) => (this.usersSharedCollection = users));
+      .pipe(map((res: HttpResponse<IApplicationUser[]>) => res.body ?? []))
+      .pipe(
+        map((applicationUsers: IApplicationUser[]) =>
+          this.applicationUserService.addApplicationUserToCollectionIfMissing<IApplicationUser>(applicationUsers, this.task?.user),
+        ),
+      )
+      .subscribe((applicationUsers: IApplicationUser[]) => (this.applicationUsersSharedCollection = applicationUsers));
   }
 }

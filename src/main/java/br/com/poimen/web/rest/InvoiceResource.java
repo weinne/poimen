@@ -4,6 +4,7 @@ import br.com.poimen.domain.Invoice;
 import br.com.poimen.repository.InvoiceRepository;
 import br.com.poimen.service.InvoiceService;
 import br.com.poimen.web.rest.errors.BadRequestAlertException;
+import br.com.poimen.web.rest.errors.ElasticsearchExceptionMapper;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotNull;
 import java.net.URI;
@@ -139,12 +140,21 @@ public class InvoiceResource {
      * {@code GET  /invoices} : get all the invoices.
      *
      * @param pageable the pagination information.
+     * @param eagerload flag to eager load entities from relationships (This is applicable for many-to-many).
      * @return the {@link ResponseEntity} with status {@code 200 (OK)} and the list of invoices in body.
      */
     @GetMapping("")
-    public ResponseEntity<List<Invoice>> getAllInvoices(@org.springdoc.core.annotations.ParameterObject Pageable pageable) {
+    public ResponseEntity<List<Invoice>> getAllInvoices(
+        @org.springdoc.core.annotations.ParameterObject Pageable pageable,
+        @RequestParam(name = "eagerload", required = false, defaultValue = "true") boolean eagerload
+    ) {
         LOG.debug("REST request to get a page of Invoices");
-        Page<Invoice> page = invoiceService.findAll(pageable);
+        Page<Invoice> page;
+        if (eagerload) {
+            page = invoiceService.findAllWithEagerRelationships(pageable);
+        } else {
+            page = invoiceService.findAll(pageable);
+        }
         HttpHeaders headers = PaginationUtil.generatePaginationHttpHeaders(ServletUriComponentsBuilder.fromCurrentRequest(), page);
         return ResponseEntity.ok().headers(headers).body(page.getContent());
     }
@@ -175,5 +185,28 @@ public class InvoiceResource {
         return ResponseEntity.noContent()
             .headers(HeaderUtil.createEntityDeletionAlert(applicationName, true, ENTITY_NAME, id.toString()))
             .build();
+    }
+
+    /**
+     * {@code SEARCH  /invoices/_search?query=:query} : search for the invoice corresponding
+     * to the query.
+     *
+     * @param query the query of the invoice search.
+     * @param pageable the pagination information.
+     * @return the result of the search.
+     */
+    @GetMapping("/_search")
+    public ResponseEntity<List<Invoice>> searchInvoices(
+        @RequestParam("query") String query,
+        @org.springdoc.core.annotations.ParameterObject Pageable pageable
+    ) {
+        LOG.debug("REST request to search for a page of Invoices for query {}", query);
+        try {
+            Page<Invoice> page = invoiceService.search(query, pageable);
+            HttpHeaders headers = PaginationUtil.generatePaginationHttpHeaders(ServletUriComponentsBuilder.fromCurrentRequest(), page);
+            return ResponseEntity.ok().headers(headers).body(page.getContent());
+        } catch (RuntimeException e) {
+            throw ElasticsearchExceptionMapper.mapException(e);
+        }
     }
 }

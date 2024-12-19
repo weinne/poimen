@@ -48,8 +48,19 @@ public class HymnAsserts {
         assertThat(expected)
             .as("Verify Hymn relevant properties")
             .satisfies(e -> assertThat(e.getTitle()).as("check title").isEqualTo(actual.getTitle()))
-            .satisfies(e -> assertThat(e.getAuthor()).as("check author").isEqualTo(actual.getAuthor()))
+            .satisfies(e -> assertThat(e.getLyricsAuthor()).as("check lyricsAuthor").isEqualTo(actual.getLyricsAuthor()))
+            .satisfies(e -> assertThat(e.getMusicAuthor()).as("check musicAuthor").isEqualTo(actual.getMusicAuthor()))
+            .satisfies(e -> assertThat(e.getHymnary()).as("check hymnary").isEqualTo(actual.getHymnary()))
             .satisfies(e -> assertThat(e.getHymnNumber()).as("check hymnNumber").isEqualTo(actual.getHymnNumber()))
+            .satisfies(e -> assertThat(e.getLink()).as("check link").isEqualTo(actual.getLink()))
+            .satisfies(e -> assertThat(e.getYoutubeLink()).as("check youtubeLink").isEqualTo(actual.getYoutubeLink()))
+            .satisfies(e -> assertThat(e.getSheetMusic()).as("check sheetMusic").isEqualTo(actual.getSheetMusic()))
+            .satisfies(e ->
+                assertThat(e.getSheetMusicContentType()).as("check sheetMusic contenty type").isEqualTo(actual.getSheetMusicContentType())
+            )
+            .satisfies(e -> assertThat(e.getMidi()).as("check midi").isEqualTo(actual.getMidi()))
+            .satisfies(e -> assertThat(e.getMidiContentType()).as("check midi contenty type").isEqualTo(actual.getMidiContentType()))
+            .satisfies(e -> assertThat(e.getTone()).as("check tone").isEqualTo(actual.getTone()))
             .satisfies(e -> assertThat(e.getLyrics()).as("check lyrics").isEqualTo(actual.getLyrics()));
     }
 
@@ -62,6 +73,6 @@ public class HymnAsserts {
     public static void assertHymnUpdatableRelationshipsEquals(Hymn expected, Hymn actual) {
         assertThat(expected)
             .as("Verify Hymn relationships")
-            .satisfies(e -> assertThat(e.getWorshipEvents()).as("check worshipEvents").isEqualTo(actual.getWorshipEvents()));
+            .satisfies(e -> assertThat(e.getServices()).as("check services").isEqualTo(actual.getServices()));
     }
 }

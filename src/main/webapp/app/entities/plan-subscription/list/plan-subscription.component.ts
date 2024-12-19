@@ -28,11 +28,20 @@ import { PlanSubscriptionDeleteDialogComponent } from '../delete/plan-subscripti
   ],
 })
 export class PlanSubscriptionComponent implements OnInit {
+  private static readonly NOT_SORTABLE_FIELDS_AFTER_SEARCH = [
+    'description',
+    'status',
+    'paymentProvider',
+    'paymentStatus',
+    'paymentReference',
+  ];
+
   subscription: Subscription | null = null;
   planSubscriptions?: IPlanSubscription[];
   isLoading = false;
 
   sortState = sortStateSignal({});
+  currentSearch = '';
 
   public readonly router = inject(Router);
   protected readonly planSubscriptionService = inject(PlanSubscriptionService);
@@ -47,13 +56,22 @@ export class PlanSubscriptionComponent implements OnInit {
     this.subscription = combineLatest([this.activatedRoute.queryParamMap, this.activatedRoute.data])
       .pipe(
         tap(([params, data]) => this.fillComponentAttributeFromRoute(params, data)),
-        tap(() => {
-          if (!this.planSubscriptions || this.planSubscriptions.length === 0) {
-            this.load();
-          }
-        }),
+        tap(() => this.load()),
       )
       .subscribe();
+  }
+
+  search(query: string): void {
+    const { predicate } = this.sortState();
+    if (query && predicate && PlanSubscriptionComponent.NOT_SORTABLE_FIELDS_AFTER_SEARCH.includes(predicate)) {
+      this.loadDefaultSortState();
+    }
+    this.currentSearch = query;
+    this.navigateToWithComponentValues(this.sortState());
+  }
+
+  loadDefaultSortState(): void {
+    this.sortState.set(this.sortService.parseSortParam(this.activatedRoute.snapshot.data[DEFAULT_SORT_DATA]));
   }
 
   delete(planSubscription: IPlanSubscription): void {
@@ -77,11 +95,18 @@ export class PlanSubscriptionComponent implements OnInit {
   }
 
   navigateToWithComponentValues(event: SortState): void {
-    this.handleNavigation(event);
+    this.handleNavigation(event, this.currentSearch);
   }
 
   protected fillComponentAttributeFromRoute(params: ParamMap, data: Data): void {
     this.sortState.set(this.sortService.parseSortParam(params.get(SORT) ?? data[DEFAULT_SORT_DATA]));
+    if (params.has('search') && params.get('search') !== '') {
+      this.currentSearch = params.get('search') as string;
+      const { predicate } = this.sortState();
+      if (predicate && PlanSubscriptionComponent.NOT_SORTABLE_FIELDS_AFTER_SEARCH.includes(predicate)) {
+        this.sortState.set({});
+      }
+    }
   }
 
   protected onResponseSuccess(response: EntityArrayResponseType): void {
@@ -99,15 +124,23 @@ export class PlanSubscriptionComponent implements OnInit {
   }
 
   protected queryBackend(): Observable<EntityArrayResponseType> {
+    const { currentSearch } = this;
+
     this.isLoading = true;
     const queryObject: any = {
+      eagerload: true,
+      query: currentSearch,
       sort: this.sortService.buildSortParam(this.sortState()),
     };
+    if (this.currentSearch && this.currentSearch !== '') {
+      return this.planSubscriptionService.search(queryObject).pipe(tap(() => (this.isLoading = false)));
+    }
     return this.planSubscriptionService.query(queryObject).pipe(tap(() => (this.isLoading = false)));
   }
 
-  protected handleNavigation(sortState: SortState): void {
+  protected handleNavigation(sortState: SortState, currentSearch?: string): void {
     const queryParamsObj = {
+      search: currentSearch,
       sort: this.sortService.buildSortParam(sortState),
     };
 

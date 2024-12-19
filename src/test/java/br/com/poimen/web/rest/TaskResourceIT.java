@@ -3,25 +3,40 @@ package br.com.poimen.web.rest;
 import static br.com.poimen.domain.TaskAsserts.*;
 import static br.com.poimen.web.rest.TestUtil.createUpdateProxyForBean;
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.awaitility.Awaitility.await;
 import static org.hamcrest.Matchers.hasItem;
+import static org.mockito.Mockito.*;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
 import br.com.poimen.IntegrationTest;
 import br.com.poimen.domain.Task;
+import br.com.poimen.domain.enumeration.PriorityTask;
+import br.com.poimen.domain.enumeration.StatusTask;
 import br.com.poimen.repository.TaskRepository;
-import br.com.poimen.repository.UserRepository;
+import br.com.poimen.repository.search.TaskSearchRepository;
+import br.com.poimen.service.TaskService;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import jakarta.persistence.EntityManager;
-import java.time.Instant;
-import java.time.temporal.ChronoUnit;
+import java.time.LocalDate;
+import java.time.ZoneId;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Random;
+import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicLong;
+import org.assertj.core.util.IterableUtil;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.Mock;
+import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.util.Streamable;
 import org.springframework.http.MediaType;
 import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.web.servlet.MockMvc;
@@ -31,6 +46,7 @@ import org.springframework.transaction.annotation.Transactional;
  * Integration tests for the {@link TaskResource} REST controller.
  */
 @IntegrationTest
+@ExtendWith(MockitoExtension.class)
 @AutoConfigureMockMvc
 @WithMockUser
 class TaskResourceIT {
@@ -41,14 +57,21 @@ class TaskResourceIT {
     private static final String DEFAULT_DESCRIPTION = "AAAAAAAAAA";
     private static final String UPDATED_DESCRIPTION = "BBBBBBBBBB";
 
-    private static final Instant DEFAULT_DUE_DATE = Instant.ofEpochMilli(0L);
-    private static final Instant UPDATED_DUE_DATE = Instant.now().truncatedTo(ChronoUnit.MILLIS);
+    private static final LocalDate DEFAULT_DUE_DATE = LocalDate.ofEpochDay(0L);
+    private static final LocalDate UPDATED_DUE_DATE = LocalDate.now(ZoneId.systemDefault());
 
-    private static final Boolean DEFAULT_COMPLETED = false;
-    private static final Boolean UPDATED_COMPLETED = true;
+    private static final StatusTask DEFAULT_STATUS = StatusTask.PENDING;
+    private static final StatusTask UPDATED_STATUS = StatusTask.IN_PROGRESS;
+
+    private static final PriorityTask DEFAULT_PRIORITY = PriorityTask.LOW;
+    private static final PriorityTask UPDATED_PRIORITY = PriorityTask.MEDIUM;
+
+    private static final String DEFAULT_NOTES = "AAAAAAAAAA";
+    private static final String UPDATED_NOTES = "BBBBBBBBBB";
 
     private static final String ENTITY_API_URL = "/api/tasks";
     private static final String ENTITY_API_URL_ID = ENTITY_API_URL + "/{id}";
+    private static final String ENTITY_SEARCH_API_URL = "/api/tasks/_search";
 
     private static Random random = new Random();
     private static AtomicLong longCount = new AtomicLong(random.nextInt() + (2 * Integer.MAX_VALUE));
@@ -59,8 +82,14 @@ class TaskResourceIT {
     @Autowired
     private TaskRepository taskRepository;
 
+    @Mock
+    private TaskRepository taskRepositoryMock;
+
+    @Mock
+    private TaskService taskServiceMock;
+
     @Autowired
-    private UserRepository userRepository;
+    private TaskSearchRepository taskSearchRepository;
 
     @Autowired
     private EntityManager em;
@@ -79,7 +108,13 @@ class TaskResourceIT {
      * if they test an entity which requires the current entity.
      */
     public static Task createEntity() {
-        return new Task().title(DEFAULT_TITLE).description(DEFAULT_DESCRIPTION).dueDate(DEFAULT_DUE_DATE).completed(DEFAULT_COMPLETED);
+        return new Task()
+            .title(DEFAULT_TITLE)
+            .description(DEFAULT_DESCRIPTION)
+            .dueDate(DEFAULT_DUE_DATE)
+            .status(DEFAULT_STATUS)
+            .priority(DEFAULT_PRIORITY)
+            .notes(DEFAULT_NOTES);
     }
 
     /**
@@ -89,7 +124,13 @@ class TaskResourceIT {
      * if they test an entity which requires the current entity.
      */
     public static Task createUpdatedEntity() {
-        return new Task().title(UPDATED_TITLE).description(UPDATED_DESCRIPTION).dueDate(UPDATED_DUE_DATE).completed(UPDATED_COMPLETED);
+        return new Task()
+            .title(UPDATED_TITLE)
+            .description(UPDATED_DESCRIPTION)
+            .dueDate(UPDATED_DUE_DATE)
+            .status(UPDATED_STATUS)
+            .priority(UPDATED_PRIORITY)
+            .notes(UPDATED_NOTES);
     }
 
     @BeforeEach
@@ -101,6 +142,7 @@ class TaskResourceIT {
     public void cleanup() {
         if (insertedTask != null) {
             taskRepository.delete(insertedTask);
+            taskSearchRepository.delete(insertedTask);
             insertedTask = null;
         }
     }
@@ -109,6 +151,7 @@ class TaskResourceIT {
     @Transactional
     void createTask() throws Exception {
         long databaseSizeBeforeCreate = getRepositoryCount();
+        int searchDatabaseSizeBefore = IterableUtil.sizeOf(taskSearchRepository.findAll());
         // Create the Task
         var returnedTask = om.readValue(
             restTaskMockMvc
@@ -124,6 +167,13 @@ class TaskResourceIT {
         assertIncrementedRepositoryCount(databaseSizeBeforeCreate);
         assertTaskUpdatableFieldsEquals(returnedTask, getPersistedTask(returnedTask));
 
+        await()
+            .atMost(5, TimeUnit.SECONDS)
+            .untilAsserted(() -> {
+                int searchDatabaseSizeAfter = IterableUtil.sizeOf(taskSearchRepository.findAll());
+                assertThat(searchDatabaseSizeAfter).isEqualTo(searchDatabaseSizeBefore + 1);
+            });
+
         insertedTask = returnedTask;
     }
 
@@ -134,6 +184,7 @@ class TaskResourceIT {
         task.setId(1L);
 
         long databaseSizeBeforeCreate = getRepositoryCount();
+        int searchDatabaseSizeBefore = IterableUtil.sizeOf(taskSearchRepository.findAll());
 
         // An entity with an existing ID cannot be created, so this API call must fail
         restTaskMockMvc
@@ -142,12 +193,15 @@ class TaskResourceIT {
 
         // Validate the Task in the database
         assertSameRepositoryCount(databaseSizeBeforeCreate);
+        int searchDatabaseSizeAfter = IterableUtil.sizeOf(taskSearchRepository.findAll());
+        assertThat(searchDatabaseSizeAfter).isEqualTo(searchDatabaseSizeBefore);
     }
 
     @Test
     @Transactional
     void checkTitleIsRequired() throws Exception {
         long databaseSizeBeforeTest = getRepositoryCount();
+        int searchDatabaseSizeBefore = IterableUtil.sizeOf(taskSearchRepository.findAll());
         // set the field null
         task.setTitle(null);
 
@@ -158,6 +212,49 @@ class TaskResourceIT {
             .andExpect(status().isBadRequest());
 
         assertSameRepositoryCount(databaseSizeBeforeTest);
+
+        int searchDatabaseSizeAfter = IterableUtil.sizeOf(taskSearchRepository.findAll());
+        assertThat(searchDatabaseSizeAfter).isEqualTo(searchDatabaseSizeBefore);
+    }
+
+    @Test
+    @Transactional
+    void checkStatusIsRequired() throws Exception {
+        long databaseSizeBeforeTest = getRepositoryCount();
+        int searchDatabaseSizeBefore = IterableUtil.sizeOf(taskSearchRepository.findAll());
+        // set the field null
+        task.setStatus(null);
+
+        // Create the Task, which fails.
+
+        restTaskMockMvc
+            .perform(post(ENTITY_API_URL).contentType(MediaType.APPLICATION_JSON).content(om.writeValueAsBytes(task)))
+            .andExpect(status().isBadRequest());
+
+        assertSameRepositoryCount(databaseSizeBeforeTest);
+
+        int searchDatabaseSizeAfter = IterableUtil.sizeOf(taskSearchRepository.findAll());
+        assertThat(searchDatabaseSizeAfter).isEqualTo(searchDatabaseSizeBefore);
+    }
+
+    @Test
+    @Transactional
+    void checkPriorityIsRequired() throws Exception {
+        long databaseSizeBeforeTest = getRepositoryCount();
+        int searchDatabaseSizeBefore = IterableUtil.sizeOf(taskSearchRepository.findAll());
+        // set the field null
+        task.setPriority(null);
+
+        // Create the Task, which fails.
+
+        restTaskMockMvc
+            .perform(post(ENTITY_API_URL).contentType(MediaType.APPLICATION_JSON).content(om.writeValueAsBytes(task)))
+            .andExpect(status().isBadRequest());
+
+        assertSameRepositoryCount(databaseSizeBeforeTest);
+
+        int searchDatabaseSizeAfter = IterableUtil.sizeOf(taskSearchRepository.findAll());
+        assertThat(searchDatabaseSizeAfter).isEqualTo(searchDatabaseSizeBefore);
     }
 
     @Test
@@ -175,7 +272,26 @@ class TaskResourceIT {
             .andExpect(jsonPath("$.[*].title").value(hasItem(DEFAULT_TITLE)))
             .andExpect(jsonPath("$.[*].description").value(hasItem(DEFAULT_DESCRIPTION)))
             .andExpect(jsonPath("$.[*].dueDate").value(hasItem(DEFAULT_DUE_DATE.toString())))
-            .andExpect(jsonPath("$.[*].completed").value(hasItem(DEFAULT_COMPLETED.booleanValue())));
+            .andExpect(jsonPath("$.[*].status").value(hasItem(DEFAULT_STATUS.toString())))
+            .andExpect(jsonPath("$.[*].priority").value(hasItem(DEFAULT_PRIORITY.toString())))
+            .andExpect(jsonPath("$.[*].notes").value(hasItem(DEFAULT_NOTES.toString())));
+    }
+
+    @SuppressWarnings({ "unchecked" })
+    void getAllTasksWithEagerRelationshipsIsEnabled() throws Exception {
+        when(taskServiceMock.findAllWithEagerRelationships(any())).thenReturn(new PageImpl(new ArrayList<>()));
+
+        restTaskMockMvc.perform(get(ENTITY_API_URL + "?eagerload=true")).andExpect(status().isOk());
+
+        verify(taskServiceMock, times(1)).findAllWithEagerRelationships(any());
+    }
+
+    @SuppressWarnings({ "unchecked" })
+    void getAllTasksWithEagerRelationshipsIsNotEnabled() throws Exception {
+        when(taskServiceMock.findAllWithEagerRelationships(any())).thenReturn(new PageImpl(new ArrayList<>()));
+
+        restTaskMockMvc.perform(get(ENTITY_API_URL + "?eagerload=false")).andExpect(status().isOk());
+        verify(taskRepositoryMock, times(1)).findAll(any(Pageable.class));
     }
 
     @Test
@@ -193,7 +309,9 @@ class TaskResourceIT {
             .andExpect(jsonPath("$.title").value(DEFAULT_TITLE))
             .andExpect(jsonPath("$.description").value(DEFAULT_DESCRIPTION))
             .andExpect(jsonPath("$.dueDate").value(DEFAULT_DUE_DATE.toString()))
-            .andExpect(jsonPath("$.completed").value(DEFAULT_COMPLETED.booleanValue()));
+            .andExpect(jsonPath("$.status").value(DEFAULT_STATUS.toString()))
+            .andExpect(jsonPath("$.priority").value(DEFAULT_PRIORITY.toString()))
+            .andExpect(jsonPath("$.notes").value(DEFAULT_NOTES.toString()));
     }
 
     @Test
@@ -210,12 +328,20 @@ class TaskResourceIT {
         insertedTask = taskRepository.saveAndFlush(task);
 
         long databaseSizeBeforeUpdate = getRepositoryCount();
+        taskSearchRepository.save(task);
+        int searchDatabaseSizeBefore = IterableUtil.sizeOf(taskSearchRepository.findAll());
 
         // Update the task
         Task updatedTask = taskRepository.findById(task.getId()).orElseThrow();
         // Disconnect from session so that the updates on updatedTask are not directly saved in db
         em.detach(updatedTask);
-        updatedTask.title(UPDATED_TITLE).description(UPDATED_DESCRIPTION).dueDate(UPDATED_DUE_DATE).completed(UPDATED_COMPLETED);
+        updatedTask
+            .title(UPDATED_TITLE)
+            .description(UPDATED_DESCRIPTION)
+            .dueDate(UPDATED_DUE_DATE)
+            .status(UPDATED_STATUS)
+            .priority(UPDATED_PRIORITY)
+            .notes(UPDATED_NOTES);
 
         restTaskMockMvc
             .perform(
@@ -228,12 +354,24 @@ class TaskResourceIT {
         // Validate the Task in the database
         assertSameRepositoryCount(databaseSizeBeforeUpdate);
         assertPersistedTaskToMatchAllProperties(updatedTask);
+
+        await()
+            .atMost(5, TimeUnit.SECONDS)
+            .untilAsserted(() -> {
+                int searchDatabaseSizeAfter = IterableUtil.sizeOf(taskSearchRepository.findAll());
+                assertThat(searchDatabaseSizeAfter).isEqualTo(searchDatabaseSizeBefore);
+                List<Task> taskSearchList = Streamable.of(taskSearchRepository.findAll()).toList();
+                Task testTaskSearch = taskSearchList.get(searchDatabaseSizeAfter - 1);
+
+                assertTaskAllPropertiesEquals(testTaskSearch, updatedTask);
+            });
     }
 
     @Test
     @Transactional
     void putNonExistingTask() throws Exception {
         long databaseSizeBeforeUpdate = getRepositoryCount();
+        int searchDatabaseSizeBefore = IterableUtil.sizeOf(taskSearchRepository.findAll());
         task.setId(longCount.incrementAndGet());
 
         // If the entity doesn't have an ID, it will throw BadRequestAlertException
@@ -243,12 +381,15 @@ class TaskResourceIT {
 
         // Validate the Task in the database
         assertSameRepositoryCount(databaseSizeBeforeUpdate);
+        int searchDatabaseSizeAfter = IterableUtil.sizeOf(taskSearchRepository.findAll());
+        assertThat(searchDatabaseSizeAfter).isEqualTo(searchDatabaseSizeBefore);
     }
 
     @Test
     @Transactional
     void putWithIdMismatchTask() throws Exception {
         long databaseSizeBeforeUpdate = getRepositoryCount();
+        int searchDatabaseSizeBefore = IterableUtil.sizeOf(taskSearchRepository.findAll());
         task.setId(longCount.incrementAndGet());
 
         // If url ID doesn't match entity ID, it will throw BadRequestAlertException
@@ -262,12 +403,15 @@ class TaskResourceIT {
 
         // Validate the Task in the database
         assertSameRepositoryCount(databaseSizeBeforeUpdate);
+        int searchDatabaseSizeAfter = IterableUtil.sizeOf(taskSearchRepository.findAll());
+        assertThat(searchDatabaseSizeAfter).isEqualTo(searchDatabaseSizeBefore);
     }
 
     @Test
     @Transactional
     void putWithMissingIdPathParamTask() throws Exception {
         long databaseSizeBeforeUpdate = getRepositoryCount();
+        int searchDatabaseSizeBefore = IterableUtil.sizeOf(taskSearchRepository.findAll());
         task.setId(longCount.incrementAndGet());
 
         // If url ID doesn't match entity ID, it will throw BadRequestAlertException
@@ -277,6 +421,8 @@ class TaskResourceIT {
 
         // Validate the Task in the database
         assertSameRepositoryCount(databaseSizeBeforeUpdate);
+        int searchDatabaseSizeAfter = IterableUtil.sizeOf(taskSearchRepository.findAll());
+        assertThat(searchDatabaseSizeAfter).isEqualTo(searchDatabaseSizeBefore);
     }
 
     @Test
@@ -290,6 +436,8 @@ class TaskResourceIT {
         // Update the task using partial update
         Task partialUpdatedTask = new Task();
         partialUpdatedTask.setId(task.getId());
+
+        partialUpdatedTask.priority(UPDATED_PRIORITY).notes(UPDATED_NOTES);
 
         restTaskMockMvc
             .perform(
@@ -317,7 +465,13 @@ class TaskResourceIT {
         Task partialUpdatedTask = new Task();
         partialUpdatedTask.setId(task.getId());
 
-        partialUpdatedTask.title(UPDATED_TITLE).description(UPDATED_DESCRIPTION).dueDate(UPDATED_DUE_DATE).completed(UPDATED_COMPLETED);
+        partialUpdatedTask
+            .title(UPDATED_TITLE)
+            .description(UPDATED_DESCRIPTION)
+            .dueDate(UPDATED_DUE_DATE)
+            .status(UPDATED_STATUS)
+            .priority(UPDATED_PRIORITY)
+            .notes(UPDATED_NOTES);
 
         restTaskMockMvc
             .perform(
@@ -337,6 +491,7 @@ class TaskResourceIT {
     @Transactional
     void patchNonExistingTask() throws Exception {
         long databaseSizeBeforeUpdate = getRepositoryCount();
+        int searchDatabaseSizeBefore = IterableUtil.sizeOf(taskSearchRepository.findAll());
         task.setId(longCount.incrementAndGet());
 
         // If the entity doesn't have an ID, it will throw BadRequestAlertException
@@ -346,12 +501,15 @@ class TaskResourceIT {
 
         // Validate the Task in the database
         assertSameRepositoryCount(databaseSizeBeforeUpdate);
+        int searchDatabaseSizeAfter = IterableUtil.sizeOf(taskSearchRepository.findAll());
+        assertThat(searchDatabaseSizeAfter).isEqualTo(searchDatabaseSizeBefore);
     }
 
     @Test
     @Transactional
     void patchWithIdMismatchTask() throws Exception {
         long databaseSizeBeforeUpdate = getRepositoryCount();
+        int searchDatabaseSizeBefore = IterableUtil.sizeOf(taskSearchRepository.findAll());
         task.setId(longCount.incrementAndGet());
 
         // If url ID doesn't match entity ID, it will throw BadRequestAlertException
@@ -365,12 +523,15 @@ class TaskResourceIT {
 
         // Validate the Task in the database
         assertSameRepositoryCount(databaseSizeBeforeUpdate);
+        int searchDatabaseSizeAfter = IterableUtil.sizeOf(taskSearchRepository.findAll());
+        assertThat(searchDatabaseSizeAfter).isEqualTo(searchDatabaseSizeBefore);
     }
 
     @Test
     @Transactional
     void patchWithMissingIdPathParamTask() throws Exception {
         long databaseSizeBeforeUpdate = getRepositoryCount();
+        int searchDatabaseSizeBefore = IterableUtil.sizeOf(taskSearchRepository.findAll());
         task.setId(longCount.incrementAndGet());
 
         // If url ID doesn't match entity ID, it will throw BadRequestAlertException
@@ -380,6 +541,8 @@ class TaskResourceIT {
 
         // Validate the Task in the database
         assertSameRepositoryCount(databaseSizeBeforeUpdate);
+        int searchDatabaseSizeAfter = IterableUtil.sizeOf(taskSearchRepository.findAll());
+        assertThat(searchDatabaseSizeAfter).isEqualTo(searchDatabaseSizeBefore);
     }
 
     @Test
@@ -387,8 +550,12 @@ class TaskResourceIT {
     void deleteTask() throws Exception {
         // Initialize the database
         insertedTask = taskRepository.saveAndFlush(task);
+        taskRepository.save(task);
+        taskSearchRepository.save(task);
 
         long databaseSizeBeforeDelete = getRepositoryCount();
+        int searchDatabaseSizeBefore = IterableUtil.sizeOf(taskSearchRepository.findAll());
+        assertThat(searchDatabaseSizeBefore).isEqualTo(databaseSizeBeforeDelete);
 
         // Delete the task
         restTaskMockMvc
@@ -397,6 +564,29 @@ class TaskResourceIT {
 
         // Validate the database contains one less item
         assertDecrementedRepositoryCount(databaseSizeBeforeDelete);
+        int searchDatabaseSizeAfter = IterableUtil.sizeOf(taskSearchRepository.findAll());
+        assertThat(searchDatabaseSizeAfter).isEqualTo(searchDatabaseSizeBefore - 1);
+    }
+
+    @Test
+    @Transactional
+    void searchTask() throws Exception {
+        // Initialize the database
+        insertedTask = taskRepository.saveAndFlush(task);
+        taskSearchRepository.save(task);
+
+        // Search the task
+        restTaskMockMvc
+            .perform(get(ENTITY_SEARCH_API_URL + "?query=id:" + task.getId()))
+            .andExpect(status().isOk())
+            .andExpect(content().contentType(MediaType.APPLICATION_JSON_VALUE))
+            .andExpect(jsonPath("$.[*].id").value(hasItem(task.getId().intValue())))
+            .andExpect(jsonPath("$.[*].title").value(hasItem(DEFAULT_TITLE)))
+            .andExpect(jsonPath("$.[*].description").value(hasItem(DEFAULT_DESCRIPTION)))
+            .andExpect(jsonPath("$.[*].dueDate").value(hasItem(DEFAULT_DUE_DATE.toString())))
+            .andExpect(jsonPath("$.[*].status").value(hasItem(DEFAULT_STATUS.toString())))
+            .andExpect(jsonPath("$.[*].priority").value(hasItem(DEFAULT_PRIORITY.toString())))
+            .andExpect(jsonPath("$.[*].notes").value(hasItem(DEFAULT_NOTES.toString())));
     }
 
     protected long getRepositoryCount() {

@@ -6,6 +6,7 @@
         "refreshListLabel": "Atualizar lista",
         "createLabel": "Criar novo Hymn",
         "createOrEditLabel": "Criar ou editar Hymn",
+        "search": "Pesquisar por Hymn",
         "notFound": "Nenhum Hymn encontrado"
       },
       "created": "Um novo Hymn foi criado com o identificador {{ param }}",
@@ -19,10 +20,17 @@
       },
       "id": "ID",
       "title": "Title",
-      "author": "Author",
+      "lyricsAuthor": "Lyrics Author",
+      "musicAuthor": "Music Author",
+      "hymnary": "Hymnary",
       "hymnNumber": "Hymn Number",
+      "link": "Link",
+      "youtubeLink": "Youtube Link",
+      "sheetMusic": "Sheet Music",
+      "midi": "Midi",
+      "tone": "Tone",
       "lyrics": "Lyrics",
-      "worshipEvent": "Worship Event"
+      "services": "Services"
     }
   }
 }

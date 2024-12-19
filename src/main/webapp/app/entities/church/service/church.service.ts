@@ -1,12 +1,16 @@
 import { Injectable, inject } from '@angular/core';
 import { HttpClient, HttpResponse } from '@angular/common/http';
-import { Observable, map } from 'rxjs';
+import { Observable, asapScheduler, map, scheduled } from 'rxjs';
+
+import { catchError } from 'rxjs/operators';
 
 import dayjs from 'dayjs/esm';
 
 import { isPresent } from 'app/core/util/operators';
+import { DATE_FORMAT } from 'app/config/input.constants';
 import { ApplicationConfigService } from 'app/core/config/application-config.service';
 import { createRequestOption } from 'app/core/request/request-util';
+import { Search } from 'app/core/request/request.model';
 import { IChurch, NewChurch } from '../church.model';
 
 export type PartialUpdateChurch = Partial<IChurch> & Pick<IChurch, 'id'>;
@@ -30,6 +34,7 @@ export class ChurchService {
   protected readonly applicationConfigService = inject(ApplicationConfigService);
 
   protected resourceUrl = this.applicationConfigService.getEndpointFor('api/churches');
+  protected resourceSearchUrl = this.applicationConfigService.getEndpointFor('api/churches/_search');
 
   create(church: NewChurch): Observable<EntityResponseType> {
     const copy = this.convertDateFromClient(church);
@@ -69,6 +74,15 @@ export class ChurchService {
     return this.http.delete(`${this.resourceUrl}/${id}`, { observe: 'response' });
   }
 
+  search(req: Search): Observable<EntityArrayResponseType> {
+    const options = createRequestOption(req);
+    return this.http.get<RestChurch[]>(this.resourceSearchUrl, { params: options, observe: 'response' }).pipe(
+      map(res => this.convertResponseArrayFromServer(res)),
+
+      catchError(() => scheduled([new HttpResponse<IChurch[]>()], asapScheduler)),
+    );
+  }
+
   getChurchIdentifier(church: Pick<IChurch, 'id'>): number {
     return church.id;
   }
@@ -100,7 +114,7 @@ export class ChurchService {
   protected convertDateFromClient<T extends IChurch | NewChurch | PartialUpdateChurch>(church: T): RestOf<T> {
     return {
       ...church,
-      dateFoundation: church.dateFoundation?.toJSON() ?? null,
+      dateFoundation: church.dateFoundation?.format(DATE_FORMAT) ?? null,
     };
   }
 

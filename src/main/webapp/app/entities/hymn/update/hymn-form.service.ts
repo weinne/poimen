@@ -14,15 +14,24 @@ type PartialWithRequiredKeyOf<T extends { id: unknown }> = Partial<Omit<T, 'id'>
  */
 type HymnFormGroupInput = IHymn | PartialWithRequiredKeyOf<NewHymn>;
 
-type HymnFormDefaults = Pick<NewHymn, 'id' | 'worshipEvents'>;
+type HymnFormDefaults = Pick<NewHymn, 'id' | 'services'>;
 
 type HymnFormGroupContent = {
   id: FormControl<IHymn['id'] | NewHymn['id']>;
   title: FormControl<IHymn['title']>;
-  author: FormControl<IHymn['author']>;
+  lyricsAuthor: FormControl<IHymn['lyricsAuthor']>;
+  musicAuthor: FormControl<IHymn['musicAuthor']>;
+  hymnary: FormControl<IHymn['hymnary']>;
   hymnNumber: FormControl<IHymn['hymnNumber']>;
+  link: FormControl<IHymn['link']>;
+  youtubeLink: FormControl<IHymn['youtubeLink']>;
+  sheetMusic: FormControl<IHymn['sheetMusic']>;
+  sheetMusicContentType: FormControl<IHymn['sheetMusicContentType']>;
+  midi: FormControl<IHymn['midi']>;
+  midiContentType: FormControl<IHymn['midiContentType']>;
+  tone: FormControl<IHymn['tone']>;
   lyrics: FormControl<IHymn['lyrics']>;
-  worshipEvents: FormControl<IHymn['worshipEvents']>;
+  services: FormControl<IHymn['services']>;
 };
 
 export type HymnFormGroup = FormGroup<HymnFormGroupContent>;
@@ -45,10 +54,21 @@ export class HymnFormService {
       title: new FormControl(hymnRawValue.title, {
         validators: [Validators.required],
       }),
-      author: new FormControl(hymnRawValue.author),
+      lyricsAuthor: new FormControl(hymnRawValue.lyricsAuthor),
+      musicAuthor: new FormControl(hymnRawValue.musicAuthor),
+      hymnary: new FormControl(hymnRawValue.hymnary),
       hymnNumber: new FormControl(hymnRawValue.hymnNumber),
+      link: new FormControl(hymnRawValue.link),
+      youtubeLink: new FormControl(hymnRawValue.youtubeLink),
+      sheetMusic: new FormControl(hymnRawValue.sheetMusic),
+      sheetMusicContentType: new FormControl(hymnRawValue.sheetMusicContentType),
+      midi: new FormControl(hymnRawValue.midi),
+      midiContentType: new FormControl(hymnRawValue.midiContentType),
+      tone: new FormControl(hymnRawValue.tone, {
+        validators: [Validators.maxLength(5)],
+      }),
       lyrics: new FormControl(hymnRawValue.lyrics),
-      worshipEvents: new FormControl(hymnRawValue.worshipEvents ?? []),
+      services: new FormControl(hymnRawValue.services ?? []),
     });
   }
 
@@ -69,7 +89,7 @@ export class HymnFormService {
   private getFormDefaults(): HymnFormDefaults {
     return {
       id: null,
-      worshipEvents: [],
+      services: [],
     };
   }
 }

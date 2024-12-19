@@ -1,6 +1,6 @@
 {
   "annotations": {
-    "changelogDate": "20241218011234"
+    "changelogDate": "20241219001252"
   },
   "applications": "*",
   "fields": [
@@ -41,13 +41,15 @@
   "pagination": "pagination",
   "relationships": [
     {
+      "otherEntityField": "number",
       "otherEntityName": "invoice",
       "otherEntityRelationshipName": "transaction",
-      "relationshipName": "invoice",
+      "relationshipName": "invoices",
       "relationshipSide": "left",
       "relationshipType": "one-to-many"
     },
     {
+      "otherEntityField": "name",
       "otherEntityName": "church",
       "otherEntityRelationshipName": "transaction",
       "relationshipName": "church",
@@ -55,21 +57,19 @@
       "relationshipType": "many-to-one"
     },
     {
+      "otherEntityField": "name",
       "otherEntityName": "member",
-      "otherEntityRelationshipName": "transaction",
       "relationshipName": "member",
       "relationshipSide": "left",
       "relationshipType": "many-to-one"
     },
     {
-      "otherEntityName": "user",
-      "otherEntityRelationshipName": "transaction",
+      "otherEntityField": "name",
+      "otherEntityName": "applicationUser",
       "relationshipName": "user",
       "relationshipSide": "left",
-      "relationshipType": "many-to-one",
-      "relationshipWithBuiltInEntity": true
+      "relationshipType": "many-to-one"
     }
   ],
-  "searchEngine": "no",
   "service": "serviceClass"
 }

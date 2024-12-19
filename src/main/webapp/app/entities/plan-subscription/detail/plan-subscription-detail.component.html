@@ -17,41 +17,67 @@
           <dd>
             <span>{{ planSubscriptionRef.id }}</span>
           </dd>
+          <dt><span jhiTranslate="poimenApp.planSubscription.description">Description</span></dt>
+          <dd>
+            <span>{{ planSubscriptionRef.description }}</span>
+          </dd>
           <dt><span jhiTranslate="poimenApp.planSubscription.startDate">Start Date</span></dt>
           <dd>
-            <span>{{ planSubscriptionRef.startDate | formatMediumDatetime }}</span>
+            <span>{{ planSubscriptionRef.startDate | formatMediumDate }}</span>
           </dd>
           <dt><span jhiTranslate="poimenApp.planSubscription.endDate">End Date</span></dt>
           <dd>
-            <span>{{ planSubscriptionRef.endDate | formatMediumDatetime }}</span>
+            <span>{{ planSubscriptionRef.endDate | formatMediumDate }}</span>
           </dd>
-          <dt><span jhiTranslate="poimenApp.planSubscription.active">Active</span></dt>
+          <dt><span jhiTranslate="poimenApp.planSubscription.status">Status</span></dt>
           <dd>
-            <span>{{ planSubscriptionRef.active }}</span>
+            <span [jhiTranslate]="'poimenApp.PlanSubscriptionStatus.' + (planSubscriptionRef.status ?? 'null')">{{
+              { null: '', ACTIVE: 'Active', INACTIVE: 'Inactive', CANCELED: 'Canceled', PAUSED: 'Paused' }[
+                planSubscriptionRef.status ?? 'null'
+              ]
+            }}</span>
           </dd>
-          <dt><span jhiTranslate="poimenApp.planSubscription.planName">Plan Name</span></dt>
+          <dt><span jhiTranslate="poimenApp.planSubscription.paymentProvider">Payment Provider</span></dt>
           <dd>
-            <span>{{ planSubscriptionRef.planName }}</span>
+            <span [jhiTranslate]="'poimenApp.PaymentProvider.' + (planSubscriptionRef.paymentProvider ?? 'null')">{{
+              { null: '', STRIPE: 'Stripe', PAYPAL: 'PayPal', OTHER: 'Other' }[planSubscriptionRef.paymentProvider ?? 'null']
+            }}</span>
           </dd>
-          <dt><span jhiTranslate="poimenApp.planSubscription.plan">Plan</span></dt>
+          <dt><span jhiTranslate="poimenApp.planSubscription.paymentStatus">Payment Status</span></dt>
           <dd>
-            @if (planSubscription()!.plan) {
-              <div>
-                <a [routerLink]="['/plan', planSubscription()!.plan?.id, 'view']">{{ planSubscriptionRef.plan?.id }}</a>
-              </div>
-            }
+            <span [jhiTranslate]="'poimenApp.PaymentStatus.' + (planSubscriptionRef.paymentStatus ?? 'null')">{{
+              { null: '', PENDING: 'Pending', COMPLETED: 'Completed', FAILED: 'Failed', REFUNDED: 'Refunded' }[
+                planSubscriptionRef.paymentStatus ?? 'null'
+              ]
+            }}</span>
+          </dd>
+          <dt><span jhiTranslate="poimenApp.planSubscription.paymentReference">Payment Reference</span></dt>
+          <dd>
+            <span>{{ planSubscriptionRef.paymentReference }}</span>
           </dd>
           <dt><span jhiTranslate="poimenApp.planSubscription.church">Church</span></dt>
           <dd>
             @if (planSubscription()!.church) {
               <div>
-                <a [routerLink]="['/church', planSubscription()!.church?.id, 'view']">{{ planSubscriptionRef.church?.id }}</a>
+                <a [routerLink]="['/church', planSubscription()!.church?.id, 'view']">{{ planSubscriptionRef.church?.name }}</a>
+              </div>
+            }
+          </dd>
+          <dt><span jhiTranslate="poimenApp.planSubscription.plan">Plan</span></dt>
+          <dd>
+            @if (planSubscription()!.plan) {
+              <div>
+                <a [routerLink]="['/plan', planSubscription()!.plan?.id, 'view']">{{ planSubscriptionRef.plan?.name }}</a>
               </div>
             }
           </dd>
           <dt><span jhiTranslate="poimenApp.planSubscription.user">User</span></dt>
           <dd>
-            <span>{{ planSubscriptionRef.user?.id }}</span>
+            @if (planSubscription()!.user) {
+              <div>
+                <a [routerLink]="['/application-user', planSubscription()!.user?.id, 'view']">{{ planSubscriptionRef.user?.name }}</a>
+              </div>
+            }
           </dd>
         </dl>
 

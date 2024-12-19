@@ -1,6 +1,6 @@
 {
   "annotations": {
-    "changelogDate": "20241218011223"
+    "changelogDate": "20241219001243"
   },
   "applications": "*",
   "fields": [
@@ -12,7 +12,8 @@
     {
       "fieldName": "cnpj",
       "fieldType": "String",
-      "fieldValidateRules": ["required"]
+      "fieldValidateRules": ["pattern", "required"],
+      "fieldValidateRulesPattern": "^\\d{14}$"
     },
     {
       "fieldName": "address",
@@ -26,21 +27,53 @@
     },
     {
       "fieldName": "dateFoundation",
-      "fieldType": "Instant",
+      "fieldType": "LocalDate",
       "fieldValidateRules": ["required"]
+    },
+    {
+      "fieldName": "phone",
+      "fieldType": "String"
+    },
+    {
+      "fieldName": "email",
+      "fieldType": "String"
+    },
+    {
+      "fieldName": "website",
+      "fieldType": "String"
+    },
+    {
+      "fieldName": "facebook",
+      "fieldType": "String"
+    },
+    {
+      "fieldName": "instagram",
+      "fieldType": "String"
+    },
+    {
+      "fieldName": "twitter",
+      "fieldType": "String"
+    },
+    {
+      "fieldName": "youtube",
+      "fieldType": "String"
+    },
+    {
+      "fieldName": "about",
+      "fieldType": "TextBlob"
     }
   ],
   "name": "Church",
   "relationships": [
     {
-      "otherEntityName": "user",
-      "otherEntityRelationshipName": "church",
+      "otherEntityField": "name",
+      "otherEntityName": "applicationUser",
       "relationshipName": "user",
       "relationshipSide": "left",
-      "relationshipType": "many-to-many",
-      "relationshipWithBuiltInEntity": true
+      "relationshipType": "one-to-many"
     },
     {
+      "otherEntityField": "name",
       "otherEntityName": "member",
       "otherEntityRelationshipName": "church",
       "relationshipName": "member",
@@ -48,27 +81,15 @@
       "relationshipType": "one-to-many"
     },
     {
-      "otherEntityName": "ministryGroup",
+      "otherEntityField": "description",
+      "otherEntityName": "planSubscription",
       "otherEntityRelationshipName": "church",
-      "relationshipName": "ministryGroup",
+      "relationshipName": "subscription",
       "relationshipSide": "right",
       "relationshipType": "one-to-many"
     },
     {
-      "otherEntityName": "worshipEvent",
-      "otherEntityRelationshipName": "church",
-      "relationshipName": "worshipEvent",
-      "relationshipSide": "right",
-      "relationshipType": "one-to-many"
-    },
-    {
-      "otherEntityName": "task",
-      "otherEntityRelationshipName": "church",
-      "relationshipName": "task",
-      "relationshipSide": "right",
-      "relationshipType": "one-to-many"
-    },
-    {
+      "otherEntityField": "subject",
       "otherEntityName": "counselingSession",
       "otherEntityRelationshipName": "church",
       "relationshipName": "counselingSession",
@@ -76,13 +97,15 @@
       "relationshipType": "one-to-many"
     },
     {
-      "otherEntityName": "invoice",
+      "otherEntityField": "title",
+      "otherEntityName": "task",
       "otherEntityRelationshipName": "church",
-      "relationshipName": "invoice",
+      "relationshipName": "task",
       "relationshipSide": "right",
       "relationshipType": "one-to-many"
     },
     {
+      "otherEntityField": "description",
       "otherEntityName": "transaction",
       "otherEntityRelationshipName": "church",
       "relationshipName": "transaction",
@@ -90,13 +113,37 @@
       "relationshipType": "one-to-many"
     },
     {
-      "otherEntityName": "planSubscription",
+      "otherEntityField": "number",
+      "otherEntityName": "invoice",
       "otherEntityRelationshipName": "church",
-      "relationshipName": "planSubscription",
+      "relationshipName": "invoice",
+      "relationshipSide": "right",
+      "relationshipType": "one-to-many"
+    },
+    {
+      "otherEntityField": "title",
+      "otherEntityName": "worshipEvent",
+      "otherEntityRelationshipName": "church",
+      "relationshipName": "worshipEvent",
+      "relationshipSide": "right",
+      "relationshipType": "one-to-many"
+    },
+    {
+      "otherEntityField": "subject",
+      "otherEntityName": "appointment",
+      "otherEntityRelationshipName": "church",
+      "relationshipName": "appointment",
+      "relationshipSide": "right",
+      "relationshipType": "one-to-many"
+    },
+    {
+      "otherEntityField": "name",
+      "otherEntityName": "ministryGroup",
+      "otherEntityRelationshipName": "church",
+      "relationshipName": "ministryGroup",
       "relationshipSide": "right",
       "relationshipType": "one-to-many"
     }
   ],
-  "searchEngine": "no",
   "service": "serviceClass"
 }

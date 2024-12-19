@@ -11,8 +11,8 @@ import { IChurch } from 'app/entities/church/church.model';
 import { ChurchService } from 'app/entities/church/service/church.service';
 import { IMember } from 'app/entities/member/member.model';
 import { MemberService } from 'app/entities/member/service/member.service';
-import { IUser } from 'app/entities/user/user.model';
-import { UserService } from 'app/entities/user/service/user.service';
+import { IApplicationUser } from 'app/entities/application-user/application-user.model';
+import { ApplicationUserService } from 'app/entities/application-user/service/application-user.service';
 import { TransactionService } from '../service/transaction.service';
 import { ITransaction } from '../transaction.model';
 import { TransactionFormGroup, TransactionFormService } from './transaction-form.service';
@@ -29,13 +29,13 @@ export class TransactionUpdateComponent implements OnInit {
 
   churchesSharedCollection: IChurch[] = [];
   membersSharedCollection: IMember[] = [];
-  usersSharedCollection: IUser[] = [];
+  applicationUsersSharedCollection: IApplicationUser[] = [];
 
   protected transactionService = inject(TransactionService);
   protected transactionFormService = inject(TransactionFormService);
   protected churchService = inject(ChurchService);
   protected memberService = inject(MemberService);
-  protected userService = inject(UserService);
+  protected applicationUserService = inject(ApplicationUserService);
   protected activatedRoute = inject(ActivatedRoute);
 
   // eslint-disable-next-line @typescript-eslint/member-ordering
@@ -45,7 +45,8 @@ export class TransactionUpdateComponent implements OnInit {
 
   compareMember = (o1: IMember | null, o2: IMember | null): boolean => this.memberService.compareMember(o1, o2);
 
-  compareUser = (o1: IUser | null, o2: IUser | null): boolean => this.userService.compareUser(o1, o2);
+  compareApplicationUser = (o1: IApplicationUser | null, o2: IApplicationUser | null): boolean =>
+    this.applicationUserService.compareApplicationUser(o1, o2);
 
   ngOnInit(): void {
     this.activatedRoute.data.subscribe(({ transaction }) => {
@@ -103,7 +104,10 @@ export class TransactionUpdateComponent implements OnInit {
       this.membersSharedCollection,
       transaction.member,
     );
-    this.usersSharedCollection = this.userService.addUserToCollectionIfMissing<IUser>(this.usersSharedCollection, transaction.user);
+    this.applicationUsersSharedCollection = this.applicationUserService.addApplicationUserToCollectionIfMissing<IApplicationUser>(
+      this.applicationUsersSharedCollection,
+      transaction.user,
+    );
   }
 
   protected loadRelationshipsOptions(): void {
@@ -119,10 +123,14 @@ export class TransactionUpdateComponent implements OnInit {
       .pipe(map((members: IMember[]) => this.memberService.addMemberToCollectionIfMissing<IMember>(members, this.transaction?.member)))
       .subscribe((members: IMember[]) => (this.membersSharedCollection = members));
 
-    this.userService
+    this.applicationUserService
       .query()
-      .pipe(map((res: HttpResponse<IUser[]>) => res.body ?? []))
-      .pipe(map((users: IUser[]) => this.userService.addUserToCollectionIfMissing<IUser>(users, this.transaction?.user)))
-      .subscribe((users: IUser[]) => (this.usersSharedCollection = users));
+      .pipe(map((res: HttpResponse<IApplicationUser[]>) => res.body ?? []))
+      .pipe(
+        map((applicationUsers: IApplicationUser[]) =>
+          this.applicationUserService.addApplicationUserToCollectionIfMissing<IApplicationUser>(applicationUsers, this.transaction?.user),
+        ),
+      )
+      .subscribe((applicationUsers: IApplicationUser[]) => (this.applicationUsersSharedCollection = applicationUsers));
   }
 }

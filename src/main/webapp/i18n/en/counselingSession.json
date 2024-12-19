@@ -6,6 +6,7 @@
         "refreshListLabel": "Refresh list",
         "createLabel": "Create a new Counseling Session",
         "createOrEditLabel": "Create or edit a Counseling Session",
+        "search": "Search for Counseling Session",
         "notFound": "No Counseling Sessions found"
       },
       "created": "A new Counseling Session is created with identifier {{ param }}",
@@ -18,11 +19,17 @@
         "title": "Counseling Session"
       },
       "id": "ID",
+      "subject": "Subject",
       "date": "Date",
+      "startTime": "Start Time",
+      "endTime": "End Time",
       "notes": "Notes",
+      "counselingTasks": "Counseling Tasks",
+      "status": "Status",
       "church": "Church",
       "member": "Member",
-      "user": "User"
+      "user": "User",
+      "appointment": "Appointment"
     }
   }
 }

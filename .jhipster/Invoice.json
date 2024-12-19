@@ -1,6 +1,6 @@
 {
   "annotations": {
-    "changelogDate": "20241218011226"
+    "changelogDate": "20241219001246"
   },
   "applications": "*",
   "fields": [
@@ -30,13 +30,16 @@
     },
     {
       "fieldName": "invoiceFile",
-      "fieldType": "String"
+      "fieldType": "AnyBlob",
+      "fieldValidateRules": ["maxbytes"],
+      "fieldValidateRulesMaxbytes": "5242880"
     }
   ],
   "name": "Invoice",
   "pagination": "pagination",
   "relationships": [
     {
+      "otherEntityField": "name",
       "otherEntityName": "church",
       "otherEntityRelationshipName": "invoice",
       "relationshipName": "church",
@@ -44,13 +47,13 @@
       "relationshipType": "many-to-one"
     },
     {
+      "otherEntityField": "description",
       "otherEntityName": "transaction",
-      "otherEntityRelationshipName": "invoice",
+      "otherEntityRelationshipName": "invoices",
       "relationshipName": "transaction",
       "relationshipSide": "right",
       "relationshipType": "many-to-one"
     }
   ],
-  "searchEngine": "no",
   "service": "serviceClass"
 }

@@ -2,11 +2,11 @@
   "poimenApp": {
     "WorshipType": {
       "null": "",
-      "SUNDAY_SERVICE": "SUNDAY_SERVICE",
-      "PRAYER_MEETING": "PRAYER_MEETING",
-      "BIBLE_STUDY": "BIBLE_STUDY",
-      "YOUTH_SERVICE": "YOUTH_SERVICE",
-      "SPECIAL_EVENT": "SPECIAL_EVENT"
+      "SUNDAY_SERVICE": "Sunday Service",
+      "PRAYER_MEETING": "Prayer Meeting",
+      "BIBLE_STUDY": "Bible Study",
+      "SPECIAL_EVENT": "Special Event",
+      "OTHER": "Other"
     }
   }
 }

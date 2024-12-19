@@ -1,5 +1,6 @@
 package br.com.poimen.domain;
 
+import static br.com.poimen.domain.ApplicationUserTestSamples.*;
 import static br.com.poimen.domain.ChurchTestSamples.*;
 import static br.com.poimen.domain.MemberTestSamples.*;
 import static br.com.poimen.domain.TaskTestSamples.*;
@@ -46,5 +47,17 @@ class TaskTest {
 
         task.member(null);
         assertThat(task.getMember()).isNull();
+    }
+
+    @Test
+    void userTest() {
+        Task task = getTaskRandomSampleGenerator();
+        ApplicationUser applicationUserBack = getApplicationUserRandomSampleGenerator();
+
+        task.setUser(applicationUserBack);
+        assertThat(task.getUser()).isEqualTo(applicationUserBack);
+
+        task.user(null);
+        assertThat(task.getUser()).isNull();
     }
 }

@@ -37,6 +37,7 @@ type InvoiceFormGroupContent = {
   type: FormControl<InvoiceFormRawValue['type']>;
   supplier: FormControl<InvoiceFormRawValue['supplier']>;
   invoiceFile: FormControl<InvoiceFormRawValue['invoiceFile']>;
+  invoiceFileContentType: FormControl<InvoiceFormRawValue['invoiceFileContentType']>;
   church: FormControl<InvoiceFormRawValue['church']>;
   transaction: FormControl<InvoiceFormRawValue['transaction']>;
 };
@@ -72,6 +73,7 @@ export class InvoiceFormService {
       }),
       supplier: new FormControl(invoiceRawValue.supplier),
       invoiceFile: new FormControl(invoiceRawValue.invoiceFile),
+      invoiceFileContentType: new FormControl(invoiceRawValue.invoiceFileContentType),
       church: new FormControl(invoiceRawValue.church),
       transaction: new FormControl(invoiceRawValue.transaction),
     });

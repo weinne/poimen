@@ -6,10 +6,10 @@ import { Subject, from, of } from 'rxjs';
 
 import { IChurch } from 'app/entities/church/church.model';
 import { ChurchService } from 'app/entities/church/service/church.service';
-import { ISchedule } from 'app/entities/schedule/schedule.model';
-import { ScheduleService } from 'app/entities/schedule/service/schedule.service';
 import { IWorshipEvent } from 'app/entities/worship-event/worship-event.model';
 import { WorshipEventService } from 'app/entities/worship-event/service/worship-event.service';
+import { IMinistryGroup } from 'app/entities/ministry-group/ministry-group.model';
+import { MinistryGroupService } from 'app/entities/ministry-group/service/ministry-group.service';
 import { IMember } from '../member.model';
 import { MemberService } from '../service/member.service';
 import { MemberFormService } from './member-form.service';
@@ -23,8 +23,8 @@ describe('Member Management Update Component', () => {
   let memberFormService: MemberFormService;
   let memberService: MemberService;
   let churchService: ChurchService;
-  let scheduleService: ScheduleService;
   let worshipEventService: WorshipEventService;
+  let ministryGroupService: MinistryGroupService;
 
   beforeEach(() => {
     TestBed.configureTestingModule({
@@ -48,8 +48,8 @@ describe('Member Management Update Component', () => {
     memberFormService = TestBed.inject(MemberFormService);
     memberService = TestBed.inject(MemberService);
     churchService = TestBed.inject(ChurchService);
-    scheduleService = TestBed.inject(ScheduleService);
     worshipEventService = TestBed.inject(WorshipEventService);
+    ministryGroupService = TestBed.inject(MinistryGroupService);
 
     comp = fixture.componentInstance;
   });
@@ -57,10 +57,10 @@ describe('Member Management Update Component', () => {
   describe('ngOnInit', () => {
     it('Should call Church query and add missing value', () => {
       const member: IMember = { id: 456 };
-      const church: IChurch = { id: 4442 };
+      const church: IChurch = { id: 26069 };
       member.church = church;
 
-      const churchCollection: IChurch[] = [{ id: 878 }];
+      const churchCollection: IChurch[] = [{ id: 25202 }];
       jest.spyOn(churchService, 'query').mockReturnValue(of(new HttpResponse({ body: churchCollection })));
       const additionalChurches = [church];
       const expectedCollection: IChurch[] = [...additionalChurches, ...churchCollection];
@@ -77,36 +77,16 @@ describe('Member Management Update Component', () => {
       expect(comp.churchesSharedCollection).toEqual(expectedCollection);
     });
 
-    it('Should call Schedule query and add missing value', () => {
-      const member: IMember = { id: 456 };
-      const schedules: ISchedule[] = [{ id: 2308 }];
-      member.schedules = schedules;
-
-      const scheduleCollection: ISchedule[] = [{ id: 32403 }];
-      jest.spyOn(scheduleService, 'query').mockReturnValue(of(new HttpResponse({ body: scheduleCollection })));
-      const additionalSchedules = [...schedules];
-      const expectedCollection: ISchedule[] = [...additionalSchedules, ...scheduleCollection];
-      jest.spyOn(scheduleService, 'addScheduleToCollectionIfMissing').mockReturnValue(expectedCollection);
-
-      activatedRoute.data = of({ member });
-      comp.ngOnInit();
-
-      expect(scheduleService.query).toHaveBeenCalled();
-      expect(scheduleService.addScheduleToCollectionIfMissing).toHaveBeenCalledWith(
-        scheduleCollection,
-        ...additionalSchedules.map(expect.objectContaining),
-      );
-      expect(comp.schedulesSharedCollection).toEqual(expectedCollection);
-    });
-
     it('Should call WorshipEvent query and add missing value', () => {
       const member: IMember = { id: 456 };
-      const worshipEvents: IWorshipEvent[] = [{ id: 29652 }];
-      member.worshipEvents = worshipEvents;
+      const playIns: IWorshipEvent[] = [{ id: 17213 }];
+      member.playIns = playIns;
+      const participateIns: IWorshipEvent[] = [{ id: 11809 }];
+      member.participateIns = participateIns;
 
-      const worshipEventCollection: IWorshipEvent[] = [{ id: 23678 }];
+      const worshipEventCollection: IWorshipEvent[] = [{ id: 4259 }];
       jest.spyOn(worshipEventService, 'query').mockReturnValue(of(new HttpResponse({ body: worshipEventCollection })));
-      const additionalWorshipEvents = [...worshipEvents];
+      const additionalWorshipEvents = [...playIns, ...participateIns];
       const expectedCollection: IWorshipEvent[] = [...additionalWorshipEvents, ...worshipEventCollection];
       jest.spyOn(worshipEventService, 'addWorshipEventToCollectionIfMissing').mockReturnValue(expectedCollection);
 
@@ -121,21 +101,46 @@ describe('Member Management Update Component', () => {
       expect(comp.worshipEventsSharedCollection).toEqual(expectedCollection);
     });
 
+    it('Should call MinistryGroup query and add missing value', () => {
+      const member: IMember = { id: 456 };
+      const memberOfs: IMinistryGroup[] = [{ id: 21489 }];
+      member.memberOfs = memberOfs;
+
+      const ministryGroupCollection: IMinistryGroup[] = [{ id: 3537 }];
+      jest.spyOn(ministryGroupService, 'query').mockReturnValue(of(new HttpResponse({ body: ministryGroupCollection })));
+      const additionalMinistryGroups = [...memberOfs];
+      const expectedCollection: IMinistryGroup[] = [...additionalMinistryGroups, ...ministryGroupCollection];
+      jest.spyOn(ministryGroupService, 'addMinistryGroupToCollectionIfMissing').mockReturnValue(expectedCollection);
+
+      activatedRoute.data = of({ member });
+      comp.ngOnInit();
+
+      expect(ministryGroupService.query).toHaveBeenCalled();
+      expect(ministryGroupService.addMinistryGroupToCollectionIfMissing).toHaveBeenCalledWith(
+        ministryGroupCollection,
+        ...additionalMinistryGroups.map(expect.objectContaining),
+      );
+      expect(comp.ministryGroupsSharedCollection).toEqual(expectedCollection);
+    });
+
     it('Should update editForm', () => {
       const member: IMember = { id: 456 };
-      const church: IChurch = { id: 27000 };
+      const church: IChurch = { id: 4585 };
       member.church = church;
-      const schedule: ISchedule = { id: 3973 };
-      member.schedules = [schedule];
-      const worshipEvent: IWorshipEvent = { id: 18194 };
-      member.worshipEvents = [worshipEvent];
+      const playIn: IWorshipEvent = { id: 20916 };
+      member.playIns = [playIn];
+      const participateIn: IWorshipEvent = { id: 24427 };
+      member.participateIns = [participateIn];
+      const memberOf: IMinistryGroup = { id: 899 };
+      member.memberOfs = [memberOf];
 
       activatedRoute.data = of({ member });
       comp.ngOnInit();
 
       expect(comp.churchesSharedCollection).toContain(church);
-      expect(comp.schedulesSharedCollection).toContain(schedule);
-      expect(comp.worshipEventsSharedCollection).toContain(worshipEvent);
+      expect(comp.worshipEventsSharedCollection).toContain(playIn);
+      expect(comp.worshipEventsSharedCollection).toContain(participateIn);
+      expect(comp.ministryGroupsSharedCollection).toContain(memberOf);
       expect(comp.member).toEqual(member);
     });
   });
@@ -219,16 +224,6 @@ describe('Member Management Update Component', () => {
       });
     });
 
-    describe('compareSchedule', () => {
-      it('Should forward to scheduleService', () => {
-        const entity = { id: 123 };
-        const entity2 = { id: 456 };
-        jest.spyOn(scheduleService, 'compareSchedule');
-        comp.compareSchedule(entity, entity2);
-        expect(scheduleService.compareSchedule).toHaveBeenCalledWith(entity, entity2);
-      });
-    });
-
     describe('compareWorshipEvent', () => {
       it('Should forward to worshipEventService', () => {
         const entity = { id: 123 };
@@ -236,6 +231,16 @@ describe('Member Management Update Component', () => {
         jest.spyOn(worshipEventService, 'compareWorshipEvent');
         comp.compareWorshipEvent(entity, entity2);
         expect(worshipEventService.compareWorshipEvent).toHaveBeenCalledWith(entity, entity2);
+      });
+    });
+
+    describe('compareMinistryGroup', () => {
+      it('Should forward to ministryGroupService', () => {
+        const entity = { id: 123 };
+        const entity2 = { id: 456 };
+        jest.spyOn(ministryGroupService, 'compareMinistryGroup');
+        comp.compareMinistryGroup(entity, entity2);
+        expect(ministryGroupService.compareMinistryGroup).toHaveBeenCalledWith(entity, entity2);
       });
     });
   });

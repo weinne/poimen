@@ -1,26 +1,31 @@
 import { IPlan, NewPlan } from './plan.model';
 
 export const sampleWithRequiredData: IPlan = {
-  id: 3388,
-  name: 'unethically loyally',
-  price: 'untried',
+  id: 482,
+  name: 'newsprint',
+  price: 'zowie unlucky ugh',
 };
 
 export const sampleWithPartialData: IPlan = {
-  id: 21400,
-  name: 'pro incandescence while',
-  price: 'growing realistic',
+  id: 25290,
+  name: 'quizzically recovery',
+  price: 'woeful why grimy',
+  description: 'joyfully',
+  features: '../fake-data/blob/hipster.txt',
 };
 
 export const sampleWithFullData: IPlan = {
-  id: 24249,
-  name: 'until',
-  price: 'provided proper recklessly',
+  id: 28232,
+  name: 'aha unhealthy fooey',
+  price: 'uh-huh anti produce',
+  description: 'during cosset deliberately',
+  features: '../fake-data/blob/hipster.txt',
+  renewalPeriod: 'construe',
 };
 
 export const sampleWithNewData: NewPlan = {
-  name: 'lean numeric',
-  price: 'hammock boo',
+  name: 'ack',
+  price: 'phew',
   id: null,
 };
 

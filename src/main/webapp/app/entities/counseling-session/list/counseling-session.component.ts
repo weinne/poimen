@@ -35,11 +35,14 @@ import { ICounselingSession } from '../counseling-session.model';
   ],
 })
 export class CounselingSessionComponent implements OnInit {
+  private static readonly NOT_SORTABLE_FIELDS_AFTER_SEARCH = ['subject', 'notes', 'counselingTasks', 'status'];
+
   subscription: Subscription | null = null;
   counselingSessions?: ICounselingSession[];
   isLoading = false;
 
   sortState = sortStateSignal({});
+  currentSearch = '';
 
   itemsPerPage = ITEMS_PER_PAGE;
   links: WritableSignal<Record<string, undefined | Record<string, string | undefined>>> = signal({});
@@ -75,6 +78,19 @@ export class CounselingSessionComponent implements OnInit {
     this.load();
   }
 
+  search(query: string): void {
+    const { predicate } = this.sortState();
+    if (query && predicate && CounselingSessionComponent.NOT_SORTABLE_FIELDS_AFTER_SEARCH.includes(predicate)) {
+      this.loadDefaultSortState();
+    }
+    this.currentSearch = query;
+    this.navigateToWithComponentValues(this.sortState());
+  }
+
+  loadDefaultSortState(): void {
+    this.sortState.set(this.sortService.parseSortParam(this.activatedRoute.snapshot.data[DEFAULT_SORT_DATA]));
+  }
+
   byteSize(base64String: string): string {
     return this.dataUtils.byteSize(base64String);
   }
@@ -104,11 +120,18 @@ export class CounselingSessionComponent implements OnInit {
   }
 
   navigateToWithComponentValues(event: SortState): void {
-    this.handleNavigation(event);
+    this.handleNavigation(event, this.currentSearch);
   }
 
   protected fillComponentAttributeFromRoute(params: ParamMap, data: Data): void {
     this.sortState.set(this.sortService.parseSortParam(params.get(SORT) ?? data[DEFAULT_SORT_DATA]));
+    if (params.has('search') && params.get('search') !== '') {
+      this.currentSearch = params.get('search') as string;
+      const { predicate } = this.sortState();
+      if (predicate && CounselingSessionComponent.NOT_SORTABLE_FIELDS_AFTER_SEARCH.includes(predicate)) {
+        this.sortState.set({});
+      }
+    }
   }
 
   protected onResponseSuccess(response: EntityArrayResponseType): void {
@@ -143,9 +166,13 @@ export class CounselingSessionComponent implements OnInit {
   }
 
   protected queryBackend(): Observable<EntityArrayResponseType> {
+    const { currentSearch } = this;
+
     this.isLoading = true;
     const queryObject: any = {
       size: this.itemsPerPage,
+      eagerload: true,
+      query: currentSearch,
     };
     if (this.hasMorePage()) {
       Object.assign(queryObject, this.links().next);
@@ -153,13 +180,17 @@ export class CounselingSessionComponent implements OnInit {
       Object.assign(queryObject, { sort: this.sortService.buildSortParam(this.sortState()) });
     }
 
+    if (this.currentSearch && this.currentSearch !== '') {
+      return this.counselingSessionService.search(queryObject).pipe(tap(() => (this.isLoading = false)));
+    }
     return this.counselingSessionService.query(queryObject).pipe(tap(() => (this.isLoading = false)));
   }
 
-  protected handleNavigation(sortState: SortState): void {
+  protected handleNavigation(sortState: SortState, currentSearch?: string): void {
     this.links.set({});
 
     const queryParamsObj = {
+      search: currentSearch,
       sort: this.sortService.buildSortParam(sortState),
     };
 

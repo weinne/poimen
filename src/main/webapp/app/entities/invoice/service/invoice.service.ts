@@ -1,12 +1,15 @@
 import { Injectable, inject } from '@angular/core';
 import { HttpClient, HttpResponse } from '@angular/common/http';
-import { Observable, map } from 'rxjs';
+import { Observable, asapScheduler, map, scheduled } from 'rxjs';
+
+import { catchError } from 'rxjs/operators';
 
 import dayjs from 'dayjs/esm';
 
 import { isPresent } from 'app/core/util/operators';
 import { ApplicationConfigService } from 'app/core/config/application-config.service';
 import { createRequestOption } from 'app/core/request/request-util';
+import { SearchWithPagination } from 'app/core/request/request.model';
 import { IInvoice, NewInvoice } from '../invoice.model';
 
 export type PartialUpdateInvoice = Partial<IInvoice> & Pick<IInvoice, 'id'>;
@@ -30,6 +33,7 @@ export class InvoiceService {
   protected readonly applicationConfigService = inject(ApplicationConfigService);
 
   protected resourceUrl = this.applicationConfigService.getEndpointFor('api/invoices');
+  protected resourceSearchUrl = this.applicationConfigService.getEndpointFor('api/invoices/_search');
 
   create(invoice: NewInvoice): Observable<EntityResponseType> {
     const copy = this.convertDateFromClient(invoice);
@@ -67,6 +71,15 @@ export class InvoiceService {
 
   delete(id: number): Observable<HttpResponse<{}>> {
     return this.http.delete(`${this.resourceUrl}/${id}`, { observe: 'response' });
+  }
+
+  search(req: SearchWithPagination): Observable<EntityArrayResponseType> {
+    const options = createRequestOption(req);
+    return this.http.get<RestInvoice[]>(this.resourceSearchUrl, { params: options, observe: 'response' }).pipe(
+      map(res => this.convertResponseArrayFromServer(res)),
+
+      catchError(() => scheduled([new HttpResponse<IInvoice[]>()], asapScheduler)),
+    );
   }
 
   getInvoiceIdentifier(invoice: Pick<IInvoice, 'id'>): number {

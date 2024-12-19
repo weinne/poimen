@@ -69,7 +69,8 @@
               "extractLicenses": false,
               "sourceMap": true,
               "namedChunks": true
-            }
+            },
+            "instrumenter": {}
           },
           "defaultConfiguration": "production"
         },
@@ -105,7 +106,6 @@
       "path": "./target/angular/",
       "environment": "all"
     },
-    "packageManager": "npm",
-    "analytics": "8dfde78f-7dde-413f-9c75-548fa4827eb4"
+    "packageManager": "npm"
   }
 }

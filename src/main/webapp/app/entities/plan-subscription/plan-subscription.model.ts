@@ -1,17 +1,23 @@
 import dayjs from 'dayjs/esm';
-import { IPlan } from 'app/entities/plan/plan.model';
 import { IChurch } from 'app/entities/church/church.model';
-import { IUser } from 'app/entities/user/user.model';
+import { IPlan } from 'app/entities/plan/plan.model';
+import { IApplicationUser } from 'app/entities/application-user/application-user.model';
+import { PlanSubscriptionStatus } from 'app/entities/enumerations/plan-subscription-status.model';
+import { PaymentProvider } from 'app/entities/enumerations/payment-provider.model';
+import { PaymentStatus } from 'app/entities/enumerations/payment-status.model';
 
 export interface IPlanSubscription {
   id: number;
+  description?: string | null;
   startDate?: dayjs.Dayjs | null;
   endDate?: dayjs.Dayjs | null;
-  active?: boolean | null;
-  planName?: string | null;
-  plan?: IPlan | null;
+  status?: keyof typeof PlanSubscriptionStatus | null;
+  paymentProvider?: keyof typeof PaymentProvider | null;
+  paymentStatus?: keyof typeof PaymentStatus | null;
+  paymentReference?: string | null;
   church?: IChurch | null;
-  user?: Pick<IUser, 'id'> | null;
+  plan?: IPlan | null;
+  user?: IApplicationUser | null;
 }
 
 export type NewPlanSubscription = Omit<IPlanSubscription, 'id'> & { id: null };

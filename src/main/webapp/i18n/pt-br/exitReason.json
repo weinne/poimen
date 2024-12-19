@@ -1,0 +1,13 @@
+{
+  "poimenApp": {
+    "ExitReason": {
+      "null": "",
+      "TRANSFER": "Transfer",
+      "EXCOMMUNICATION": "Excommunication",
+      "DEATH": "Death",
+      "DISMISSAL": "Dismissal",
+      "ORDENATION": "Ordenation",
+      "OTHER": "Other"
+    }
+  }
+}

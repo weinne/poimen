@@ -15,39 +15,67 @@
           </div>
         }
 
-        @let firstNameRef = editForm.get('firstName')!;
+        @let nameRef = editForm.get('name')!;
         <div class="mb-3">
-          <label class="form-label" for="field_firstName" jhiTranslate="poimenApp.member.firstName">First Name</label>
-          <input type="text" class="form-control" name="firstName" id="field_firstName" data-cy="firstName" formControlName="firstName" />
-          @if (firstNameRef.invalid && (firstNameRef.dirty || firstNameRef.touched)) {
+          <label class="form-label" for="field_name" jhiTranslate="poimenApp.member.name">Name</label>
+          <input type="text" class="form-control" name="name" id="field_name" data-cy="name" formControlName="name" />
+          @if (nameRef.invalid && (nameRef.dirty || nameRef.touched)) {
             <div>
-              @if (editForm.get('firstName')?.errors?.required) {
+              @if (editForm.get('name')?.errors?.required) {
                 <small class="form-text text-danger" jhiTranslate="entity.validation.required">This field is required.</small>
               }
             </div>
           }
         </div>
 
-        @let lastNameRef = editForm.get('lastName')!;
+        @let photoRef = editForm.get('photo')!;
         <div class="mb-3">
-          <label class="form-label" for="field_lastName" jhiTranslate="poimenApp.member.lastName">Last Name</label>
-          <input type="text" class="form-control" name="lastName" id="field_lastName" data-cy="lastName" formControlName="lastName" />
-          @if (lastNameRef.invalid && (lastNameRef.dirty || lastNameRef.touched)) {
-            <div>
-              @if (editForm.get('lastName')?.errors?.required) {
-                <small class="form-text text-danger" jhiTranslate="entity.validation.required">This field is required.</small>
-              }
-            </div>
+          <label class="form-label" for="field_photo" jhiTranslate="poimenApp.member.photo">Photo</label>
+          <div>
+            @if (photoRef.value) {
+              <img
+                [src]="'data:' + editForm.get('photoContentType')!.value + ';base64,' + photoRef.value"
+                style="max-height: 100px"
+                alt="member"
+              />
+            }
+            @if (photoRef.value) {
+              <div class="form-text text-danger clearfix">
+                <span class="pull-start">{{ editForm.get('photoContentType')!.value }}, {{ byteSize(photoRef.value!) }}</span>
+                <button
+                  type="button"
+                  (click)="clearInputImage('photo', 'photoContentType', 'file_photo')"
+                  class="btn btn-secondary btn-xs pull-end"
+                >
+                  <fa-icon icon="times"></fa-icon>
+                </button>
+              </div>
+            }
+            <input
+              type="file"
+              id="file_photo"
+              data-cy="photo"
+              (change)="setFileData($event, 'photo', true)"
+              accept="image/*"
+              jhiTranslate="entity.action.addimage"
+            />
+          </div>
+          <input type="hidden" class="form-control" name="photo" id="field_photo" data-cy="photo" formControlName="photo" />
+          <input
+            type="hidden"
+            class="form-control"
+            name="photoContentType"
+            id="field_photoContentType"
+            formControlName="photoContentType"
+          />
+          @if (photoRef.invalid && (photoRef.dirty || photoRef.touched)) {
+            <div></div>
           }
         </div>
 
-        @let emailRef = editForm.get('email')!;
         <div class="mb-3">
           <label class="form-label" for="field_email" jhiTranslate="poimenApp.member.email">Email</label>
           <input type="text" class="form-control" name="email" id="field_email" data-cy="email" formControlName="email" />
-          @if (emailRef.invalid && (emailRef.dirty || emailRef.touched)) {
-            <div></div>
-          }
         </div>
 
         <div class="mb-3">
@@ -62,24 +90,336 @@
           />
         </div>
 
+        @let dateOfBirthRef = editForm.get('dateOfBirth')!;
         <div class="mb-3">
           <label class="form-label" for="field_dateOfBirth" jhiTranslate="poimenApp.member.dateOfBirth">Date Of Birth</label>
-          <div class="d-flex">
+          <div class="input-group">
             <input
               id="field_dateOfBirth"
               data-cy="dateOfBirth"
-              type="datetime-local"
+              type="text"
               class="form-control"
               name="dateOfBirth"
+              ngbDatepicker
+              #dateOfBirthDp="ngbDatepicker"
               formControlName="dateOfBirth"
-              placeholder="YYYY-MM-DD HH:mm"
             />
+            <button type="button" class="btn btn-secondary" (click)="dateOfBirthDp.toggle()">
+              <fa-icon icon="calendar-alt"></fa-icon>
+            </button>
           </div>
+          @if (dateOfBirthRef.invalid && (dateOfBirthRef.dirty || dateOfBirthRef.touched)) {
+            <div>
+              @if (editForm.get('dateOfBirth')?.errors?.required) {
+                <small class="form-text text-danger" jhiTranslate="entity.validation.required">This field is required.</small>
+              }
+            </div>
+          }
         </div>
 
         <div class="mb-3">
           <label class="form-label" for="field_address" jhiTranslate="poimenApp.member.address">Address</label>
           <input type="text" class="form-control" name="address" id="field_address" data-cy="address" formControlName="address" />
+        </div>
+
+        <div class="mb-3">
+          <label class="form-label" for="field_city" jhiTranslate="poimenApp.member.city">City</label>
+          <input type="text" class="form-control" name="city" id="field_city" data-cy="city" formControlName="city" />
+        </div>
+
+        <div class="mb-3">
+          <label class="form-label" for="field_state" jhiTranslate="poimenApp.member.state">State</label>
+          <input type="text" class="form-control" name="state" id="field_state" data-cy="state" formControlName="state" />
+        </div>
+
+        <div class="mb-3">
+          <label class="form-label" for="field_zipCode" jhiTranslate="poimenApp.member.zipCode">Zip Code</label>
+          <input type="text" class="form-control" name="zipCode" id="field_zipCode" data-cy="zipCode" formControlName="zipCode" />
+        </div>
+
+        <div class="mb-3">
+          <label class="form-label" for="field_cityOfBirth" jhiTranslate="poimenApp.member.cityOfBirth">City Of Birth</label>
+          <input
+            type="text"
+            class="form-control"
+            name="cityOfBirth"
+            id="field_cityOfBirth"
+            data-cy="cityOfBirth"
+            formControlName="cityOfBirth"
+          />
+        </div>
+
+        <div class="mb-3">
+          <label class="form-label" for="field_previousReligion" jhiTranslate="poimenApp.member.previousReligion">Previous Religion</label>
+          <input
+            type="text"
+            class="form-control"
+            name="previousReligion"
+            id="field_previousReligion"
+            data-cy="previousReligion"
+            formControlName="previousReligion"
+          />
+        </div>
+
+        @let maritalStatusRef = editForm.get('maritalStatus')!;
+        <div class="mb-3">
+          <label class="form-label" for="field_maritalStatus" jhiTranslate="poimenApp.member.maritalStatus">Marital Status</label>
+          <select
+            class="form-control"
+            name="maritalStatus"
+            formControlName="maritalStatus"
+            id="field_maritalStatus"
+            data-cy="maritalStatus"
+          >
+            <option [ngValue]="null">{{ 'poimenApp.MaritalStatus.null' | translate }}</option>
+            @for (maritalStatus of maritalStatusValues; track $index) {
+              <option [value]="maritalStatus">{{ 'poimenApp.MaritalStatus.' + maritalStatus | translate }}</option>
+            }
+          </select>
+          @if (maritalStatusRef.invalid && (maritalStatusRef.dirty || maritalStatusRef.touched)) {
+            <div>
+              @if (editForm.get('maritalStatus')?.errors?.required) {
+                <small class="form-text text-danger" jhiTranslate="entity.validation.required">This field is required.</small>
+              }
+            </div>
+          }
+        </div>
+
+        <div class="mb-3">
+          <label class="form-label" for="field_spouseName" jhiTranslate="poimenApp.member.spouseName">Spouse Name</label>
+          <input
+            type="text"
+            class="form-control"
+            name="spouseName"
+            id="field_spouseName"
+            data-cy="spouseName"
+            formControlName="spouseName"
+          />
+        </div>
+
+        <div class="mb-3">
+          <label class="form-label" for="field_dateOfMarriage" jhiTranslate="poimenApp.member.dateOfMarriage">Date Of Marriage</label>
+          <div class="input-group">
+            <input
+              id="field_dateOfMarriage"
+              data-cy="dateOfMarriage"
+              type="text"
+              class="form-control"
+              name="dateOfMarriage"
+              ngbDatepicker
+              #dateOfMarriageDp="ngbDatepicker"
+              formControlName="dateOfMarriage"
+            />
+            <button type="button" class="btn btn-secondary" (click)="dateOfMarriageDp.toggle()">
+              <fa-icon icon="calendar-alt"></fa-icon>
+            </button>
+          </div>
+        </div>
+
+        @let statusRef = editForm.get('status')!;
+        <div class="mb-3">
+          <label class="form-label" for="field_status" jhiTranslate="poimenApp.member.status">Status</label>
+          <select class="form-control" name="status" formControlName="status" id="field_status" data-cy="status">
+            <option [ngValue]="null">{{ 'poimenApp.MemberStatus.null' | translate }}</option>
+            @for (memberStatus of memberStatusValues; track $index) {
+              <option [value]="memberStatus">{{ 'poimenApp.MemberStatus.' + memberStatus | translate }}</option>
+            }
+          </select>
+          @if (statusRef.invalid && (statusRef.dirty || statusRef.touched)) {
+            <div>
+              @if (editForm.get('status')?.errors?.required) {
+                <small class="form-text text-danger" jhiTranslate="entity.validation.required">This field is required.</small>
+              }
+            </div>
+          }
+        </div>
+
+        @let cpfRef = editForm.get('cpf')!;
+        <div class="mb-3">
+          <label class="form-label" for="field_cpf" jhiTranslate="poimenApp.member.cpf">Cpf</label>
+          <input type="text" class="form-control" name="cpf" id="field_cpf" data-cy="cpf" formControlName="cpf" />
+          @if (cpfRef.invalid && (cpfRef.dirty || cpfRef.touched)) {
+            <div>
+              @if (editForm.get('cpf')?.errors?.required) {
+                <small class="form-text text-danger" jhiTranslate="entity.validation.required">This field is required.</small>
+              }
+              @if (editForm.get('cpf')?.errors?.pattern) {
+                <small class="form-text text-danger" jhiTranslate="entity.validation.pattern" [translateValues]="{ pattern: 'Cpf' }"
+                  >This field should follow pattern for Cpf.</small
+                >
+              }
+            </div>
+          }
+        </div>
+
+        @let rgRef = editForm.get('rg')!;
+        <div class="mb-3">
+          <label class="form-label" for="field_rg" jhiTranslate="poimenApp.member.rg">Rg</label>
+          <input type="text" class="form-control" name="rg" id="field_rg" data-cy="rg" formControlName="rg" />
+          @if (rgRef.invalid && (rgRef.dirty || rgRef.touched)) {
+            <div>
+              @if (editForm.get('rg')?.errors?.required) {
+                <small class="form-text text-danger" jhiTranslate="entity.validation.required">This field is required.</small>
+              }
+            </div>
+          }
+        </div>
+
+        <div class="mb-3">
+          <label class="form-label" for="field_dateOfBaptism" jhiTranslate="poimenApp.member.dateOfBaptism">Date Of Baptism</label>
+          <div class="input-group">
+            <input
+              id="field_dateOfBaptism"
+              data-cy="dateOfBaptism"
+              type="text"
+              class="form-control"
+              name="dateOfBaptism"
+              ngbDatepicker
+              #dateOfBaptismDp="ngbDatepicker"
+              formControlName="dateOfBaptism"
+            />
+            <button type="button" class="btn btn-secondary" (click)="dateOfBaptismDp.toggle()">
+              <fa-icon icon="calendar-alt"></fa-icon>
+            </button>
+          </div>
+        </div>
+
+        <div class="mb-3">
+          <label class="form-label" for="field_churchOfBaptism" jhiTranslate="poimenApp.member.churchOfBaptism">Church Of Baptism</label>
+          <input
+            type="text"
+            class="form-control"
+            name="churchOfBaptism"
+            id="field_churchOfBaptism"
+            data-cy="churchOfBaptism"
+            formControlName="churchOfBaptism"
+          />
+        </div>
+
+        <div class="mb-3">
+          <label class="form-label" for="field_dateOfMembership" jhiTranslate="poimenApp.member.dateOfMembership">Date Of Membership</label>
+          <div class="input-group">
+            <input
+              id="field_dateOfMembership"
+              data-cy="dateOfMembership"
+              type="text"
+              class="form-control"
+              name="dateOfMembership"
+              ngbDatepicker
+              #dateOfMembershipDp="ngbDatepicker"
+              formControlName="dateOfMembership"
+            />
+            <button type="button" class="btn btn-secondary" (click)="dateOfMembershipDp.toggle()">
+              <fa-icon icon="calendar-alt"></fa-icon>
+            </button>
+          </div>
+        </div>
+
+        <div class="mb-3">
+          <label class="form-label" for="field_typeOfMembership" jhiTranslate="poimenApp.member.typeOfMembership">Type Of Membership</label>
+          <select
+            class="form-control"
+            name="typeOfMembership"
+            formControlName="typeOfMembership"
+            id="field_typeOfMembership"
+            data-cy="typeOfMembership"
+          >
+            <option [ngValue]="null">{{ 'poimenApp.MembershipType.null' | translate }}</option>
+            @for (membershipType of membershipTypeValues; track $index) {
+              <option [value]="membershipType">{{ 'poimenApp.MembershipType.' + membershipType | translate }}</option>
+            }
+          </select>
+        </div>
+
+        <div class="mb-3">
+          <label class="form-label" for="field_associationMeetingMinutes" jhiTranslate="poimenApp.member.associationMeetingMinutes"
+            >Association Meeting Minutes</label
+          >
+          <input
+            type="text"
+            class="form-control"
+            name="associationMeetingMinutes"
+            id="field_associationMeetingMinutes"
+            data-cy="associationMeetingMinutes"
+            formControlName="associationMeetingMinutes"
+          />
+        </div>
+
+        <div class="mb-3">
+          <label class="form-label" for="field_dateOfDeath" jhiTranslate="poimenApp.member.dateOfDeath">Date Of Death</label>
+          <div class="input-group">
+            <input
+              id="field_dateOfDeath"
+              data-cy="dateOfDeath"
+              type="text"
+              class="form-control"
+              name="dateOfDeath"
+              ngbDatepicker
+              #dateOfDeathDp="ngbDatepicker"
+              formControlName="dateOfDeath"
+            />
+            <button type="button" class="btn btn-secondary" (click)="dateOfDeathDp.toggle()">
+              <fa-icon icon="calendar-alt"></fa-icon>
+            </button>
+          </div>
+        </div>
+
+        <div class="mb-3">
+          <label class="form-label" for="field_dateOfExit" jhiTranslate="poimenApp.member.dateOfExit">Date Of Exit</label>
+          <div class="input-group">
+            <input
+              id="field_dateOfExit"
+              data-cy="dateOfExit"
+              type="text"
+              class="form-control"
+              name="dateOfExit"
+              ngbDatepicker
+              #dateOfExitDp="ngbDatepicker"
+              formControlName="dateOfExit"
+            />
+            <button type="button" class="btn btn-secondary" (click)="dateOfExitDp.toggle()"><fa-icon icon="calendar-alt"></fa-icon></button>
+          </div>
+        </div>
+
+        <div class="mb-3">
+          <label class="form-label" for="field_exitDestination" jhiTranslate="poimenApp.member.exitDestination">Exit Destination</label>
+          <input
+            type="text"
+            class="form-control"
+            name="exitDestination"
+            id="field_exitDestination"
+            data-cy="exitDestination"
+            formControlName="exitDestination"
+          />
+        </div>
+
+        <div class="mb-3">
+          <label class="form-label" for="field_exitReason" jhiTranslate="poimenApp.member.exitReason">Exit Reason</label>
+          <select class="form-control" name="exitReason" formControlName="exitReason" id="field_exitReason" data-cy="exitReason">
+            <option [ngValue]="null">{{ 'poimenApp.ExitReason.null' | translate }}</option>
+            @for (exitReason of exitReasonValues; track $index) {
+              <option [value]="exitReason">{{ 'poimenApp.ExitReason.' + exitReason | translate }}</option>
+            }
+          </select>
+        </div>
+
+        <div class="mb-3">
+          <label class="form-label" for="field_exitMeetingMinutes" jhiTranslate="poimenApp.member.exitMeetingMinutes"
+            >Exit Meeting Minutes</label
+          >
+          <input
+            type="text"
+            class="form-control"
+            name="exitMeetingMinutes"
+            id="field_exitMeetingMinutes"
+            data-cy="exitMeetingMinutes"
+            formControlName="exitMeetingMinutes"
+          />
+        </div>
+
+        <div class="mb-3">
+          <label class="form-label" for="field_notes" jhiTranslate="poimenApp.member.notes">Notes</label>
+          <textarea class="form-control" name="notes" id="field_notes" data-cy="notes" formControlName="notes"></textarea>
         </div>
 
         <div class="mb-3">
@@ -94,41 +434,58 @@
           >
             <option [ngValue]="null"></option>
             @for (churchOption of churchesSharedCollection; track $index) {
-              <option [ngValue]="churchOption">{{ churchOption.id }}</option>
+              <option [ngValue]="churchOption">{{ churchOption.name }}</option>
             }
           </select>
         </div>
 
         <div class="mb-3">
-          <label for="field_schedules" jhiTranslate="poimenApp.member.schedule">Schedule</label>
+          <label for="field_playIns" jhiTranslate="poimenApp.member.playIn">Play In</label>
           <select
             class="form-control"
-            id="field_schedules"
-            data-cy="schedule"
+            id="field_playIns"
+            data-cy="playIn"
             multiple
-            name="schedules"
-            formControlName="schedules"
-            [compareWith]="compareSchedule"
-          >
-            @for (scheduleOption of schedulesSharedCollection; track $index) {
-              <option [ngValue]="scheduleOption">{{ scheduleOption.id }}</option>
-            }
-          </select>
-        </div>
-
-        <div class="mb-3">
-          <label for="field_worshipEvents" jhiTranslate="poimenApp.member.worshipEvent">Worship Event</label>
-          <select
-            class="form-control"
-            id="field_worshipEvents"
-            data-cy="worshipEvent"
-            multiple
-            name="worshipEvents"
-            formControlName="worshipEvents"
+            name="playIns"
+            formControlName="playIns"
             [compareWith]="compareWorshipEvent"
           >
             @for (worshipEventOption of worshipEventsSharedCollection; track $index) {
-              <option [ngValue]="worshipEventOption">{{ worshipEventOption.id }}</option>
+              <option [ngValue]="worshipEventOption">{{ worshipEventOption.title }}</option>
+            }
+          </select>
+        </div>
+
+        <div class="mb-3">
+          <label for="field_participateIns" jhiTranslate="poimenApp.member.participateIn">Participate In</label>
+          <select
+            class="form-control"
+            id="field_participateIns"
+            data-cy="participateIn"
+            multiple
+            name="participateIns"
+            formControlName="participateIns"
+            [compareWith]="compareWorshipEvent"
+          >
+            @for (worshipEventOption of worshipEventsSharedCollection; track $index) {
+              <option [ngValue]="worshipEventOption">{{ worshipEventOption.title }}</option>
+            }
+          </select>
+        </div>
+
+        <div class="mb-3">
+          <label for="field_memberOfs" jhiTranslate="poimenApp.member.memberOf">Member Of</label>
+          <select
+            class="form-control"
+            id="field_memberOfs"
+            data-cy="memberOf"
+            multiple
+            name="memberOfs"
+            formControlName="memberOfs"
+            [compareWith]="compareMinistryGroup"
+          >
+            @for (ministryGroupOption of ministryGroupsSharedCollection; track $index) {
+              <option [ngValue]="ministryGroupOption">{{ ministryGroupOption.name }}</option>
             }
           </select>
         </div>

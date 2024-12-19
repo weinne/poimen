@@ -2,10 +2,14 @@ package br.com.poimen.service;
 
 import br.com.poimen.domain.Task;
 import br.com.poimen.repository.TaskRepository;
+import br.com.poimen.repository.search.TaskSearchRepository;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.StreamSupport;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -20,8 +24,11 @@ public class TaskService {
 
     private final TaskRepository taskRepository;
 
-    public TaskService(TaskRepository taskRepository) {
+    private final TaskSearchRepository taskSearchRepository;
+
+    public TaskService(TaskRepository taskRepository, TaskSearchRepository taskSearchRepository) {
         this.taskRepository = taskRepository;
+        this.taskSearchRepository = taskSearchRepository;
     }
 
     /**
@@ -32,7 +39,9 @@ public class TaskService {
      */
     public Task save(Task task) {
         LOG.debug("Request to save Task : {}", task);
-        return taskRepository.save(task);
+        task = taskRepository.save(task);
+        taskSearchRepository.index(task);
+        return task;
     }
 
     /**
@@ -43,7 +52,9 @@ public class TaskService {
      */
     public Task update(Task task) {
         LOG.debug("Request to update Task : {}", task);
-        return taskRepository.save(task);
+        task = taskRepository.save(task);
+        taskSearchRepository.index(task);
+        return task;
     }
 
     /**
@@ -67,13 +78,23 @@ public class TaskService {
                 if (task.getDueDate() != null) {
                     existingTask.setDueDate(task.getDueDate());
                 }
-                if (task.getCompleted() != null) {
-                    existingTask.setCompleted(task.getCompleted());
+                if (task.getStatus() != null) {
+                    existingTask.setStatus(task.getStatus());
+                }
+                if (task.getPriority() != null) {
+                    existingTask.setPriority(task.getPriority());
+                }
+                if (task.getNotes() != null) {
+                    existingTask.setNotes(task.getNotes());
                 }
 
                 return existingTask;
             })
-            .map(taskRepository::save);
+            .map(taskRepository::save)
+            .map(savedTask -> {
+                taskSearchRepository.index(savedTask);
+                return savedTask;
+            });
     }
 
     /**
@@ -88,6 +109,15 @@ public class TaskService {
     }
 
     /**
+     * Get all the tasks with eager load of many-to-many relationships.
+     *
+     * @return the list of entities.
+     */
+    public Page<Task> findAllWithEagerRelationships(Pageable pageable) {
+        return taskRepository.findAllWithEagerRelationships(pageable);
+    }
+
+    /**
      * Get one task by id.
      *
      * @param id the id of the entity.
@@ -96,7 +126,7 @@ public class TaskService {
     @Transactional(readOnly = true)
     public Optional<Task> findOne(Long id) {
         LOG.debug("Request to get Task : {}", id);
-        return taskRepository.findById(id);
+        return taskRepository.findOneWithEagerRelationships(id);
     }
 
     /**
@@ -107,5 +137,22 @@ public class TaskService {
     public void delete(Long id) {
         LOG.debug("Request to delete Task : {}", id);
         taskRepository.deleteById(id);
+        taskSearchRepository.deleteFromIndexById(id);
+    }
+
+    /**
+     * Search for the task corresponding to the query.
+     *
+     * @param query the query of the search.
+     * @return the list of entities.
+     */
+    @Transactional(readOnly = true)
+    public List<Task> search(String query) {
+        LOG.debug("Request to search Tasks for query {}", query);
+        try {
+            return StreamSupport.stream(taskSearchRepository.search(query).spliterator(), false).toList();
+        } catch (RuntimeException e) {
+            throw e;
+        }
     }
 }

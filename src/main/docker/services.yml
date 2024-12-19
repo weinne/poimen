@@ -8,3 +8,7 @@ services:
     profiles:
       - ''
       - prod
+  elasticsearch:
+    extends:
+      file: ./elasticsearch.yml
+      service: elasticsearch

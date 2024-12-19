@@ -1,6 +1,6 @@
 {
   "annotations": {
-    "changelogDate": "20241218011235"
+    "changelogDate": "20241219001253"
   },
   "applications": "*",
   "fields": [
@@ -14,20 +14,73 @@
       "fieldType": "String"
     },
     {
-      "fieldName": "description",
+      "fieldName": "guestPreacher",
       "fieldType": "String"
+    },
+    {
+      "fieldName": "description",
+      "fieldType": "TextBlob"
+    },
+    {
+      "fieldName": "callToWorshipText",
+      "fieldType": "String"
+    },
+    {
+      "fieldName": "confessionOfSinText",
+      "fieldType": "String"
+    },
+    {
+      "fieldName": "assuranceOfPardonText",
+      "fieldType": "String"
+    },
+    {
+      "fieldName": "lordSupperText",
+      "fieldType": "String"
+    },
+    {
+      "fieldName": "benedictionText",
+      "fieldType": "String"
+    },
+    {
+      "fieldName": "confessionalText",
+      "fieldType": "String"
+    },
+    {
+      "fieldName": "sermonText",
+      "fieldType": "TextBlob"
+    },
+    {
+      "fieldName": "sermonFile",
+      "fieldType": "AnyBlob",
+      "fieldValidateRules": ["maxbytes"],
+      "fieldValidateRulesMaxbytes": "5242880"
+    },
+    {
+      "fieldName": "sermonLink",
+      "fieldType": "String"
+    },
+    {
+      "fieldName": "youtubeLink",
+      "fieldType": "String"
+    },
+    {
+      "fieldName": "bulletinFile",
+      "fieldType": "AnyBlob",
+      "fieldValidateRules": ["maxbytes"],
+      "fieldValidateRulesMaxbytes": "5242880"
     },
     {
       "fieldName": "worshipType",
       "fieldType": "WorshipType",
       "fieldValidateRules": ["required"],
-      "fieldValues": "SUNDAY_SERVICE,PRAYER_MEETING,BIBLE_STUDY,YOUTH_SERVICE,SPECIAL_EVENT"
+      "fieldValues": "SUNDAY_SERVICE (Sunday Service),PRAYER_MEETING (Prayer Meeting),BIBLE_STUDY (Bible Study),SPECIAL_EVENT (Special Event),OTHER (Other)"
     }
   ],
   "name": "WorshipEvent",
   "pagination": "pagination",
   "relationships": [
     {
+      "otherEntityField": "name",
       "otherEntityName": "church",
       "otherEntityRelationshipName": "worshipEvent",
       "relationshipName": "church",
@@ -35,31 +88,53 @@
       "relationshipType": "many-to-one"
     },
     {
+      "otherEntityField": "name",
       "otherEntityName": "member",
+      "otherEntityRelationshipName": "preachIn",
       "relationshipName": "preacher",
       "relationshipSide": "left",
       "relationshipType": "many-to-one"
     },
     {
+      "otherEntityField": "name",
       "otherEntityName": "member",
+      "otherEntityRelationshipName": "liturgyIn",
       "relationshipName": "liturgist",
       "relationshipSide": "left",
       "relationshipType": "many-to-one"
     },
     {
+      "otherEntityField": "title",
       "otherEntityName": "hymn",
-      "otherEntityRelationshipName": "worshipEvent",
-      "relationshipName": "hymn",
+      "otherEntityRelationshipName": "services",
+      "relationshipName": "hymns",
       "relationshipSide": "left",
       "relationshipType": "many-to-many"
     },
     {
+      "otherEntityField": "name",
       "otherEntityName": "member",
+      "otherEntityRelationshipName": "playIn",
       "relationshipName": "musicians",
       "relationshipSide": "left",
       "relationshipType": "many-to-many"
+    },
+    {
+      "otherEntityField": "name",
+      "otherEntityName": "member",
+      "otherEntityRelationshipName": "participateIn",
+      "relationshipName": "participants",
+      "relationshipSide": "left",
+      "relationshipType": "many-to-many"
+    },
+    {
+      "otherEntityField": "subject",
+      "otherEntityName": "appointment",
+      "otherEntityRelationshipName": "service",
+      "relationshipName": "appointment",
+      "relationshipSide": "right",
+      "relationshipType": "one-to-many"
     }
   ],
-  "searchEngine": "no",
   "service": "serviceClass"
 }

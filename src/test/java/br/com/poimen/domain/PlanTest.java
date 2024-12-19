@@ -26,24 +26,24 @@ class PlanTest {
     }
 
     @Test
-    void planSubscriptionTest() {
+    void subscriptionTest() {
         Plan plan = getPlanRandomSampleGenerator();
         PlanSubscription planSubscriptionBack = getPlanSubscriptionRandomSampleGenerator();
 
-        plan.addPlanSubscription(planSubscriptionBack);
-        assertThat(plan.getPlanSubscriptions()).containsOnly(planSubscriptionBack);
+        plan.addSubscription(planSubscriptionBack);
+        assertThat(plan.getSubscriptions()).containsOnly(planSubscriptionBack);
         assertThat(planSubscriptionBack.getPlan()).isEqualTo(plan);
 
-        plan.removePlanSubscription(planSubscriptionBack);
-        assertThat(plan.getPlanSubscriptions()).doesNotContain(planSubscriptionBack);
+        plan.removeSubscription(planSubscriptionBack);
+        assertThat(plan.getSubscriptions()).doesNotContain(planSubscriptionBack);
         assertThat(planSubscriptionBack.getPlan()).isNull();
 
-        plan.planSubscriptions(new HashSet<>(Set.of(planSubscriptionBack)));
-        assertThat(plan.getPlanSubscriptions()).containsOnly(planSubscriptionBack);
+        plan.subscriptions(new HashSet<>(Set.of(planSubscriptionBack)));
+        assertThat(plan.getSubscriptions()).containsOnly(planSubscriptionBack);
         assertThat(planSubscriptionBack.getPlan()).isEqualTo(plan);
 
-        plan.setPlanSubscriptions(new HashSet<>());
-        assertThat(plan.getPlanSubscriptions()).doesNotContain(planSubscriptionBack);
+        plan.setSubscriptions(new HashSet<>());
+        assertThat(plan.getSubscriptions()).doesNotContain(planSubscriptionBack);
         assertThat(planSubscriptionBack.getPlan()).isNull();
     }
 }

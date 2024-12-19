@@ -33,13 +33,39 @@
           </dd>
           <dt><span jhiTranslate="poimenApp.church.dateFoundation">Date Foundation</span></dt>
           <dd>
-            <span>{{ churchRef.dateFoundation | formatMediumDatetime }}</span>
+            <span>{{ churchRef.dateFoundation | formatMediumDate }}</span>
           </dd>
-          <dt><span jhiTranslate="poimenApp.church.user">User</span></dt>
+          <dt><span jhiTranslate="poimenApp.church.phone">Phone</span></dt>
           <dd>
-            @for (user of churchRef.users; track $index; let last = $last) {
-              <span> {{ user.id }}{{ last ? '' : ', ' }} </span>
-            }
+            <span>{{ churchRef.phone }}</span>
+          </dd>
+          <dt><span jhiTranslate="poimenApp.church.email">Email</span></dt>
+          <dd>
+            <span>{{ churchRef.email }}</span>
+          </dd>
+          <dt><span jhiTranslate="poimenApp.church.website">Website</span></dt>
+          <dd>
+            <span>{{ churchRef.website }}</span>
+          </dd>
+          <dt><span jhiTranslate="poimenApp.church.facebook">Facebook</span></dt>
+          <dd>
+            <span>{{ churchRef.facebook }}</span>
+          </dd>
+          <dt><span jhiTranslate="poimenApp.church.instagram">Instagram</span></dt>
+          <dd>
+            <span>{{ churchRef.instagram }}</span>
+          </dd>
+          <dt><span jhiTranslate="poimenApp.church.twitter">Twitter</span></dt>
+          <dd>
+            <span>{{ churchRef.twitter }}</span>
+          </dd>
+          <dt><span jhiTranslate="poimenApp.church.youtube">Youtube</span></dt>
+          <dd>
+            <span>{{ churchRef.youtube }}</span>
+          </dd>
+          <dt><span jhiTranslate="poimenApp.church.about">About</span></dt>
+          <dd>
+            <span>{{ churchRef.about }}</span>
           </dd>
         </dl>
 

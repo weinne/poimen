@@ -49,12 +49,12 @@ describe('Hymn Management Update Component', () => {
   describe('ngOnInit', () => {
     it('Should call WorshipEvent query and add missing value', () => {
       const hymn: IHymn = { id: 456 };
-      const worshipEvents: IWorshipEvent[] = [{ id: 27982 }];
-      hymn.worshipEvents = worshipEvents;
+      const services: IWorshipEvent[] = [{ id: 25097 }];
+      hymn.services = services;
 
-      const worshipEventCollection: IWorshipEvent[] = [{ id: 31118 }];
+      const worshipEventCollection: IWorshipEvent[] = [{ id: 26806 }];
       jest.spyOn(worshipEventService, 'query').mockReturnValue(of(new HttpResponse({ body: worshipEventCollection })));
-      const additionalWorshipEvents = [...worshipEvents];
+      const additionalWorshipEvents = [...services];
       const expectedCollection: IWorshipEvent[] = [...additionalWorshipEvents, ...worshipEventCollection];
       jest.spyOn(worshipEventService, 'addWorshipEventToCollectionIfMissing').mockReturnValue(expectedCollection);
 
@@ -71,13 +71,13 @@ describe('Hymn Management Update Component', () => {
 
     it('Should update editForm', () => {
       const hymn: IHymn = { id: 456 };
-      const worshipEvent: IWorshipEvent = { id: 32480 };
-      hymn.worshipEvents = [worshipEvent];
+      const services: IWorshipEvent = { id: 13962 };
+      hymn.services = [services];
 
       activatedRoute.data = of({ hymn });
       comp.ngOnInit();
 
-      expect(comp.worshipEventsSharedCollection).toContain(worshipEvent);
+      expect(comp.worshipEventsSharedCollection).toContain(services);
       expect(comp.hymn).toEqual(hymn);
     });
   });

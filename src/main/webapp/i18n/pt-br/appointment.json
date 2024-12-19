@@ -1,0 +1,36 @@
+{
+  "poimenApp": {
+    "appointment": {
+      "home": {
+        "title": "Appointments",
+        "refreshListLabel": "Atualizar lista",
+        "createLabel": "Criar novo Appointment",
+        "createOrEditLabel": "Criar ou editar Appointment",
+        "search": "Pesquisar por Appointment",
+        "notFound": "Nenhum Appointment encontrado"
+      },
+      "created": "Um novo Appointment foi criado com o identificador {{ param }}",
+      "updated": "Um Appointment foi atualizado com o identificador {{ param }}",
+      "deleted": "Um Appointment foi excluído com o identificador {{ param }}",
+      "delete": {
+        "question": "Tem certeza de que deseja excluir Appointment {{ id }}?"
+      },
+      "detail": {
+        "title": "Appointment"
+      },
+      "id": "ID",
+      "subject": "Subject",
+      "startTime": "Start Time",
+      "endTime": "End Time",
+      "notes": "Notes",
+      "local": "Local",
+      "appointmentType": "Appointment Type",
+      "church": "Church",
+      "member": "Member",
+      "service": "Service",
+      "group": "Group",
+      "counselingSession": "Counseling Session",
+      "user": "User"
+    }
+  }
+}

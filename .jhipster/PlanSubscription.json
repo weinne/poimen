@@ -1,54 +1,71 @@
 {
   "annotations": {
-    "changelogDate": "20241218011231"
+    "changelogDate": "20241219001250"
   },
   "applications": "*",
   "fields": [
     {
+      "fieldName": "description",
+      "fieldType": "String",
+      "fieldValidateRules": ["required"]
+    },
+    {
       "fieldName": "startDate",
-      "fieldType": "Instant",
+      "fieldType": "LocalDate",
       "fieldValidateRules": ["required"]
     },
     {
       "fieldName": "endDate",
-      "fieldType": "Instant"
+      "fieldType": "LocalDate"
     },
     {
-      "fieldName": "active",
-      "fieldType": "Boolean",
-      "fieldValidateRules": ["required"]
+      "fieldName": "status",
+      "fieldType": "PlanSubscriptionStatus",
+      "fieldValidateRules": ["required"],
+      "fieldValues": "ACTIVE (Active),INACTIVE (Inactive),CANCELED (Canceled),PAUSED (Paused)"
     },
     {
-      "fieldName": "planName",
-      "fieldType": "String",
-      "fieldValidateRules": ["required"]
+      "fieldName": "paymentProvider",
+      "fieldType": "PaymentProvider",
+      "fieldValidateRules": ["required"],
+      "fieldValues": "STRIPE (Stripe),PAYPAL (PayPal),OTHER (Other)"
+    },
+    {
+      "fieldName": "paymentStatus",
+      "fieldType": "PaymentStatus",
+      "fieldValidateRules": ["required"],
+      "fieldValues": "PENDING (Pending),COMPLETED (Completed),FAILED (Failed),REFUNDED (Refunded)"
+    },
+    {
+      "fieldName": "paymentReference",
+      "fieldType": "String"
     }
   ],
   "name": "PlanSubscription",
   "relationships": [
     {
-      "otherEntityName": "plan",
-      "otherEntityRelationshipName": "planSubscription",
-      "relationshipName": "plan",
-      "relationshipSide": "left",
-      "relationshipType": "many-to-one"
-    },
-    {
+      "otherEntityField": "name",
       "otherEntityName": "church",
-      "otherEntityRelationshipName": "planSubscription",
+      "otherEntityRelationshipName": "subscription",
       "relationshipName": "church",
       "relationshipSide": "left",
       "relationshipType": "many-to-one"
     },
     {
-      "otherEntityName": "user",
-      "otherEntityRelationshipName": "planSubscription",
+      "otherEntityField": "name",
+      "otherEntityName": "plan",
+      "otherEntityRelationshipName": "subscription",
+      "relationshipName": "plan",
+      "relationshipSide": "left",
+      "relationshipType": "many-to-one"
+    },
+    {
+      "otherEntityField": "name",
+      "otherEntityName": "applicationUser",
       "relationshipName": "user",
       "relationshipSide": "left",
-      "relationshipType": "many-to-one",
-      "relationshipWithBuiltInEntity": true
+      "relationshipType": "many-to-one"
     }
   ],
-  "searchEngine": "no",
   "service": "serviceClass"
 }

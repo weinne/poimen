@@ -27,19 +27,34 @@ type WorshipEventFormRawValue = FormValueOf<IWorshipEvent>;
 
 type NewWorshipEventFormRawValue = FormValueOf<NewWorshipEvent>;
 
-type WorshipEventFormDefaults = Pick<NewWorshipEvent, 'id' | 'date' | 'hymns' | 'musicians'>;
+type WorshipEventFormDefaults = Pick<NewWorshipEvent, 'id' | 'date' | 'hymns' | 'musicians' | 'participants'>;
 
 type WorshipEventFormGroupContent = {
   id: FormControl<WorshipEventFormRawValue['id'] | NewWorshipEvent['id']>;
   date: FormControl<WorshipEventFormRawValue['date']>;
   title: FormControl<WorshipEventFormRawValue['title']>;
+  guestPreacher: FormControl<WorshipEventFormRawValue['guestPreacher']>;
   description: FormControl<WorshipEventFormRawValue['description']>;
+  callToWorshipText: FormControl<WorshipEventFormRawValue['callToWorshipText']>;
+  confessionOfSinText: FormControl<WorshipEventFormRawValue['confessionOfSinText']>;
+  assuranceOfPardonText: FormControl<WorshipEventFormRawValue['assuranceOfPardonText']>;
+  lordSupperText: FormControl<WorshipEventFormRawValue['lordSupperText']>;
+  benedictionText: FormControl<WorshipEventFormRawValue['benedictionText']>;
+  confessionalText: FormControl<WorshipEventFormRawValue['confessionalText']>;
+  sermonText: FormControl<WorshipEventFormRawValue['sermonText']>;
+  sermonFile: FormControl<WorshipEventFormRawValue['sermonFile']>;
+  sermonFileContentType: FormControl<WorshipEventFormRawValue['sermonFileContentType']>;
+  sermonLink: FormControl<WorshipEventFormRawValue['sermonLink']>;
+  youtubeLink: FormControl<WorshipEventFormRawValue['youtubeLink']>;
+  bulletinFile: FormControl<WorshipEventFormRawValue['bulletinFile']>;
+  bulletinFileContentType: FormControl<WorshipEventFormRawValue['bulletinFileContentType']>;
   worshipType: FormControl<WorshipEventFormRawValue['worshipType']>;
   church: FormControl<WorshipEventFormRawValue['church']>;
   preacher: FormControl<WorshipEventFormRawValue['preacher']>;
   liturgist: FormControl<WorshipEventFormRawValue['liturgist']>;
   hymns: FormControl<WorshipEventFormRawValue['hymns']>;
   musicians: FormControl<WorshipEventFormRawValue['musicians']>;
+  participants: FormControl<WorshipEventFormRawValue['participants']>;
 };
 
 export type WorshipEventFormGroup = FormGroup<WorshipEventFormGroupContent>;
@@ -63,7 +78,21 @@ export class WorshipEventFormService {
         validators: [Validators.required],
       }),
       title: new FormControl(worshipEventRawValue.title),
+      guestPreacher: new FormControl(worshipEventRawValue.guestPreacher),
       description: new FormControl(worshipEventRawValue.description),
+      callToWorshipText: new FormControl(worshipEventRawValue.callToWorshipText),
+      confessionOfSinText: new FormControl(worshipEventRawValue.confessionOfSinText),
+      assuranceOfPardonText: new FormControl(worshipEventRawValue.assuranceOfPardonText),
+      lordSupperText: new FormControl(worshipEventRawValue.lordSupperText),
+      benedictionText: new FormControl(worshipEventRawValue.benedictionText),
+      confessionalText: new FormControl(worshipEventRawValue.confessionalText),
+      sermonText: new FormControl(worshipEventRawValue.sermonText),
+      sermonFile: new FormControl(worshipEventRawValue.sermonFile),
+      sermonFileContentType: new FormControl(worshipEventRawValue.sermonFileContentType),
+      sermonLink: new FormControl(worshipEventRawValue.sermonLink),
+      youtubeLink: new FormControl(worshipEventRawValue.youtubeLink),
+      bulletinFile: new FormControl(worshipEventRawValue.bulletinFile),
+      bulletinFileContentType: new FormControl(worshipEventRawValue.bulletinFileContentType),
       worshipType: new FormControl(worshipEventRawValue.worshipType, {
         validators: [Validators.required],
       }),
@@ -72,6 +101,7 @@ export class WorshipEventFormService {
       liturgist: new FormControl(worshipEventRawValue.liturgist),
       hymns: new FormControl(worshipEventRawValue.hymns ?? []),
       musicians: new FormControl(worshipEventRawValue.musicians ?? []),
+      participants: new FormControl(worshipEventRawValue.participants ?? []),
     });
   }
 
@@ -97,6 +127,7 @@ export class WorshipEventFormService {
       date: currentTime,
       hymns: [],
       musicians: [],
+      participants: [],
     };
   }
 
@@ -117,6 +148,7 @@ export class WorshipEventFormService {
       date: worshipEvent.date ? worshipEvent.date.format(DATE_TIME_FORMAT) : undefined,
       hymns: worshipEvent.hymns ?? [],
       musicians: worshipEvent.musicians ?? [],
+      participants: worshipEvent.participants ?? [],
     };
   }
 }

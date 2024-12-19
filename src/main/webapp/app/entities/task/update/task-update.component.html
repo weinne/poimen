@@ -42,22 +42,60 @@
 
         <div class="mb-3">
           <label class="form-label" for="field_dueDate" jhiTranslate="poimenApp.task.dueDate">Due Date</label>
-          <div class="d-flex">
+          <div class="input-group">
             <input
               id="field_dueDate"
               data-cy="dueDate"
-              type="datetime-local"
+              type="text"
               class="form-control"
               name="dueDate"
+              ngbDatepicker
+              #dueDateDp="ngbDatepicker"
               formControlName="dueDate"
-              placeholder="YYYY-MM-DD HH:mm"
             />
+            <button type="button" class="btn btn-secondary" (click)="dueDateDp.toggle()"><fa-icon icon="calendar-alt"></fa-icon></button>
           </div>
         </div>
 
+        @let statusRef = editForm.get('status')!;
         <div class="mb-3">
-          <label class="form-label" for="field_completed" jhiTranslate="poimenApp.task.completed">Completed</label>
-          <input type="checkbox" class="form-check" name="completed" id="field_completed" data-cy="completed" formControlName="completed" />
+          <label class="form-label" for="field_status" jhiTranslate="poimenApp.task.status">Status</label>
+          <select class="form-control" name="status" formControlName="status" id="field_status" data-cy="status">
+            <option [ngValue]="null">{{ 'poimenApp.StatusTask.null' | translate }}</option>
+            @for (statusTask of statusTaskValues; track $index) {
+              <option [value]="statusTask">{{ 'poimenApp.StatusTask.' + statusTask | translate }}</option>
+            }
+          </select>
+          @if (statusRef.invalid && (statusRef.dirty || statusRef.touched)) {
+            <div>
+              @if (editForm.get('status')?.errors?.required) {
+                <small class="form-text text-danger" jhiTranslate="entity.validation.required">This field is required.</small>
+              }
+            </div>
+          }
+        </div>
+
+        @let priorityRef = editForm.get('priority')!;
+        <div class="mb-3">
+          <label class="form-label" for="field_priority" jhiTranslate="poimenApp.task.priority">Priority</label>
+          <select class="form-control" name="priority" formControlName="priority" id="field_priority" data-cy="priority">
+            <option [ngValue]="null">{{ 'poimenApp.PriorityTask.null' | translate }}</option>
+            @for (priorityTask of priorityTaskValues; track $index) {
+              <option [value]="priorityTask">{{ 'poimenApp.PriorityTask.' + priorityTask | translate }}</option>
+            }
+          </select>
+          @if (priorityRef.invalid && (priorityRef.dirty || priorityRef.touched)) {
+            <div>
+              @if (editForm.get('priority')?.errors?.required) {
+                <small class="form-text text-danger" jhiTranslate="entity.validation.required">This field is required.</small>
+              }
+            </div>
+          }
+        </div>
+
+        <div class="mb-3">
+          <label class="form-label" for="field_notes" jhiTranslate="poimenApp.task.notes">Notes</label>
+          <textarea class="form-control" name="notes" id="field_notes" data-cy="notes" formControlName="notes"></textarea>
         </div>
 
         <div class="mb-3">
@@ -72,7 +110,7 @@
           >
             <option [ngValue]="null"></option>
             @for (churchOption of churchesSharedCollection; track $index) {
-              <option [ngValue]="churchOption">{{ churchOption.id }}</option>
+              <option [ngValue]="churchOption">{{ churchOption.name }}</option>
             }
           </select>
         </div>
@@ -89,17 +127,24 @@
           >
             <option [ngValue]="null"></option>
             @for (memberOption of membersSharedCollection; track $index) {
-              <option [ngValue]="memberOption">{{ memberOption.id }}</option>
+              <option [ngValue]="memberOption">{{ memberOption.name }}</option>
             }
           </select>
         </div>
 
         <div class="mb-3">
           <label class="form-label" for="field_user" jhiTranslate="poimenApp.task.user">User</label>
-          <select class="form-control" id="field_user" data-cy="user" name="user" formControlName="user" [compareWith]="compareUser">
+          <select
+            class="form-control"
+            id="field_user"
+            data-cy="user"
+            name="user"
+            formControlName="user"
+            [compareWith]="compareApplicationUser"
+          >
             <option [ngValue]="null"></option>
-            @for (userOption of usersSharedCollection; track $index) {
-              <option [ngValue]="userOption">{{ userOption.id }}</option>
+            @for (applicationUserOption of applicationUsersSharedCollection; track $index) {
+              <option [ngValue]="applicationUserOption">{{ applicationUserOption.name }}</option>
             }
           </select>
         </div>

@@ -15,6 +15,7 @@ import org.hibernate.annotations.CacheConcurrencyStrategy;
 @Entity
 @Table(name = "hymn")
 @Cache(usage = CacheConcurrencyStrategy.READ_WRITE)
+@org.springframework.data.elasticsearch.annotations.Document(indexName = "hymn")
 @SuppressWarnings("common-java:DuplicatedBlocks")
 public class Hymn implements Serializable {
 
@@ -28,21 +29,64 @@ public class Hymn implements Serializable {
 
     @NotNull
     @Column(name = "title", nullable = false)
+    @org.springframework.data.elasticsearch.annotations.Field(type = org.springframework.data.elasticsearch.annotations.FieldType.Text)
     private String title;
 
-    @Column(name = "author")
-    private String author;
+    @Column(name = "lyrics_author")
+    @org.springframework.data.elasticsearch.annotations.Field(type = org.springframework.data.elasticsearch.annotations.FieldType.Text)
+    private String lyricsAuthor;
+
+    @Column(name = "music_author")
+    @org.springframework.data.elasticsearch.annotations.Field(type = org.springframework.data.elasticsearch.annotations.FieldType.Text)
+    private String musicAuthor;
+
+    @Column(name = "hymnary")
+    @org.springframework.data.elasticsearch.annotations.Field(type = org.springframework.data.elasticsearch.annotations.FieldType.Text)
+    private String hymnary;
 
     @Column(name = "hymn_number")
+    @org.springframework.data.elasticsearch.annotations.Field(type = org.springframework.data.elasticsearch.annotations.FieldType.Text)
     private String hymnNumber;
 
+    @Column(name = "link")
+    @org.springframework.data.elasticsearch.annotations.Field(type = org.springframework.data.elasticsearch.annotations.FieldType.Text)
+    private String link;
+
+    @Column(name = "youtube_link")
+    @org.springframework.data.elasticsearch.annotations.Field(type = org.springframework.data.elasticsearch.annotations.FieldType.Text)
+    private String youtubeLink;
+
+    @Lob
+    @Column(name = "sheet_music")
+    private byte[] sheetMusic;
+
+    @Column(name = "sheet_music_content_type")
+    private String sheetMusicContentType;
+
+    @Lob
+    @Column(name = "midi")
+    private byte[] midi;
+
+    @Column(name = "midi_content_type")
+    private String midiContentType;
+
+    @Size(max = 5)
+    @Column(name = "tone", length = 5)
+    @org.springframework.data.elasticsearch.annotations.Field(type = org.springframework.data.elasticsearch.annotations.FieldType.Text)
+    private String tone;
+
     @Column(name = "lyrics")
+    @org.springframework.data.elasticsearch.annotations.Field(type = org.springframework.data.elasticsearch.annotations.FieldType.Text)
     private String lyrics;
 
     @ManyToMany(fetch = FetchType.LAZY, mappedBy = "hymns")
     @Cache(usage = CacheConcurrencyStrategy.READ_WRITE)
-    @JsonIgnoreProperties(value = { "church", "preacher", "liturgist", "hymns", "musicians" }, allowSetters = true)
-    private Set<WorshipEvent> worshipEvents = new HashSet<>();
+    @org.springframework.data.annotation.Transient
+    @JsonIgnoreProperties(
+        value = { "church", "preacher", "liturgist", "hymns", "musicians", "participants", "appointments" },
+        allowSetters = true
+    )
+    private Set<WorshipEvent> services = new HashSet<>();
 
     // jhipster-needle-entity-add-field - JHipster will add fields here
 
@@ -72,17 +116,43 @@ public class Hymn implements Serializable {
         this.title = title;
     }
 
-    public String getAuthor() {
-        return this.author;
+    public String getLyricsAuthor() {
+        return this.lyricsAuthor;
     }
 
-    public Hymn author(String author) {
-        this.setAuthor(author);
+    public Hymn lyricsAuthor(String lyricsAuthor) {
+        this.setLyricsAuthor(lyricsAuthor);
         return this;
     }
 
-    public void setAuthor(String author) {
-        this.author = author;
+    public void setLyricsAuthor(String lyricsAuthor) {
+        this.lyricsAuthor = lyricsAuthor;
+    }
+
+    public String getMusicAuthor() {
+        return this.musicAuthor;
+    }
+
+    public Hymn musicAuthor(String musicAuthor) {
+        this.setMusicAuthor(musicAuthor);
+        return this;
+    }
+
+    public void setMusicAuthor(String musicAuthor) {
+        this.musicAuthor = musicAuthor;
+    }
+
+    public String getHymnary() {
+        return this.hymnary;
+    }
+
+    public Hymn hymnary(String hymnary) {
+        this.setHymnary(hymnary);
+        return this;
+    }
+
+    public void setHymnary(String hymnary) {
+        this.hymnary = hymnary;
     }
 
     public String getHymnNumber() {
@@ -98,6 +168,97 @@ public class Hymn implements Serializable {
         this.hymnNumber = hymnNumber;
     }
 
+    public String getLink() {
+        return this.link;
+    }
+
+    public Hymn link(String link) {
+        this.setLink(link);
+        return this;
+    }
+
+    public void setLink(String link) {
+        this.link = link;
+    }
+
+    public String getYoutubeLink() {
+        return this.youtubeLink;
+    }
+
+    public Hymn youtubeLink(String youtubeLink) {
+        this.setYoutubeLink(youtubeLink);
+        return this;
+    }
+
+    public void setYoutubeLink(String youtubeLink) {
+        this.youtubeLink = youtubeLink;
+    }
+
+    public byte[] getSheetMusic() {
+        return this.sheetMusic;
+    }
+
+    public Hymn sheetMusic(byte[] sheetMusic) {
+        this.setSheetMusic(sheetMusic);
+        return this;
+    }
+
+    public void setSheetMusic(byte[] sheetMusic) {
+        this.sheetMusic = sheetMusic;
+    }
+
+    public String getSheetMusicContentType() {
+        return this.sheetMusicContentType;
+    }
+
+    public Hymn sheetMusicContentType(String sheetMusicContentType) {
+        this.sheetMusicContentType = sheetMusicContentType;
+        return this;
+    }
+
+    public void setSheetMusicContentType(String sheetMusicContentType) {
+        this.sheetMusicContentType = sheetMusicContentType;
+    }
+
+    public byte[] getMidi() {
+        return this.midi;
+    }
+
+    public Hymn midi(byte[] midi) {
+        this.setMidi(midi);
+        return this;
+    }
+
+    public void setMidi(byte[] midi) {
+        this.midi = midi;
+    }
+
+    public String getMidiContentType() {
+        return this.midiContentType;
+    }
+
+    public Hymn midiContentType(String midiContentType) {
+        this.midiContentType = midiContentType;
+        return this;
+    }
+
+    public void setMidiContentType(String midiContentType) {
+        this.midiContentType = midiContentType;
+    }
+
+    public String getTone() {
+        return this.tone;
+    }
+
+    public Hymn tone(String tone) {
+        this.setTone(tone);
+        return this;
+    }
+
+    public void setTone(String tone) {
+        this.tone = tone;
+    }
+
     public String getLyrics() {
         return this.lyrics;
     }
@@ -111,33 +272,33 @@ public class Hymn implements Serializable {
         this.lyrics = lyrics;
     }
 
-    public Set<WorshipEvent> getWorshipEvents() {
-        return this.worshipEvents;
+    public Set<WorshipEvent> getServices() {
+        return this.services;
     }
 
-    public void setWorshipEvents(Set<WorshipEvent> worshipEvents) {
-        if (this.worshipEvents != null) {
-            this.worshipEvents.forEach(i -> i.removeHymn(this));
+    public void setServices(Set<WorshipEvent> worshipEvents) {
+        if (this.services != null) {
+            this.services.forEach(i -> i.removeHymns(this));
         }
         if (worshipEvents != null) {
-            worshipEvents.forEach(i -> i.addHymn(this));
+            worshipEvents.forEach(i -> i.addHymns(this));
         }
-        this.worshipEvents = worshipEvents;
+        this.services = worshipEvents;
     }
 
-    public Hymn worshipEvents(Set<WorshipEvent> worshipEvents) {
-        this.setWorshipEvents(worshipEvents);
+    public Hymn services(Set<WorshipEvent> worshipEvents) {
+        this.setServices(worshipEvents);
         return this;
     }
 
-    public Hymn addWorshipEvent(WorshipEvent worshipEvent) {
-        this.worshipEvents.add(worshipEvent);
+    public Hymn addServices(WorshipEvent worshipEvent) {
+        this.services.add(worshipEvent);
         worshipEvent.getHymns().add(this);
         return this;
     }
 
-    public Hymn removeWorshipEvent(WorshipEvent worshipEvent) {
-        this.worshipEvents.remove(worshipEvent);
+    public Hymn removeServices(WorshipEvent worshipEvent) {
+        this.services.remove(worshipEvent);
         worshipEvent.getHymns().remove(this);
         return this;
     }
@@ -167,8 +328,17 @@ public class Hymn implements Serializable {
         return "Hymn{" +
             "id=" + getId() +
             ", title='" + getTitle() + "'" +
-            ", author='" + getAuthor() + "'" +
+            ", lyricsAuthor='" + getLyricsAuthor() + "'" +
+            ", musicAuthor='" + getMusicAuthor() + "'" +
+            ", hymnary='" + getHymnary() + "'" +
             ", hymnNumber='" + getHymnNumber() + "'" +
+            ", link='" + getLink() + "'" +
+            ", youtubeLink='" + getYoutubeLink() + "'" +
+            ", sheetMusic='" + getSheetMusic() + "'" +
+            ", sheetMusicContentType='" + getSheetMusicContentType() + "'" +
+            ", midi='" + getMidi() + "'" +
+            ", midiContentType='" + getMidiContentType() + "'" +
+            ", tone='" + getTone() + "'" +
             ", lyrics='" + getLyrics() + "'" +
             "}";
     }

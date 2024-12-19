@@ -20,6 +20,9 @@ type PlanFormGroupContent = {
   id: FormControl<IPlan['id'] | NewPlan['id']>;
   name: FormControl<IPlan['name']>;
   price: FormControl<IPlan['price']>;
+  description: FormControl<IPlan['description']>;
+  features: FormControl<IPlan['features']>;
+  renewalPeriod: FormControl<IPlan['renewalPeriod']>;
 };
 
 export type PlanFormGroup = FormGroup<PlanFormGroupContent>;
@@ -45,6 +48,9 @@ export class PlanFormService {
       price: new FormControl(planRawValue.price, {
         validators: [Validators.required],
       }),
+      description: new FormControl(planRawValue.description),
+      features: new FormControl(planRawValue.features),
+      renewalPeriod: new FormControl(planRawValue.renewalPeriod),
     });
   }
 

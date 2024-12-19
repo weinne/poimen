@@ -6,6 +6,7 @@
         "refreshListLabel": "Refresh list",
         "createLabel": "Create a new Church",
         "createOrEditLabel": "Create or edit a Church",
+        "search": "Search for Church",
         "notFound": "No Churches found"
       },
       "created": "A new Church is created with identifier {{ param }}",
@@ -23,15 +24,24 @@
       "address": "Address",
       "city": "City",
       "dateFoundation": "Date Foundation",
+      "phone": "Phone",
+      "email": "Email",
+      "website": "Website",
+      "facebook": "Facebook",
+      "instagram": "Instagram",
+      "twitter": "Twitter",
+      "youtube": "Youtube",
+      "about": "About",
       "user": "User",
       "member": "Member",
-      "ministryGroup": "Ministry Group",
-      "worshipEvent": "Worship Event",
-      "task": "Task",
+      "subscription": "Subscription",
       "counselingSession": "Counseling Session",
-      "invoice": "Invoice",
+      "task": "Task",
       "transaction": "Transaction",
-      "planSubscription": "Plan Subscription"
+      "invoice": "Invoice",
+      "worshipEvent": "Worship Event",
+      "appointment": "Appointment",
+      "ministryGroup": "Ministry Group"
     }
   }
 }

@@ -6,6 +6,7 @@
         "refreshListLabel": "Atualizar lista",
         "createLabel": "Criar novo Worship Event",
         "createOrEditLabel": "Criar ou editar Worship Event",
+        "search": "Pesquisar por Worship Event",
         "notFound": "Nenhum Worship Event encontrado"
       },
       "created": "Um novo Worship Event foi criado com o identificador {{ param }}",
@@ -20,13 +21,27 @@
       "id": "ID",
       "date": "Date",
       "title": "Title",
+      "guestPreacher": "Guest Preacher",
       "description": "Description",
+      "callToWorshipText": "Call To Worship Text",
+      "confessionOfSinText": "Confession Of Sin Text",
+      "assuranceOfPardonText": "Assurance Of Pardon Text",
+      "lordSupperText": "Lord Supper Text",
+      "benedictionText": "Benediction Text",
+      "confessionalText": "Confessional Text",
+      "sermonText": "Sermon Text",
+      "sermonFile": "Sermon File",
+      "sermonLink": "Sermon Link",
+      "youtubeLink": "Youtube Link",
+      "bulletinFile": "Bulletin File",
       "worshipType": "Worship Type",
       "church": "Church",
       "preacher": "Preacher",
       "liturgist": "Liturgist",
-      "hymn": "Hymn",
-      "musicians": "Musicians"
+      "hymns": "Hymns",
+      "musicians": "Musicians",
+      "participants": "Participants",
+      "appointment": "Appointment"
     }
   }
 }

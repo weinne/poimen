@@ -1,9 +1,9 @@
 export enum GroupType {
-  DEPARTMENT = 'DEPARTMENT',
+  DEPARTMENT = 'Department',
 
-  INTERNAL_SOCIETY = 'INTERNAL_SOCIETY',
+  INTERNAL_SOCIETY = 'Internal Society',
 
-  DEACON_BOARD = 'DEACON_BOARD',
+  DEACON_BOARD = 'Deacon Board',
 
-  CHURCH_COUNCIL = 'CHURCH_COUNCIL',
+  CHURCH_COUNCIL = 'Church Council',
 }

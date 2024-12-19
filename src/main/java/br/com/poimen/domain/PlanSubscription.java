@@ -1,10 +1,13 @@
 package br.com.poimen.domain;
 
+import br.com.poimen.domain.enumeration.PaymentProvider;
+import br.com.poimen.domain.enumeration.PaymentStatus;
+import br.com.poimen.domain.enumeration.PlanSubscriptionStatus;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.*;
 import java.io.Serializable;
-import java.time.Instant;
+import java.time.LocalDate;
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
 
@@ -14,6 +17,7 @@ import org.hibernate.annotations.CacheConcurrencyStrategy;
 @Entity
 @Table(name = "plan_subscription")
 @Cache(usage = CacheConcurrencyStrategy.READ_WRITE)
+@org.springframework.data.elasticsearch.annotations.Document(indexName = "plansubscription")
 @SuppressWarnings("common-java:DuplicatedBlocks")
 public class PlanSubscription implements Serializable {
 
@@ -26,43 +30,64 @@ public class PlanSubscription implements Serializable {
     private Long id;
 
     @NotNull
+    @Column(name = "description", nullable = false)
+    @org.springframework.data.elasticsearch.annotations.Field(type = org.springframework.data.elasticsearch.annotations.FieldType.Text)
+    private String description;
+
+    @NotNull
     @Column(name = "start_date", nullable = false)
-    private Instant startDate;
+    private LocalDate startDate;
 
     @Column(name = "end_date")
-    private Instant endDate;
+    private LocalDate endDate;
 
     @NotNull
-    @Column(name = "active", nullable = false)
-    private Boolean active;
+    @Enumerated(EnumType.STRING)
+    @Column(name = "status", nullable = false)
+    @org.springframework.data.elasticsearch.annotations.Field(type = org.springframework.data.elasticsearch.annotations.FieldType.Keyword)
+    private PlanSubscriptionStatus status;
 
     @NotNull
-    @Column(name = "plan_name", nullable = false)
-    private String planName;
+    @Enumerated(EnumType.STRING)
+    @Column(name = "payment_provider", nullable = false)
+    @org.springframework.data.elasticsearch.annotations.Field(type = org.springframework.data.elasticsearch.annotations.FieldType.Keyword)
+    private PaymentProvider paymentProvider;
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JsonIgnoreProperties(value = { "planSubscriptions" }, allowSetters = true)
-    private Plan plan;
+    @NotNull
+    @Enumerated(EnumType.STRING)
+    @Column(name = "payment_status", nullable = false)
+    @org.springframework.data.elasticsearch.annotations.Field(type = org.springframework.data.elasticsearch.annotations.FieldType.Keyword)
+    private PaymentStatus paymentStatus;
+
+    @Column(name = "payment_reference")
+    @org.springframework.data.elasticsearch.annotations.Field(type = org.springframework.data.elasticsearch.annotations.FieldType.Text)
+    private String paymentReference;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JsonIgnoreProperties(
         value = {
             "users",
             "members",
-            "ministryGroups",
-            "worshipEvents",
-            "tasks",
+            "subscriptions",
             "counselingSessions",
-            "invoices",
+            "tasks",
             "transactions",
-            "planSubscriptions",
+            "invoices",
+            "worshipEvents",
+            "appointments",
+            "ministryGroups",
         },
         allowSetters = true
     )
     private Church church;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    private User user;
+    @JsonIgnoreProperties(value = { "subscriptions" }, allowSetters = true)
+    private Plan plan;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JsonIgnoreProperties(value = { "internalUser", "church" }, allowSetters = true)
+    private ApplicationUser user;
 
     // jhipster-needle-entity-add-field - JHipster will add fields here
 
@@ -79,69 +104,95 @@ public class PlanSubscription implements Serializable {
         this.id = id;
     }
 
-    public Instant getStartDate() {
+    public String getDescription() {
+        return this.description;
+    }
+
+    public PlanSubscription description(String description) {
+        this.setDescription(description);
+        return this;
+    }
+
+    public void setDescription(String description) {
+        this.description = description;
+    }
+
+    public LocalDate getStartDate() {
         return this.startDate;
     }
 
-    public PlanSubscription startDate(Instant startDate) {
+    public PlanSubscription startDate(LocalDate startDate) {
         this.setStartDate(startDate);
         return this;
     }
 
-    public void setStartDate(Instant startDate) {
+    public void setStartDate(LocalDate startDate) {
         this.startDate = startDate;
     }
 
-    public Instant getEndDate() {
+    public LocalDate getEndDate() {
         return this.endDate;
     }
 
-    public PlanSubscription endDate(Instant endDate) {
+    public PlanSubscription endDate(LocalDate endDate) {
         this.setEndDate(endDate);
         return this;
     }
 
-    public void setEndDate(Instant endDate) {
+    public void setEndDate(LocalDate endDate) {
         this.endDate = endDate;
     }
 
-    public Boolean getActive() {
-        return this.active;
+    public PlanSubscriptionStatus getStatus() {
+        return this.status;
     }
 
-    public PlanSubscription active(Boolean active) {
-        this.setActive(active);
+    public PlanSubscription status(PlanSubscriptionStatus status) {
+        this.setStatus(status);
         return this;
     }
 
-    public void setActive(Boolean active) {
-        this.active = active;
+    public void setStatus(PlanSubscriptionStatus status) {
+        this.status = status;
     }
 
-    public String getPlanName() {
-        return this.planName;
+    public PaymentProvider getPaymentProvider() {
+        return this.paymentProvider;
     }
 
-    public PlanSubscription planName(String planName) {
-        this.setPlanName(planName);
+    public PlanSubscription paymentProvider(PaymentProvider paymentProvider) {
+        this.setPaymentProvider(paymentProvider);
         return this;
     }
 
-    public void setPlanName(String planName) {
-        this.planName = planName;
+    public void setPaymentProvider(PaymentProvider paymentProvider) {
+        this.paymentProvider = paymentProvider;
     }
 
-    public Plan getPlan() {
-        return this.plan;
+    public PaymentStatus getPaymentStatus() {
+        return this.paymentStatus;
     }
 
-    public void setPlan(Plan plan) {
-        this.plan = plan;
-    }
-
-    public PlanSubscription plan(Plan plan) {
-        this.setPlan(plan);
+    public PlanSubscription paymentStatus(PaymentStatus paymentStatus) {
+        this.setPaymentStatus(paymentStatus);
         return this;
+    }
+
+    public void setPaymentStatus(PaymentStatus paymentStatus) {
+        this.paymentStatus = paymentStatus;
+    }
+
+    public String getPaymentReference() {
+        return this.paymentReference;
+    }
+
+    public PlanSubscription paymentReference(String paymentReference) {
+        this.setPaymentReference(paymentReference);
+        return this;
+    }
+
+    public void setPaymentReference(String paymentReference) {
+        this.paymentReference = paymentReference;
     }
 
     public Church getChurch() {
@@ -157,16 +208,29 @@ public class PlanSubscription implements Serializable {
         return this;
     }
 
-    public User getUser() {
+    public Plan getPlan() {
+        return this.plan;
+    }
+
+    public void setPlan(Plan plan) {
+        this.plan = plan;
+    }
+
+    public PlanSubscription plan(Plan plan) {
+        this.setPlan(plan);
+        return this;
+    }
+
+    public ApplicationUser getUser() {
         return this.user;
     }
 
-    public void setUser(User user) {
-        this.user = user;
+    public void setUser(ApplicationUser applicationUser) {
+        this.user = applicationUser;
     }
 
-    public PlanSubscription user(User user) {
-        this.setUser(user);
+    public PlanSubscription user(ApplicationUser applicationUser) {
+        this.setUser(applicationUser);
         return this;
     }
 
@@ -194,10 +258,13 @@ public class PlanSubscription implements Serializable {
     public String toString() {
         return "PlanSubscription{" +
             "id=" + getId() +
+            ", description='" + getDescription() + "'" +
             ", startDate='" + getStartDate() + "'" +
             ", endDate='" + getEndDate() + "'" +
-            ", active='" + getActive() + "'" +
-            ", planName='" + getPlanName() + "'" +
+            ", status='" + getStatus() + "'" +
+            ", paymentProvider='" + getPaymentProvider() + "'" +
+            ", paymentStatus='" + getPaymentStatus() + "'" +
+            ", paymentReference='" + getPaymentReference() + "'" +
             "}";
     }
 }

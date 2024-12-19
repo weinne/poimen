@@ -1,25 +1,43 @@
 import { IHymn, NewHymn } from './hymn.model';
 
 export const sampleWithRequiredData: IHymn = {
-  id: 13676,
-  title: 'blah',
+  id: 8849,
+  title: 'exactly',
 };
 
 export const sampleWithPartialData: IHymn = {
-  id: 25393,
-  title: 'ah yippee yuck',
+  id: 13003,
+  title: 'yuck blah',
+  lyricsAuthor: 'boastfully duster',
+  musicAuthor: 'ready afterwards',
+  link: 'woot',
+  youtubeLink: 'than',
+  sheetMusic: '../fake-data/blob/hipster.png',
+  sheetMusicContentType: 'unknown',
+  midi: '../fake-data/blob/hipster.png',
+  midiContentType: 'unknown',
+  tone: 'frill',
 };
 
 export const sampleWithFullData: IHymn = {
-  id: 13937,
-  title: 'that uselessly questioningly',
-  author: 'underneath deceivingly woot',
-  hymnNumber: 'than',
-  lyrics: 'frilly',
+  id: 24341,
+  title: 'role monthly',
+  lyricsAuthor: 'however er what',
+  musicAuthor: 'with',
+  hymnary: 'by comparison',
+  hymnNumber: 'the',
+  link: 'brr',
+  youtubeLink: 'backbone above own',
+  sheetMusic: '../fake-data/blob/hipster.png',
+  sheetMusicContentType: 'unknown',
+  midi: '../fake-data/blob/hipster.png',
+  midiContentType: 'unknown',
+  tone: 'an th',
+  lyrics: 'under',
 };
 
 export const sampleWithNewData: NewHymn = {
-  title: 'woot fantastic blend',
+  title: 'intent usually enhance',
   id: null,
 };
 

@@ -1,0 +1,56 @@
+<div class="d-flex justify-content-center">
+  <div class="col-8">
+    @if (applicationUser(); as applicationUserRef) {
+      <div>
+        <h2 data-cy="applicationUserDetailsHeading"><span jhiTranslate="poimenApp.applicationUser.detail.title">Application User</span></h2>
+
+        <hr />
+
+        <jhi-alert-error></jhi-alert-error>
+
+        <jhi-alert></jhi-alert>
+
+        <dl class="row-md jh-entity-details">
+          <dt><span jhiTranslate="global.field.id">ID</span></dt>
+          <dd>
+            <span>{{ applicationUserRef.id }}</span>
+          </dd>
+          <dt><span jhiTranslate="poimenApp.applicationUser.name">Name</span></dt>
+          <dd>
+            <span>{{ applicationUserRef.name }}</span>
+          </dd>
+          <dt><span jhiTranslate="poimenApp.applicationUser.description">Description</span></dt>
+          <dd>
+            <span>{{ applicationUserRef.description }}</span>
+          </dd>
+          <dt><span jhiTranslate="poimenApp.applicationUser.status">Status</span></dt>
+          <dd>
+            <span [jhiTranslate]="'poimenApp.UserStatus.' + (applicationUserRef.status ?? 'null')">{{
+              { null: '', ACTIVE: 'Active', INACTIVE: 'Inactive', BLOCKED: 'Blocked' }[applicationUserRef.status ?? 'null']
+            }}</span>
+          </dd>
+          <dt><span jhiTranslate="poimenApp.applicationUser.internalUser">Internal User</span></dt>
+          <dd>
+            <span>{{ applicationUserRef.internalUser?.login }}</span>
+          </dd>
+          <dt><span jhiTranslate="poimenApp.applicationUser.church">Church</span></dt>
+          <dd>
+            @if (applicationUser()!.church) {
+              <div>
+                <a [routerLink]="['/church', applicationUser()!.church?.id, 'view']">{{ applicationUserRef.church?.id }}</a>
+              </div>
+            }
+          </dd>
+        </dl>
+
+        <button type="submit" (click)="previousState()" class="btn btn-info" data-cy="entityDetailsBackButton">
+          <fa-icon icon="arrow-left"></fa-icon>&nbsp;<span jhiTranslate="entity.action.back">Back</span>
+        </button>
+
+        <button type="button" [routerLink]="['/application-user', applicationUserRef.id, 'edit']" class="btn btn-primary">
+          <fa-icon icon="pencil-alt"></fa-icon>&nbsp;<span jhiTranslate="entity.action.edit">Edit</span>
+        </button>
+      </div>
+    }
+  </div>
+</div>

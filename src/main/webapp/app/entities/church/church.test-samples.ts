@@ -3,38 +3,50 @@ import dayjs from 'dayjs/esm';
 import { IChurch, NewChurch } from './church.model';
 
 export const sampleWithRequiredData: IChurch = {
-  id: 9453,
-  name: 'neaten besides',
-  cnpj: 'barring unlike out',
-  address: 'zowie enormously',
-  city: 'Lonnyton',
-  dateFoundation: dayjs('2024-12-17T15:36'),
+  id: 18632,
+  name: 'stale',
+  cnpj: '01560616140562',
+  address: 'gosh till',
+  city: 'Aliceboro',
+  dateFoundation: dayjs('2024-12-18'),
 };
 
 export const sampleWithPartialData: IChurch = {
-  id: 5072,
-  name: 'promptly gosh',
-  cnpj: 'woot',
-  address: 'order',
-  city: 'Lake Sydni',
-  dateFoundation: dayjs('2024-12-17T05:13'),
+  id: 5488,
+  name: 'develop suspiciously chatter',
+  cnpj: '62745341198273',
+  address: 'skyline meh serve',
+  city: 'Wildermancester',
+  dateFoundation: dayjs('2024-12-18'),
+  phone: '557.363.1640 x6431',
+  website: 'dreamily',
+  facebook: 'failing honestly',
+  twitter: 'if ugh aboard',
 };
 
 export const sampleWithFullData: IChurch = {
-  id: 22282,
-  name: 'aha despite',
-  cnpj: 'however cardboard thick',
-  address: 'heartfelt beyond',
-  city: 'Lake Darryl',
-  dateFoundation: dayjs('2024-12-17T02:59'),
+  id: 27000,
+  name: 'obstruct',
+  cnpj: '21210645414743',
+  address: 'order swiftly anti',
+  city: 'South Queenie',
+  dateFoundation: dayjs('2024-12-18'),
+  phone: '(867) 244-7999 x03200',
+  email: 'Axel7@hotmail.com',
+  website: 'travel',
+  facebook: 'questionably deer eek',
+  instagram: 'stall split',
+  twitter: 'zowie so',
+  youtube: 'where',
+  about: '../fake-data/blob/hipster.txt',
 };
 
 export const sampleWithNewData: NewChurch = {
-  name: 'oddly lest aw',
-  cnpj: 'aw greedily',
-  address: 'till besides',
-  city: 'North Ethancester',
-  dateFoundation: dayjs('2024-12-17T04:46'),
+  name: 'whereas back hippodrome',
+  cnpj: '34358619439705',
+  address: 'righteously amid scuttle',
+  city: 'Port Abdullah',
+  dateFoundation: dayjs('2024-12-18'),
   id: null,
 };
 

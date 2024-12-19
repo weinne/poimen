@@ -47,8 +47,13 @@ public class CounselingSessionAsserts {
     public static void assertCounselingSessionUpdatableFieldsEquals(CounselingSession expected, CounselingSession actual) {
         assertThat(expected)
             .as("Verify CounselingSession relevant properties")
+            .satisfies(e -> assertThat(e.getSubject()).as("check subject").isEqualTo(actual.getSubject()))
             .satisfies(e -> assertThat(e.getDate()).as("check date").isEqualTo(actual.getDate()))
-            .satisfies(e -> assertThat(e.getNotes()).as("check notes").isEqualTo(actual.getNotes()));
+            .satisfies(e -> assertThat(e.getStartTime()).as("check startTime").isEqualTo(actual.getStartTime()))
+            .satisfies(e -> assertThat(e.getEndTime()).as("check endTime").isEqualTo(actual.getEndTime()))
+            .satisfies(e -> assertThat(e.getNotes()).as("check notes").isEqualTo(actual.getNotes()))
+            .satisfies(e -> assertThat(e.getCounselingTasks()).as("check counselingTasks").isEqualTo(actual.getCounselingTasks()))
+            .satisfies(e -> assertThat(e.getStatus()).as("check status").isEqualTo(actual.getStatus()));
     }
 
     /**
@@ -61,6 +66,7 @@ public class CounselingSessionAsserts {
         assertThat(expected)
             .as("Verify CounselingSession relationships")
             .satisfies(e -> assertThat(e.getChurch()).as("check church").isEqualTo(actual.getChurch()))
-            .satisfies(e -> assertThat(e.getMember()).as("check member").isEqualTo(actual.getMember()));
+            .satisfies(e -> assertThat(e.getMember()).as("check member").isEqualTo(actual.getMember()))
+            .satisfies(e -> assertThat(e.getUser()).as("check user").isEqualTo(actual.getUser()));
     }
 }

@@ -15,7 +15,7 @@
         [routerLink]="['/task/new']"
       >
         <fa-icon icon="plus"></fa-icon>
-        <span jhiTranslate="poimenApp.task.home.createLabel">Create a new Task</span>
+        <span class="hidden-sm-down" jhiTranslate="poimenApp.task.home.createLabel">Create a new Task</span>
       </button>
     </div>
   </h2>
@@ -23,6 +23,32 @@
   <jhi-alert-error></jhi-alert-error>
 
   <jhi-alert></jhi-alert>
+
+  <form name="searchForm" class="row row-cols-sm-auto align-items-center">
+    <div class="col-sm-12">
+      <div class="input-group w-100 mt-3">
+        <label class="visually-hidden" for="currentSearch" jhiTranslate="poimenApp.task.home.search">Search for Task</label>
+        <input
+          type="text"
+          class="form-control"
+          [(ngModel)]="currentSearch"
+          id="currentSearch"
+          name="currentSearch"
+          placeholder="{{ 'poimenApp.task.home.search' | translate }}"
+        />
+
+        <button class="btn btn-info" (click)="search(currentSearch)">
+          <fa-icon icon="search"></fa-icon>
+        </button>
+
+        @if (currentSearch) {
+          <button class="btn btn-danger" (click)="search('')">
+            <fa-icon icon="trash-alt"></fa-icon>
+          </button>
+        }
+      </div>
+    </div>
+  </form>
 
   @if (tasks?.length === 0) {
     <div class="alert alert-warning" id="no-result">
@@ -45,15 +71,17 @@
             <th scope="col" jhiSortBy="title">
               <div class="d-flex">
                 <span jhiTranslate="poimenApp.task.title">Title</span>
-
-                <fa-icon class="p-1" icon="sort"></fa-icon>
+                @if (!currentSearch) {
+                  <fa-icon class="p-1" icon="sort"></fa-icon>
+                }
               </div>
             </th>
             <th scope="col" jhiSortBy="description">
               <div class="d-flex">
                 <span jhiTranslate="poimenApp.task.description">Description</span>
-
-                <fa-icon class="p-1" icon="sort"></fa-icon>
+                @if (!currentSearch) {
+                  <fa-icon class="p-1" icon="sort"></fa-icon>
+                }
               </div>
             </th>
             <th scope="col" jhiSortBy="dueDate">
@@ -63,26 +91,43 @@
                 <fa-icon class="p-1" icon="sort"></fa-icon>
               </div>
             </th>
-            <th scope="col" jhiSortBy="completed">
+            <th scope="col" jhiSortBy="status">
               <div class="d-flex">
-                <span jhiTranslate="poimenApp.task.completed">Completed</span>
-
-                <fa-icon class="p-1" icon="sort"></fa-icon>
+                <span jhiTranslate="poimenApp.task.status">Status</span>
+                @if (!currentSearch) {
+                  <fa-icon class="p-1" icon="sort"></fa-icon>
+                }
               </div>
             </th>
-            <th scope="col" jhiSortBy="church.id">
+            <th scope="col" jhiSortBy="priority">
+              <div class="d-flex">
+                <span jhiTranslate="poimenApp.task.priority">Priority</span>
+                @if (!currentSearch) {
+                  <fa-icon class="p-1" icon="sort"></fa-icon>
+                }
+              </div>
+            </th>
+            <th scope="col" jhiSortBy="notes">
+              <div class="d-flex">
+                <span jhiTranslate="poimenApp.task.notes">Notes</span>
+                @if (!currentSearch) {
+                  <fa-icon class="p-1" icon="sort"></fa-icon>
+                }
+              </div>
+            </th>
+            <th scope="col" jhiSortBy="church.name">
               <div class="d-flex">
                 <span jhiTranslate="poimenApp.task.church">Church</span>
                 <fa-icon class="p-1" icon="sort"></fa-icon>
               </div>
             </th>
-            <th scope="col" jhiSortBy="member.id">
+            <th scope="col" jhiSortBy="member.name">
               <div class="d-flex">
                 <span jhiTranslate="poimenApp.task.member">Member</span>
                 <fa-icon class="p-1" icon="sort"></fa-icon>
               </div>
             </th>
-            <th scope="col" jhiSortBy="user.id">
+            <th scope="col" jhiSortBy="user.name">
               <div class="d-flex">
                 <span jhiTranslate="poimenApp.task.user">User</span>
                 <fa-icon class="p-1" icon="sort"></fa-icon>
@@ -99,24 +144,34 @@
               </td>
               <td>{{ task.title }}</td>
               <td>{{ task.description }}</td>
-              <td>{{ task.dueDate | formatMediumDatetime }}</td>
-              <td>{{ task.completed }}</td>
+              <td>{{ task.dueDate | formatMediumDate }}</td>
+              <td [jhiTranslate]="'poimenApp.StatusTask.' + (task.status ?? 'null')">
+                {{ { null: '', PENDING: 'Pending', IN_PROGRESS: 'In Progress', DONE: 'Done' }[task.status ?? 'null'] }}
+              </td>
+              <td [jhiTranslate]="'poimenApp.PriorityTask.' + (task.priority ?? 'null')">
+                {{ { null: '', LOW: 'Low', MEDIUM: 'Medium', HIGH: 'High' }[task.priority ?? 'null'] }}
+              </td>
+              <td>{{ task.notes }}</td>
               <td>
                 @if (task.church) {
                   <div>
-                    <a [routerLink]="['/church', task.church.id, 'view']">{{ task.church.id }}</a>
+                    <a [routerLink]="['/church', task.church.id, 'view']">{{ task.church.name }}</a>
                   </div>
                 }
               </td>
               <td>
                 @if (task.member) {
                   <div>
-                    <a [routerLink]="['/member', task.member.id, 'view']">{{ task.member.id }}</a>
+                    <a [routerLink]="['/member', task.member.id, 'view']">{{ task.member.name }}</a>
                   </div>
                 }
               </td>
               <td>
-                {{ task.user?.id }}
+                @if (task.user) {
+                  <div>
+                    <a [routerLink]="['/application-user', task.user.id, 'view']">{{ task.user.name }}</a>
+                  </div>
+                }
               </td>
               <td class="text-end">
                 <div class="btn-group">

@@ -6,8 +6,10 @@ import { Subject, from, of } from 'rxjs';
 
 import { IChurch } from 'app/entities/church/church.model';
 import { ChurchService } from 'app/entities/church/service/church.service';
-import { MinistryGroupService } from '../service/ministry-group.service';
+import { IMember } from 'app/entities/member/member.model';
+import { MemberService } from 'app/entities/member/service/member.service';
 import { IMinistryGroup } from '../ministry-group.model';
+import { MinistryGroupService } from '../service/ministry-group.service';
 import { MinistryGroupFormService } from './ministry-group-form.service';
 
 import { MinistryGroupUpdateComponent } from './ministry-group-update.component';
@@ -19,6 +21,7 @@ describe('MinistryGroup Management Update Component', () => {
   let ministryGroupFormService: MinistryGroupFormService;
   let ministryGroupService: MinistryGroupService;
   let churchService: ChurchService;
+  let memberService: MemberService;
 
   beforeEach(() => {
     TestBed.configureTestingModule({
@@ -42,6 +45,7 @@ describe('MinistryGroup Management Update Component', () => {
     ministryGroupFormService = TestBed.inject(MinistryGroupFormService);
     ministryGroupService = TestBed.inject(MinistryGroupService);
     churchService = TestBed.inject(ChurchService);
+    memberService = TestBed.inject(MemberService);
 
     comp = fixture.componentInstance;
   });
@@ -49,10 +53,10 @@ describe('MinistryGroup Management Update Component', () => {
   describe('ngOnInit', () => {
     it('Should call Church query and add missing value', () => {
       const ministryGroup: IMinistryGroup = { id: 456 };
-      const church: IChurch = { id: 2491 };
+      const church: IChurch = { id: 12146 };
       ministryGroup.church = church;
 
-      const churchCollection: IChurch[] = [{ id: 9849 }];
+      const churchCollection: IChurch[] = [{ id: 17877 }];
       jest.spyOn(churchService, 'query').mockReturnValue(of(new HttpResponse({ body: churchCollection })));
       const additionalChurches = [church];
       const expectedCollection: IChurch[] = [...additionalChurches, ...churchCollection];
@@ -69,15 +73,50 @@ describe('MinistryGroup Management Update Component', () => {
       expect(comp.churchesSharedCollection).toEqual(expectedCollection);
     });
 
+    it('Should call Member query and add missing value', () => {
+      const ministryGroup: IMinistryGroup = { id: 456 };
+      const president: IMember = { id: 31515 };
+      ministryGroup.president = president;
+      const supervisor: IMember = { id: 85 };
+      ministryGroup.supervisor = supervisor;
+      const members: IMember[] = [{ id: 14030 }];
+      ministryGroup.members = members;
+
+      const memberCollection: IMember[] = [{ id: 9109 }];
+      jest.spyOn(memberService, 'query').mockReturnValue(of(new HttpResponse({ body: memberCollection })));
+      const additionalMembers = [president, supervisor, ...members];
+      const expectedCollection: IMember[] = [...additionalMembers, ...memberCollection];
+      jest.spyOn(memberService, 'addMemberToCollectionIfMissing').mockReturnValue(expectedCollection);
+
+      activatedRoute.data = of({ ministryGroup });
+      comp.ngOnInit();
+
+      expect(memberService.query).toHaveBeenCalled();
+      expect(memberService.addMemberToCollectionIfMissing).toHaveBeenCalledWith(
+        memberCollection,
+        ...additionalMembers.map(expect.objectContaining),
+      );
+      expect(comp.membersSharedCollection).toEqual(expectedCollection);
+    });
+
     it('Should update editForm', () => {
       const ministryGroup: IMinistryGroup = { id: 456 };
-      const church: IChurch = { id: 9173 };
+      const church: IChurch = { id: 27849 };
       ministryGroup.church = church;
+      const president: IMember = { id: 11591 };
+      ministryGroup.president = president;
+      const supervisor: IMember = { id: 3082 };
+      ministryGroup.supervisor = supervisor;
+      const members: IMember = { id: 6143 };
+      ministryGroup.members = [members];
 
       activatedRoute.data = of({ ministryGroup });
       comp.ngOnInit();
 
       expect(comp.churchesSharedCollection).toContain(church);
+      expect(comp.membersSharedCollection).toContain(president);
+      expect(comp.membersSharedCollection).toContain(supervisor);
+      expect(comp.membersSharedCollection).toContain(members);
       expect(comp.ministryGroup).toEqual(ministryGroup);
     });
   });
@@ -158,6 +197,16 @@ describe('MinistryGroup Management Update Component', () => {
         jest.spyOn(churchService, 'compareChurch');
         comp.compareChurch(entity, entity2);
         expect(churchService.compareChurch).toHaveBeenCalledWith(entity, entity2);
+      });
+    });
+
+    describe('compareMember', () => {
+      it('Should forward to memberService', () => {
+        const entity = { id: 123 };
+        const entity2 = { id: 456 };
+        jest.spyOn(memberService, 'compareMember');
+        comp.compareMember(entity, entity2);
+        expect(memberService.compareMember).toHaveBeenCalledWith(entity, entity2);
       });
     });
   });

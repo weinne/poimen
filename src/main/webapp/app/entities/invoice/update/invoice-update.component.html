@@ -101,16 +101,54 @@
           <input type="text" class="form-control" name="supplier" id="field_supplier" data-cy="supplier" formControlName="supplier" />
         </div>
 
+        @let invoiceFileRef = editForm.get('invoiceFile')!;
         <div class="mb-3">
           <label class="form-label" for="field_invoiceFile" jhiTranslate="poimenApp.invoice.invoiceFile">Invoice File</label>
+          <div>
+            @if (invoiceFileRef.value) {
+              <div class="form-text text-danger clearfix">
+                <a
+                  class="pull-start"
+                  (click)="openFile(invoiceFileRef.value!, editForm.get('invoiceFileContentType')!.value!)"
+                  jhiTranslate="entity.action.open"
+                  >Open</a
+                ><br />
+                <span class="pull-start">{{ editForm.get('invoiceFileContentType')!.value }}, {{ byteSize(invoiceFileRef.value!) }}</span>
+                <button
+                  type="button"
+                  (click)="editForm.patchValue({ invoiceFile: undefined, invoiceFileContentType: undefined })"
+                  class="btn btn-secondary btn-xs pull-end"
+                >
+                  <fa-icon icon="times"></fa-icon>
+                </button>
+              </div>
+            }
+            <input
+              type="file"
+              id="file_invoiceFile"
+              data-cy="invoiceFile"
+              (change)="setFileData($event, 'invoiceFile', false)"
+              jhiTranslate="entity.action.addblob"
+            />
+          </div>
           <input
-            type="text"
+            type="hidden"
             class="form-control"
             name="invoiceFile"
             id="field_invoiceFile"
             data-cy="invoiceFile"
             formControlName="invoiceFile"
           />
+          <input
+            type="hidden"
+            class="form-control"
+            name="invoiceFileContentType"
+            id="field_invoiceFileContentType"
+            formControlName="invoiceFileContentType"
+          />
+          @if (invoiceFileRef.invalid && (invoiceFileRef.dirty || invoiceFileRef.touched)) {
+            <div></div>
+          }
         </div>
 
         <div class="mb-3">
@@ -125,7 +163,7 @@
           >
             <option [ngValue]="null"></option>
             @for (churchOption of churchesSharedCollection; track $index) {
-              <option [ngValue]="churchOption">{{ churchOption.id }}</option>
+              <option [ngValue]="churchOption">{{ churchOption.name }}</option>
             }
           </select>
         </div>
@@ -142,7 +180,7 @@
           >
             <option [ngValue]="null"></option>
             @for (transactionOption of transactionsSharedCollection; track $index) {
-              <option [ngValue]="transactionOption">{{ transactionOption.id }}</option>
+              <option [ngValue]="transactionOption">{{ transactionOption.description }}</option>
             }
           </select>
         </div>

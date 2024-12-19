@@ -15,6 +15,7 @@ import org.hibernate.annotations.CacheConcurrencyStrategy;
 @Entity
 @Table(name = "plan")
 @Cache(usage = CacheConcurrencyStrategy.READ_WRITE)
+@org.springframework.data.elasticsearch.annotations.Document(indexName = "plan")
 @SuppressWarnings("common-java:DuplicatedBlocks")
 public class Plan implements Serializable {
 
@@ -28,16 +29,32 @@ public class Plan implements Serializable {
 
     @NotNull
     @Column(name = "name", nullable = false)
+    @org.springframework.data.elasticsearch.annotations.Field(type = org.springframework.data.elasticsearch.annotations.FieldType.Text)
     private String name;
 
     @NotNull
     @Column(name = "price", nullable = false)
+    @org.springframework.data.elasticsearch.annotations.Field(type = org.springframework.data.elasticsearch.annotations.FieldType.Text)
     private String price;
+
+    @Column(name = "description")
+    @org.springframework.data.elasticsearch.annotations.Field(type = org.springframework.data.elasticsearch.annotations.FieldType.Text)
+    private String description;
+
+    @Lob
+    @Column(name = "features")
+    @org.springframework.data.elasticsearch.annotations.Field(type = org.springframework.data.elasticsearch.annotations.FieldType.Text)
+    private String features;
+
+    @Column(name = "renewal_period")
+    @org.springframework.data.elasticsearch.annotations.Field(type = org.springframework.data.elasticsearch.annotations.FieldType.Text)
+    private String renewalPeriod;
 
     @OneToMany(fetch = FetchType.LAZY, mappedBy = "plan")
     @Cache(usage = CacheConcurrencyStrategy.READ_WRITE)
-    @JsonIgnoreProperties(value = { "plan", "church", "user" }, allowSetters = true)
-    private Set<PlanSubscription> planSubscriptions = new HashSet<>();
+    @org.springframework.data.annotation.Transient
+    @JsonIgnoreProperties(value = { "church", "plan", "user" }, allowSetters = true)
+    private Set<PlanSubscription> subscriptions = new HashSet<>();
 
     // jhipster-needle-entity-add-field - JHipster will add fields here
 
@@ -80,33 +97,72 @@ public class Plan implements Serializable {
         this.price = price;
     }
 
-    public Set<PlanSubscription> getPlanSubscriptions() {
-        return this.planSubscriptions;
+    public String getDescription() {
+        return this.description;
     }
 
-    public void setPlanSubscriptions(Set<PlanSubscription> planSubscriptions) {
-        if (this.planSubscriptions != null) {
-            this.planSubscriptions.forEach(i -> i.setPlan(null));
+    public Plan description(String description) {
+        this.setDescription(description);
+        return this;
+    }
+
+    public void setDescription(String description) {
+        this.description = description;
+    }
+
+    public String getFeatures() {
+        return this.features;
+    }
+
+    public Plan features(String features) {
+        this.setFeatures(features);
+        return this;
+    }
+
+    public void setFeatures(String features) {
+        this.features = features;
+    }
+
+    public String getRenewalPeriod() {
+        return this.renewalPeriod;
+    }
+
+    public Plan renewalPeriod(String renewalPeriod) {
+        this.setRenewalPeriod(renewalPeriod);
+        return this;
+    }
+
+    public void setRenewalPeriod(String renewalPeriod) {
+        this.renewalPeriod = renewalPeriod;
+    }
+
+    public Set<PlanSubscription> getSubscriptions() {
+        return this.subscriptions;
+    }
+
+    public void setSubscriptions(Set<PlanSubscription> planSubscriptions) {
+        if (this.subscriptions != null) {
+            this.subscriptions.forEach(i -> i.setPlan(null));
         }
         if (planSubscriptions != null) {
             planSubscriptions.forEach(i -> i.setPlan(this));
         }
-        this.planSubscriptions = planSubscriptions;
+        this.subscriptions = planSubscriptions;
     }
 
-    public Plan planSubscriptions(Set<PlanSubscription> planSubscriptions) {
-        this.setPlanSubscriptions(planSubscriptions);
+    public Plan subscriptions(Set<PlanSubscription> planSubscriptions) {
+        this.setSubscriptions(planSubscriptions);
         return this;
     }
 
-    public Plan addPlanSubscription(PlanSubscription planSubscription) {
-        this.planSubscriptions.add(planSubscription);
+    public Plan addSubscription(PlanSubscription planSubscription) {
+        this.subscriptions.add(planSubscription);
         planSubscription.setPlan(this);
         return this;
     }
 
-    public Plan removePlanSubscription(PlanSubscription planSubscription) {
-        this.planSubscriptions.remove(planSubscription);
+    public Plan removeSubscription(PlanSubscription planSubscription) {
+        this.subscriptions.remove(planSubscription);
         planSubscription.setPlan(null);
         return this;
     }
@@ -137,6 +193,9 @@ public class Plan implements Serializable {
             "id=" + getId() +
             ", name='" + getName() + "'" +
             ", price='" + getPrice() + "'" +
+            ", description='" + getDescription() + "'" +
+            ", features='" + getFeatures() + "'" +
+            ", renewalPeriod='" + getRenewalPeriod() + "'" +
             "}";
     }
 }

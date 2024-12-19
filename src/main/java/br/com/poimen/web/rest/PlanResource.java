@@ -4,6 +4,7 @@ import br.com.poimen.domain.Plan;
 import br.com.poimen.repository.PlanRepository;
 import br.com.poimen.service.PlanService;
 import br.com.poimen.web.rest.errors.BadRequestAlertException;
+import br.com.poimen.web.rest.errors.ElasticsearchExceptionMapper;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotNull;
 import java.net.URI;
@@ -165,5 +166,22 @@ public class PlanResource {
         return ResponseEntity.noContent()
             .headers(HeaderUtil.createEntityDeletionAlert(applicationName, true, ENTITY_NAME, id.toString()))
             .build();
+    }
+
+    /**
+     * {@code SEARCH  /plans/_search?query=:query} : search for the plan corresponding
+     * to the query.
+     *
+     * @param query the query of the plan search.
+     * @return the result of the search.
+     */
+    @GetMapping("/_search")
+    public List<Plan> searchPlans(@RequestParam("query") String query) {
+        LOG.debug("REST request to search Plans for query {}", query);
+        try {
+            return planService.search(query);
+        } catch (RuntimeException e) {
+            throw ElasticsearchExceptionMapper.mapException(e);
+        }
     }
 }

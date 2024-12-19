@@ -47,12 +47,39 @@ public class MemberAsserts {
     public static void assertMemberUpdatableFieldsEquals(Member expected, Member actual) {
         assertThat(expected)
             .as("Verify Member relevant properties")
-            .satisfies(e -> assertThat(e.getFirstName()).as("check firstName").isEqualTo(actual.getFirstName()))
-            .satisfies(e -> assertThat(e.getLastName()).as("check lastName").isEqualTo(actual.getLastName()))
+            .satisfies(e -> assertThat(e.getName()).as("check name").isEqualTo(actual.getName()))
+            .satisfies(e -> assertThat(e.getPhoto()).as("check photo").isEqualTo(actual.getPhoto()))
+            .satisfies(e -> assertThat(e.getPhotoContentType()).as("check photo contenty type").isEqualTo(actual.getPhotoContentType()))
             .satisfies(e -> assertThat(e.getEmail()).as("check email").isEqualTo(actual.getEmail()))
             .satisfies(e -> assertThat(e.getPhoneNumber()).as("check phoneNumber").isEqualTo(actual.getPhoneNumber()))
             .satisfies(e -> assertThat(e.getDateOfBirth()).as("check dateOfBirth").isEqualTo(actual.getDateOfBirth()))
-            .satisfies(e -> assertThat(e.getAddress()).as("check address").isEqualTo(actual.getAddress()));
+            .satisfies(e -> assertThat(e.getAddress()).as("check address").isEqualTo(actual.getAddress()))
+            .satisfies(e -> assertThat(e.getCity()).as("check city").isEqualTo(actual.getCity()))
+            .satisfies(e -> assertThat(e.getState()).as("check state").isEqualTo(actual.getState()))
+            .satisfies(e -> assertThat(e.getZipCode()).as("check zipCode").isEqualTo(actual.getZipCode()))
+            .satisfies(e -> assertThat(e.getCityOfBirth()).as("check cityOfBirth").isEqualTo(actual.getCityOfBirth()))
+            .satisfies(e -> assertThat(e.getPreviousReligion()).as("check previousReligion").isEqualTo(actual.getPreviousReligion()))
+            .satisfies(e -> assertThat(e.getMaritalStatus()).as("check maritalStatus").isEqualTo(actual.getMaritalStatus()))
+            .satisfies(e -> assertThat(e.getSpouseName()).as("check spouseName").isEqualTo(actual.getSpouseName()))
+            .satisfies(e -> assertThat(e.getDateOfMarriage()).as("check dateOfMarriage").isEqualTo(actual.getDateOfMarriage()))
+            .satisfies(e -> assertThat(e.getStatus()).as("check status").isEqualTo(actual.getStatus()))
+            .satisfies(e -> assertThat(e.getCpf()).as("check cpf").isEqualTo(actual.getCpf()))
+            .satisfies(e -> assertThat(e.getRg()).as("check rg").isEqualTo(actual.getRg()))
+            .satisfies(e -> assertThat(e.getDateOfBaptism()).as("check dateOfBaptism").isEqualTo(actual.getDateOfBaptism()))
+            .satisfies(e -> assertThat(e.getChurchOfBaptism()).as("check churchOfBaptism").isEqualTo(actual.getChurchOfBaptism()))
+            .satisfies(e -> assertThat(e.getDateOfMembership()).as("check dateOfMembership").isEqualTo(actual.getDateOfMembership()))
+            .satisfies(e -> assertThat(e.getTypeOfMembership()).as("check typeOfMembership").isEqualTo(actual.getTypeOfMembership()))
+            .satisfies(e ->
+                assertThat(e.getAssociationMeetingMinutes())
+                    .as("check associationMeetingMinutes")
+                    .isEqualTo(actual.getAssociationMeetingMinutes())
+            )
+            .satisfies(e -> assertThat(e.getDateOfDeath()).as("check dateOfDeath").isEqualTo(actual.getDateOfDeath()))
+            .satisfies(e -> assertThat(e.getDateOfExit()).as("check dateOfExit").isEqualTo(actual.getDateOfExit()))
+            .satisfies(e -> assertThat(e.getExitDestination()).as("check exitDestination").isEqualTo(actual.getExitDestination()))
+            .satisfies(e -> assertThat(e.getExitReason()).as("check exitReason").isEqualTo(actual.getExitReason()))
+            .satisfies(e -> assertThat(e.getExitMeetingMinutes()).as("check exitMeetingMinutes").isEqualTo(actual.getExitMeetingMinutes()))
+            .satisfies(e -> assertThat(e.getNotes()).as("check notes").isEqualTo(actual.getNotes()));
     }
 
     /**
@@ -65,7 +92,8 @@ public class MemberAsserts {
         assertThat(expected)
             .as("Verify Member relationships")
             .satisfies(e -> assertThat(e.getChurch()).as("check church").isEqualTo(actual.getChurch()))
-            .satisfies(e -> assertThat(e.getSchedules()).as("check schedules").isEqualTo(actual.getSchedules()))
-            .satisfies(e -> assertThat(e.getWorshipEvents()).as("check worshipEvents").isEqualTo(actual.getWorshipEvents()));
+            .satisfies(e -> assertThat(e.getPlayIns()).as("check playIns").isEqualTo(actual.getPlayIns()))
+            .satisfies(e -> assertThat(e.getParticipateIns()).as("check participateIns").isEqualTo(actual.getParticipateIns()))
+            .satisfies(e -> assertThat(e.getMemberOfs()).as("check memberOfs").isEqualTo(actual.getMemberOfs()));
     }
 }

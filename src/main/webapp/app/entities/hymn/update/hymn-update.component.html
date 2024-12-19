@@ -29,8 +29,32 @@
         </div>
 
         <div class="mb-3">
-          <label class="form-label" for="field_author" jhiTranslate="poimenApp.hymn.author">Author</label>
-          <input type="text" class="form-control" name="author" id="field_author" data-cy="author" formControlName="author" />
+          <label class="form-label" for="field_lyricsAuthor" jhiTranslate="poimenApp.hymn.lyricsAuthor">Lyrics Author</label>
+          <input
+            type="text"
+            class="form-control"
+            name="lyricsAuthor"
+            id="field_lyricsAuthor"
+            data-cy="lyricsAuthor"
+            formControlName="lyricsAuthor"
+          />
+        </div>
+
+        <div class="mb-3">
+          <label class="form-label" for="field_musicAuthor" jhiTranslate="poimenApp.hymn.musicAuthor">Music Author</label>
+          <input
+            type="text"
+            class="form-control"
+            name="musicAuthor"
+            id="field_musicAuthor"
+            data-cy="musicAuthor"
+            formControlName="musicAuthor"
+          />
+        </div>
+
+        <div class="mb-3">
+          <label class="form-label" for="field_hymnary" jhiTranslate="poimenApp.hymn.hymnary">Hymnary</label>
+          <input type="text" class="form-control" name="hymnary" id="field_hymnary" data-cy="hymnary" formControlName="hymnary" />
         </div>
 
         <div class="mb-3">
@@ -46,23 +70,142 @@
         </div>
 
         <div class="mb-3">
+          <label class="form-label" for="field_link" jhiTranslate="poimenApp.hymn.link">Link</label>
+          <input type="text" class="form-control" name="link" id="field_link" data-cy="link" formControlName="link" />
+        </div>
+
+        <div class="mb-3">
+          <label class="form-label" for="field_youtubeLink" jhiTranslate="poimenApp.hymn.youtubeLink">Youtube Link</label>
+          <input
+            type="text"
+            class="form-control"
+            name="youtubeLink"
+            id="field_youtubeLink"
+            data-cy="youtubeLink"
+            formControlName="youtubeLink"
+          />
+        </div>
+
+        @let sheetMusicRef = editForm.get('sheetMusic')!;
+        <div class="mb-3">
+          <label class="form-label" for="field_sheetMusic" jhiTranslate="poimenApp.hymn.sheetMusic">Sheet Music</label>
+          <div>
+            @if (sheetMusicRef.value) {
+              <div class="form-text text-danger clearfix">
+                <a
+                  class="pull-start"
+                  (click)="openFile(sheetMusicRef.value!, editForm.get('sheetMusicContentType')!.value!)"
+                  jhiTranslate="entity.action.open"
+                  >Open</a
+                ><br />
+                <span class="pull-start">{{ editForm.get('sheetMusicContentType')!.value }}, {{ byteSize(sheetMusicRef.value!) }}</span>
+                <button
+                  type="button"
+                  (click)="editForm.patchValue({ sheetMusic: undefined, sheetMusicContentType: undefined })"
+                  class="btn btn-secondary btn-xs pull-end"
+                >
+                  <fa-icon icon="times"></fa-icon>
+                </button>
+              </div>
+            }
+            <input
+              type="file"
+              id="file_sheetMusic"
+              data-cy="sheetMusic"
+              (change)="setFileData($event, 'sheetMusic', false)"
+              jhiTranslate="entity.action.addblob"
+            />
+          </div>
+          <input
+            type="hidden"
+            class="form-control"
+            name="sheetMusic"
+            id="field_sheetMusic"
+            data-cy="sheetMusic"
+            formControlName="sheetMusic"
+          />
+          <input
+            type="hidden"
+            class="form-control"
+            name="sheetMusicContentType"
+            id="field_sheetMusicContentType"
+            formControlName="sheetMusicContentType"
+          />
+          @if (sheetMusicRef.invalid && (sheetMusicRef.dirty || sheetMusicRef.touched)) {
+            <div></div>
+          }
+        </div>
+
+        @let midiRef = editForm.get('midi')!;
+        <div class="mb-3">
+          <label class="form-label" for="field_midi" jhiTranslate="poimenApp.hymn.midi">Midi</label>
+          <div>
+            @if (midiRef.value) {
+              <div class="form-text text-danger clearfix">
+                <a
+                  class="pull-start"
+                  (click)="openFile(midiRef.value!, editForm.get('midiContentType')!.value!)"
+                  jhiTranslate="entity.action.open"
+                  >Open</a
+                ><br />
+                <span class="pull-start">{{ editForm.get('midiContentType')!.value }}, {{ byteSize(midiRef.value!) }}</span>
+                <button
+                  type="button"
+                  (click)="editForm.patchValue({ midi: undefined, midiContentType: undefined })"
+                  class="btn btn-secondary btn-xs pull-end"
+                >
+                  <fa-icon icon="times"></fa-icon>
+                </button>
+              </div>
+            }
+            <input
+              type="file"
+              id="file_midi"
+              data-cy="midi"
+              (change)="setFileData($event, 'midi', false)"
+              jhiTranslate="entity.action.addblob"
+            />
+          </div>
+          <input type="hidden" class="form-control" name="midi" id="field_midi" data-cy="midi" formControlName="midi" />
+          <input type="hidden" class="form-control" name="midiContentType" id="field_midiContentType" formControlName="midiContentType" />
+          @if (midiRef.invalid && (midiRef.dirty || midiRef.touched)) {
+            <div></div>
+          }
+        </div>
+
+        @let toneRef = editForm.get('tone')!;
+        <div class="mb-3">
+          <label class="form-label" for="field_tone" jhiTranslate="poimenApp.hymn.tone">Tone</label>
+          <input type="text" class="form-control" name="tone" id="field_tone" data-cy="tone" formControlName="tone" />
+          @if (toneRef.invalid && (toneRef.dirty || toneRef.touched)) {
+            <div>
+              @if (editForm.get('tone')?.errors?.maxlength) {
+                <small class="form-text text-danger" jhiTranslate="entity.validation.maxlength" [translateValues]="{ max: '5' }"
+                  >This field cannot be longer than 5 characters.</small
+                >
+              }
+            </div>
+          }
+        </div>
+
+        <div class="mb-3">
           <label class="form-label" for="field_lyrics" jhiTranslate="poimenApp.hymn.lyrics">Lyrics</label>
           <input type="text" class="form-control" name="lyrics" id="field_lyrics" data-cy="lyrics" formControlName="lyrics" />
         </div>
 
         <div class="mb-3">
-          <label for="field_worshipEvents" jhiTranslate="poimenApp.hymn.worshipEvent">Worship Event</label>
+          <label for="field_services" jhiTranslate="poimenApp.hymn.services">Services</label>
           <select
             class="form-control"
-            id="field_worshipEvents"
-            data-cy="worshipEvent"
+            id="field_services"
+            data-cy="services"
             multiple
-            name="worshipEvents"
-            formControlName="worshipEvents"
+            name="services"
+            formControlName="services"
             [compareWith]="compareWorshipEvent"
           >
             @for (worshipEventOption of worshipEventsSharedCollection; track $index) {
-              <option [ngValue]="worshipEventOption">{{ worshipEventOption.id }}</option>
+              <option [ngValue]="worshipEventOption">{{ worshipEventOption.title }}</option>
             }
           </select>
         </div>

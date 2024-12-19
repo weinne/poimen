@@ -4,6 +4,7 @@ import br.com.poimen.domain.Church;
 import br.com.poimen.repository.ChurchRepository;
 import br.com.poimen.service.ChurchService;
 import br.com.poimen.web.rest.errors.BadRequestAlertException;
+import br.com.poimen.web.rest.errors.ElasticsearchExceptionMapper;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotNull;
 import java.net.URI;
@@ -133,11 +134,10 @@ public class ChurchResource {
     /**
      * {@code GET  /churches} : get all the churches.
      *
-     * @param eagerload flag to eager load entities from relationships (This is applicable for many-to-many).
      * @return the {@link ResponseEntity} with status {@code 200 (OK)} and the list of churches in body.
      */
     @GetMapping("")
-    public List<Church> getAllChurches(@RequestParam(name = "eagerload", required = false, defaultValue = "true") boolean eagerload) {
+    public List<Church> getAllChurches() {
         LOG.debug("REST request to get all Churches");
         return churchService.findAll();
     }
@@ -168,5 +168,22 @@ public class ChurchResource {
         return ResponseEntity.noContent()
             .headers(HeaderUtil.createEntityDeletionAlert(applicationName, true, ENTITY_NAME, id.toString()))
             .build();
+    }
+
+    /**
+     * {@code SEARCH  /churches/_search?query=:query} : search for the church corresponding
+     * to the query.
+     *
+     * @param query the query of the church search.
+     * @return the result of the search.
+     */
+    @GetMapping("/_search")
+    public List<Church> searchChurches(@RequestParam("query") String query) {
+        LOG.debug("REST request to search Churches for query {}", query);
+        try {
+            return churchService.search(query);
+        } catch (RuntimeException e) {
+            throw ElasticsearchExceptionMapper.mapException(e);
+        }
     }
 }

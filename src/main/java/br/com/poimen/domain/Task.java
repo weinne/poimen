@@ -1,10 +1,12 @@
 package br.com.poimen.domain;
 
+import br.com.poimen.domain.enumeration.PriorityTask;
+import br.com.poimen.domain.enumeration.StatusTask;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.*;
 import java.io.Serializable;
-import java.time.Instant;
+import java.time.LocalDate;
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
 
@@ -14,6 +16,7 @@ import org.hibernate.annotations.CacheConcurrencyStrategy;
 @Entity
 @Table(name = "task")
 @Cache(usage = CacheConcurrencyStrategy.READ_WRITE)
+@org.springframework.data.elasticsearch.annotations.Document(indexName = "task")
 @SuppressWarnings("common-java:DuplicatedBlocks")
 public class Task implements Serializable {
 
@@ -27,29 +30,46 @@ public class Task implements Serializable {
 
     @NotNull
     @Column(name = "title", nullable = false)
+    @org.springframework.data.elasticsearch.annotations.Field(type = org.springframework.data.elasticsearch.annotations.FieldType.Text)
     private String title;
 
     @Column(name = "description")
+    @org.springframework.data.elasticsearch.annotations.Field(type = org.springframework.data.elasticsearch.annotations.FieldType.Text)
     private String description;
 
     @Column(name = "due_date")
-    private Instant dueDate;
+    private LocalDate dueDate;
 
-    @Column(name = "completed")
-    private Boolean completed;
+    @NotNull
+    @Enumerated(EnumType.STRING)
+    @Column(name = "status", nullable = false)
+    @org.springframework.data.elasticsearch.annotations.Field(type = org.springframework.data.elasticsearch.annotations.FieldType.Keyword)
+    private StatusTask status;
+
+    @NotNull
+    @Enumerated(EnumType.STRING)
+    @Column(name = "priority", nullable = false)
+    @org.springframework.data.elasticsearch.annotations.Field(type = org.springframework.data.elasticsearch.annotations.FieldType.Keyword)
+    private PriorityTask priority;
+
+    @Lob
+    @Column(name = "notes")
+    @org.springframework.data.elasticsearch.annotations.Field(type = org.springframework.data.elasticsearch.annotations.FieldType.Text)
+    private String notes;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JsonIgnoreProperties(
         value = {
             "users",
             "members",
-            "ministryGroups",
-            "worshipEvents",
-            "tasks",
+            "subscriptions",
             "counselingSessions",
-            "invoices",
+            "tasks",
             "transactions",
-            "planSubscriptions",
+            "invoices",
+            "worshipEvents",
+            "appointments",
+            "ministryGroups",
         },
         allowSetters = true
     )
@@ -57,13 +77,26 @@ public class Task implements Serializable {
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JsonIgnoreProperties(
-        value = { "church", "counselingSessions", "ministryMemberships", "tasks", "transactions", "schedules", "worshipEvents" },
+        value = {
+            "church",
+            "counselings",
+            "tasks",
+            "preachIns",
+            "liturgyIns",
+            "appointments",
+            "presidentOfs",
+            "supervisorOfs",
+            "playIns",
+            "participateIns",
+            "memberOfs",
+        },
         allowSetters = true
     )
     private Member member;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    private User user;
+    @JsonIgnoreProperties(value = { "internalUser", "church" }, allowSetters = true)
+    private ApplicationUser user;
 
     // jhipster-needle-entity-add-field - JHipster will add fields here
 
@@ -106,30 +139,56 @@ public class Task implements Serializable {
         this.description = description;
     }
 
-    public Instant getDueDate() {
+    public LocalDate getDueDate() {
         return this.dueDate;
     }
 
-    public Task dueDate(Instant dueDate) {
+    public Task dueDate(LocalDate dueDate) {
         this.setDueDate(dueDate);
         return this;
     }
 
-    public void setDueDate(Instant dueDate) {
+    public void setDueDate(LocalDate dueDate) {
         this.dueDate = dueDate;
     }
 
-    public Boolean getCompleted() {
-        return this.completed;
+    public StatusTask getStatus() {
+        return this.status;
     }
 
-    public Task completed(Boolean completed) {
-        this.setCompleted(completed);
+    public Task status(StatusTask status) {
+        this.setStatus(status);
         return this;
     }
 
-    public void setCompleted(Boolean completed) {
-        this.completed = completed;
+    public void setStatus(StatusTask status) {
+        this.status = status;
+    }
+
+    public PriorityTask getPriority() {
+        return this.priority;
+    }
+
+    public Task priority(PriorityTask priority) {
+        this.setPriority(priority);
+        return this;
+    }
+
+    public void setPriority(PriorityTask priority) {
+        this.priority = priority;
+    }
+
+    public String getNotes() {
+        return this.notes;
+    }
+
+    public Task notes(String notes) {
+        this.setNotes(notes);
+        return this;
+    }
+
+    public void setNotes(String notes) {
+        this.notes = notes;
     }
 
     public Church getChurch() {
@@ -158,16 +217,16 @@ public class Task implements Serializable {
         return this;
     }
 
-    public User getUser() {
+    public ApplicationUser getUser() {
         return this.user;
     }
 
-    public void setUser(User user) {
-        this.user = user;
+    public void setUser(ApplicationUser applicationUser) {
+        this.user = applicationUser;
     }
 
-    public Task user(User user) {
-        this.setUser(user);
+    public Task user(ApplicationUser applicationUser) {
+        this.setUser(applicationUser);
         return this;
     }
 
@@ -198,7 +257,9 @@ public class Task implements Serializable {
             ", title='" + getTitle() + "'" +
             ", description='" + getDescription() + "'" +
             ", dueDate='" + getDueDate() + "'" +
-            ", completed='" + getCompleted() + "'" +
+            ", status='" + getStatus() + "'" +
+            ", priority='" + getPriority() + "'" +
+            ", notes='" + getNotes() + "'" +
             "}";
     }
 }

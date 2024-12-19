@@ -48,22 +48,21 @@
           <label class="form-label" for="field_establishedDate" jhiTranslate="poimenApp.ministryGroup.establishedDate"
             >Established Date</label
           >
-          <div class="d-flex">
+          <div class="input-group">
             <input
               id="field_establishedDate"
               data-cy="establishedDate"
-              type="datetime-local"
+              type="text"
               class="form-control"
               name="establishedDate"
+              ngbDatepicker
+              #establishedDateDp="ngbDatepicker"
               formControlName="establishedDate"
-              placeholder="YYYY-MM-DD HH:mm"
             />
+            <button type="button" class="btn btn-secondary" (click)="establishedDateDp.toggle()">
+              <fa-icon icon="calendar-alt"></fa-icon>
+            </button>
           </div>
-        </div>
-
-        <div class="mb-3">
-          <label class="form-label" for="field_leader" jhiTranslate="poimenApp.ministryGroup.leader">Leader</label>
-          <input type="text" class="form-control" name="leader" id="field_leader" data-cy="leader" formControlName="leader" />
         </div>
 
         @let typeRef = editForm.get('type')!;
@@ -96,7 +95,58 @@
           >
             <option [ngValue]="null"></option>
             @for (churchOption of churchesSharedCollection; track $index) {
-              <option [ngValue]="churchOption">{{ churchOption.id }}</option>
+              <option [ngValue]="churchOption">{{ churchOption.name }}</option>
+            }
+          </select>
+        </div>
+
+        <div class="mb-3">
+          <label class="form-label" for="field_president" jhiTranslate="poimenApp.ministryGroup.president">President</label>
+          <select
+            class="form-control"
+            id="field_president"
+            data-cy="president"
+            name="president"
+            formControlName="president"
+            [compareWith]="compareMember"
+          >
+            <option [ngValue]="null"></option>
+            @for (memberOption of membersSharedCollection; track $index) {
+              <option [ngValue]="memberOption">{{ memberOption.name }}</option>
+            }
+          </select>
+        </div>
+
+        <div class="mb-3">
+          <label class="form-label" for="field_supervisor" jhiTranslate="poimenApp.ministryGroup.supervisor">Supervisor</label>
+          <select
+            class="form-control"
+            id="field_supervisor"
+            data-cy="supervisor"
+            name="supervisor"
+            formControlName="supervisor"
+            [compareWith]="compareMember"
+          >
+            <option [ngValue]="null"></option>
+            @for (memberOption of membersSharedCollection; track $index) {
+              <option [ngValue]="memberOption">{{ memberOption.name }}</option>
+            }
+          </select>
+        </div>
+
+        <div class="mb-3">
+          <label for="field_members" jhiTranslate="poimenApp.ministryGroup.members">Members</label>
+          <select
+            class="form-control"
+            id="field_members"
+            data-cy="members"
+            multiple
+            name="members"
+            formControlName="members"
+            [compareWith]="compareMember"
+          >
+            @for (memberOption of membersSharedCollection; track $index) {
+              <option [ngValue]="memberOption">{{ memberOption.name }}</option>
             }
           </select>
         </div>

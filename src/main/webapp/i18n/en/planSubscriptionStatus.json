@@ -1,0 +1,11 @@
+{
+  "poimenApp": {
+    "PlanSubscriptionStatus": {
+      "null": "",
+      "ACTIVE": "Active",
+      "INACTIVE": "Inactive",
+      "CANCELED": "Canceled",
+      "PAUSED": "Paused"
+    }
+  }
+}

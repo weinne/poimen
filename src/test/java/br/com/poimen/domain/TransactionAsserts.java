@@ -67,6 +67,7 @@ public class TransactionAsserts {
         assertThat(expected)
             .as("Verify Transaction relationships")
             .satisfies(e -> assertThat(e.getChurch()).as("check church").isEqualTo(actual.getChurch()))
-            .satisfies(e -> assertThat(e.getMember()).as("check member").isEqualTo(actual.getMember()));
+            .satisfies(e -> assertThat(e.getMember()).as("check member").isEqualTo(actual.getMember()))
+            .satisfies(e -> assertThat(e.getUser()).as("check user").isEqualTo(actual.getUser()));
     }
 }

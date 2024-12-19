@@ -6,6 +6,7 @@
         "refreshListLabel": "Refresh list",
         "createLabel": "Create a new Ministry Group",
         "createOrEditLabel": "Create or edit a Ministry Group",
+        "search": "Search for Ministry Group",
         "notFound": "No Ministry Groups found"
       },
       "created": "A new Ministry Group is created with identifier {{ param }}",
@@ -21,10 +22,12 @@
       "name": "Name",
       "description": "Description",
       "establishedDate": "Established Date",
-      "leader": "Leader",
       "type": "Type",
       "church": "Church",
-      "ministryMembership": "Ministry Membership"
+      "president": "President",
+      "supervisor": "Supervisor",
+      "members": "Members",
+      "appointment": "Appointment"
     }
   }
 }

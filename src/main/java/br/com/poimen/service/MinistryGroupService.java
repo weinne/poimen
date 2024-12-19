@@ -2,6 +2,7 @@ package br.com.poimen.service;
 
 import br.com.poimen.domain.MinistryGroup;
 import br.com.poimen.repository.MinistryGroupRepository;
+import br.com.poimen.repository.search.MinistryGroupSearchRepository;
 import java.util.Optional;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -21,8 +22,14 @@ public class MinistryGroupService {
 
     private final MinistryGroupRepository ministryGroupRepository;
 
-    public MinistryGroupService(MinistryGroupRepository ministryGroupRepository) {
+    private final MinistryGroupSearchRepository ministryGroupSearchRepository;
+
+    public MinistryGroupService(
+        MinistryGroupRepository ministryGroupRepository,
+        MinistryGroupSearchRepository ministryGroupSearchRepository
+    ) {
         this.ministryGroupRepository = ministryGroupRepository;
+        this.ministryGroupSearchRepository = ministryGroupSearchRepository;
     }
 
     /**
@@ -33,7 +40,9 @@ public class MinistryGroupService {
      */
     public MinistryGroup save(MinistryGroup ministryGroup) {
         LOG.debug("Request to save MinistryGroup : {}", ministryGroup);
-        return ministryGroupRepository.save(ministryGroup);
+        ministryGroup = ministryGroupRepository.save(ministryGroup);
+        ministryGroupSearchRepository.index(ministryGroup);
+        return ministryGroup;
     }
 
     /**
@@ -44,7 +53,9 @@ public class MinistryGroupService {
      */
     public MinistryGroup update(MinistryGroup ministryGroup) {
         LOG.debug("Request to update MinistryGroup : {}", ministryGroup);
-        return ministryGroupRepository.save(ministryGroup);
+        ministryGroup = ministryGroupRepository.save(ministryGroup);
+        ministryGroupSearchRepository.index(ministryGroup);
+        return ministryGroup;
     }
 
     /**
@@ -68,16 +79,17 @@ public class MinistryGroupService {
                 if (ministryGroup.getEstablishedDate() != null) {
                     existingMinistryGroup.setEstablishedDate(ministryGroup.getEstablishedDate());
                 }
-                if (ministryGroup.getLeader() != null) {
-                    existingMinistryGroup.setLeader(ministryGroup.getLeader());
-                }
                 if (ministryGroup.getType() != null) {
                     existingMinistryGroup.setType(ministryGroup.getType());
                 }
 
                 return existingMinistryGroup;
             })
-            .map(ministryGroupRepository::save);
+            .map(ministryGroupRepository::save)
+            .map(savedMinistryGroup -> {
+                ministryGroupSearchRepository.index(savedMinistryGroup);
+                return savedMinistryGroup;
+            });
     }
 
     /**
@@ -93,6 +105,15 @@ public class MinistryGroupService {
     }
 
     /**
+     * Get all the ministryGroups with eager load of many-to-many relationships.
+     *
+     * @return the list of entities.
+     */
+    public Page<MinistryGroup> findAllWithEagerRelationships(Pageable pageable) {
+        return ministryGroupRepository.findAllWithEagerRelationships(pageable);
+    }
+
+    /**
      * Get one ministryGroup by id.
      *
      * @param id the id of the entity.
@@ -101,7 +122,7 @@ public class MinistryGroupService {
     @Transactional(readOnly = true)
     public Optional<MinistryGroup> findOne(Long id) {
         LOG.debug("Request to get MinistryGroup : {}", id);
-        return ministryGroupRepository.findById(id);
+        return ministryGroupRepository.findOneWithEagerRelationships(id);
     }
 
     /**
@@ -112,5 +133,19 @@ public class MinistryGroupService {
     public void delete(Long id) {
         LOG.debug("Request to delete MinistryGroup : {}", id);
         ministryGroupRepository.deleteById(id);
+        ministryGroupSearchRepository.deleteFromIndexById(id);
+    }
+
+    /**
+     * Search for the ministryGroup corresponding to the query.
+     *
+     * @param query the query of the search.
+     * @param pageable the pagination information.
+     * @return the list of entities.
+     */
+    @Transactional(readOnly = true)
+    public Page<MinistryGroup> search(String query, Pageable pageable) {
+        LOG.debug("Request to search for a page of MinistryGroups for query {}", query);
+        return ministryGroupSearchRepository.search(query, pageable);
     }
 }

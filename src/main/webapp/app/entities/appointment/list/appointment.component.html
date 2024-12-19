@@ -1,0 +1,270 @@
+<div>
+  <h2 id="page-heading" data-cy="AppointmentHeading">
+    <span jhiTranslate="poimenApp.appointment.home.title">Appointments</span>
+
+    <div class="d-flex justify-content-end">
+      <button class="btn btn-info me-2" (click)="load()" [disabled]="isLoading">
+        <fa-icon icon="sync" [animation]="isLoading ? 'spin' : undefined"></fa-icon>
+        <span jhiTranslate="poimenApp.appointment.home.refreshListLabel">Refresh list</span>
+      </button>
+
+      <button
+        id="jh-create-entity"
+        data-cy="entityCreateButton"
+        class="btn btn-primary jh-create-entity create-appointment"
+        [routerLink]="['/appointment/new']"
+      >
+        <fa-icon icon="plus"></fa-icon>
+        <span class="hidden-sm-down" jhiTranslate="poimenApp.appointment.home.createLabel">Create a new Appointment</span>
+      </button>
+    </div>
+  </h2>
+
+  <jhi-alert-error></jhi-alert-error>
+
+  <jhi-alert></jhi-alert>
+
+  <form name="searchForm" class="row row-cols-sm-auto align-items-center">
+    <div class="col-sm-12">
+      <div class="input-group w-100 mt-3">
+        <label class="visually-hidden" for="currentSearch" jhiTranslate="poimenApp.appointment.home.search">Search for Appointment</label>
+        <input
+          type="text"
+          class="form-control"
+          [(ngModel)]="currentSearch"
+          id="currentSearch"
+          name="currentSearch"
+          placeholder="{{ 'poimenApp.appointment.home.search' | translate }}"
+        />
+
+        <button class="btn btn-info" (click)="search(currentSearch)">
+          <fa-icon icon="search"></fa-icon>
+        </button>
+
+        @if (currentSearch) {
+          <button class="btn btn-danger" (click)="search('')">
+            <fa-icon icon="trash-alt"></fa-icon>
+          </button>
+        }
+      </div>
+    </div>
+  </form>
+
+  @if (appointments?.length === 0) {
+    <div class="alert alert-warning" id="no-result">
+      <span jhiTranslate="poimenApp.appointment.home.notFound">No Appointments found</span>
+    </div>
+  }
+
+  @if (appointments && appointments.length > 0) {
+    <div class="table-responsive table-entities" id="entities">
+      <table class="table table-striped" aria-describedby="page-heading">
+        <thead>
+          <tr jhiSort [sortState]="sortState" (sortChange)="navigateToWithComponentValues($event)">
+            <th scope="col" jhiSortBy="id">
+              <div class="d-flex">
+                <span jhiTranslate="global.field.id">ID</span>
+
+                <fa-icon class="p-1" icon="sort"></fa-icon>
+              </div>
+            </th>
+            <th scope="col" jhiSortBy="subject">
+              <div class="d-flex">
+                <span jhiTranslate="poimenApp.appointment.subject">Subject</span>
+                @if (!currentSearch) {
+                  <fa-icon class="p-1" icon="sort"></fa-icon>
+                }
+              </div>
+            </th>
+            <th scope="col" jhiSortBy="startTime">
+              <div class="d-flex">
+                <span jhiTranslate="poimenApp.appointment.startTime">Start Time</span>
+
+                <fa-icon class="p-1" icon="sort"></fa-icon>
+              </div>
+            </th>
+            <th scope="col" jhiSortBy="endTime">
+              <div class="d-flex">
+                <span jhiTranslate="poimenApp.appointment.endTime">End Time</span>
+
+                <fa-icon class="p-1" icon="sort"></fa-icon>
+              </div>
+            </th>
+            <th scope="col" jhiSortBy="notes">
+              <div class="d-flex">
+                <span jhiTranslate="poimenApp.appointment.notes">Notes</span>
+                @if (!currentSearch) {
+                  <fa-icon class="p-1" icon="sort"></fa-icon>
+                }
+              </div>
+            </th>
+            <th scope="col" jhiSortBy="local">
+              <div class="d-flex">
+                <span jhiTranslate="poimenApp.appointment.local">Local</span>
+                @if (!currentSearch) {
+                  <fa-icon class="p-1" icon="sort"></fa-icon>
+                }
+              </div>
+            </th>
+            <th scope="col" jhiSortBy="appointmentType">
+              <div class="d-flex">
+                <span jhiTranslate="poimenApp.appointment.appointmentType">Appointment Type</span>
+                @if (!currentSearch) {
+                  <fa-icon class="p-1" icon="sort"></fa-icon>
+                }
+              </div>
+            </th>
+            <th scope="col" jhiSortBy="church.name">
+              <div class="d-flex">
+                <span jhiTranslate="poimenApp.appointment.church">Church</span>
+                <fa-icon class="p-1" icon="sort"></fa-icon>
+              </div>
+            </th>
+            <th scope="col" jhiSortBy="member.name">
+              <div class="d-flex">
+                <span jhiTranslate="poimenApp.appointment.member">Member</span>
+                <fa-icon class="p-1" icon="sort"></fa-icon>
+              </div>
+            </th>
+            <th scope="col" jhiSortBy="service.title">
+              <div class="d-flex">
+                <span jhiTranslate="poimenApp.appointment.service">Service</span>
+                <fa-icon class="p-1" icon="sort"></fa-icon>
+              </div>
+            </th>
+            <th scope="col" jhiSortBy="group.name">
+              <div class="d-flex">
+                <span jhiTranslate="poimenApp.appointment.group">Group</span>
+                <fa-icon class="p-1" icon="sort"></fa-icon>
+              </div>
+            </th>
+            <th scope="col" jhiSortBy="counselingSession.subject">
+              <div class="d-flex">
+                <span jhiTranslate="poimenApp.appointment.counselingSession">Counseling Session</span>
+                <fa-icon class="p-1" icon="sort"></fa-icon>
+              </div>
+            </th>
+            <th scope="col" jhiSortBy="user.name">
+              <div class="d-flex">
+                <span jhiTranslate="poimenApp.appointment.user">User</span>
+                <fa-icon class="p-1" icon="sort"></fa-icon>
+              </div>
+            </th>
+            <th scope="col"></th>
+          </tr>
+        </thead>
+        <tbody>
+          @for (appointment of appointments; track trackId(appointment)) {
+            <tr data-cy="entityTable">
+              <td>
+                <a [routerLink]="['/appointment', appointment.id, 'view']">{{ appointment.id }}</a>
+              </td>
+              <td>{{ appointment.subject }}</td>
+              <td>{{ appointment.startTime | formatMediumDatetime }}</td>
+              <td>{{ appointment.endTime | formatMediumDatetime }}</td>
+              <td>{{ appointment.notes }}</td>
+              <td>{{ appointment.local }}</td>
+              <td [jhiTranslate]="'poimenApp.AppointmentType.' + (appointment.appointmentType ?? 'null')">
+                {{
+                  {
+                    null: '',
+                    SERVICE: 'Worship Service',
+                    MEETING: 'Meeting',
+                    EVENT: 'Event',
+                    REHEARSAL: 'Rehearsal',
+                    VISIT: 'Visit',
+                    COUNSELING: 'Counseling',
+                    DISCIPLESHIP: 'Discipleship',
+                    SMALL_GROUP: 'Small Group',
+                    OTHER: 'Other',
+                  }[appointment.appointmentType ?? 'null']
+                }}
+              </td>
+              <td>
+                @if (appointment.church) {
+                  <div>
+                    <a [routerLink]="['/church', appointment.church.id, 'view']">{{ appointment.church.name }}</a>
+                  </div>
+                }
+              </td>
+              <td>
+                @if (appointment.member) {
+                  <div>
+                    <a [routerLink]="['/member', appointment.member.id, 'view']">{{ appointment.member.name }}</a>
+                  </div>
+                }
+              </td>
+              <td>
+                @if (appointment.service) {
+                  <div>
+                    <a [routerLink]="['/worship-event', appointment.service.id, 'view']">{{ appointment.service.title }}</a>
+                  </div>
+                }
+              </td>
+              <td>
+                @if (appointment.group) {
+                  <div>
+                    <a [routerLink]="['/ministry-group', appointment.group.id, 'view']">{{ appointment.group.name }}</a>
+                  </div>
+                }
+              </td>
+              <td>
+                @if (appointment.counselingSession) {
+                  <div>
+                    <a [routerLink]="['/counseling-session', appointment.counselingSession.id, 'view']">{{
+                      appointment.counselingSession.subject
+                    }}</a>
+                  </div>
+                }
+              </td>
+              <td>
+                @if (appointment.user) {
+                  <div>
+                    <a [routerLink]="['/application-user', appointment.user.id, 'view']">{{ appointment.user.name }}</a>
+                  </div>
+                }
+              </td>
+              <td class="text-end">
+                <div class="btn-group">
+                  <a [routerLink]="['/appointment', appointment.id, 'view']" class="btn btn-info btn-sm" data-cy="entityDetailsButton">
+                    <fa-icon icon="eye"></fa-icon>
+                    <span class="d-none d-md-inline" jhiTranslate="entity.action.view">View</span>
+                  </a>
+
+                  <a [routerLink]="['/appointment', appointment.id, 'edit']" class="btn btn-primary btn-sm" data-cy="entityEditButton">
+                    <fa-icon icon="pencil-alt"></fa-icon>
+                    <span class="d-none d-md-inline" jhiTranslate="entity.action.edit">Edit</span>
+                  </a>
+
+                  <button type="submit" (click)="delete(appointment)" class="btn btn-danger btn-sm" data-cy="entityDeleteButton">
+                    <fa-icon icon="times"></fa-icon>
+                    <span class="d-none d-md-inline" jhiTranslate="entity.action.delete">Delete</span>
+                  </button>
+                </div>
+              </td>
+            </tr>
+          }
+        </tbody>
+      </table>
+    </div>
+  }
+  @if (appointments && appointments.length > 0) {
+    <div>
+      <div class="d-flex justify-content-center">
+        <jhi-item-count [params]="{ page: page, totalItems: totalItems, itemsPerPage: itemsPerPage }"></jhi-item-count>
+      </div>
+
+      <div class="d-flex justify-content-center">
+        <ngb-pagination
+          [collectionSize]="totalItems"
+          [page]="page"
+          [pageSize]="itemsPerPage"
+          [maxSize]="5"
+          [rotate]="true"
+          [boundaryLinks]="true"
+          (pageChange)="navigateToPage($event)"
+        ></ngb-pagination>
+      </div>
+    </div>
+  }
+</div>

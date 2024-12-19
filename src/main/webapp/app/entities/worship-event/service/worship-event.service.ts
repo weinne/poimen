@@ -1,12 +1,15 @@
 import { Injectable, inject } from '@angular/core';
 import { HttpClient, HttpResponse } from '@angular/common/http';
-import { Observable, map } from 'rxjs';
+import { Observable, asapScheduler, map, scheduled } from 'rxjs';
+
+import { catchError } from 'rxjs/operators';
 
 import dayjs from 'dayjs/esm';
 
 import { isPresent } from 'app/core/util/operators';
 import { ApplicationConfigService } from 'app/core/config/application-config.service';
 import { createRequestOption } from 'app/core/request/request-util';
+import { SearchWithPagination } from 'app/core/request/request.model';
 import { IWorshipEvent, NewWorshipEvent } from '../worship-event.model';
 
 export type PartialUpdateWorshipEvent = Partial<IWorshipEvent> & Pick<IWorshipEvent, 'id'>;
@@ -30,6 +33,7 @@ export class WorshipEventService {
   protected readonly applicationConfigService = inject(ApplicationConfigService);
 
   protected resourceUrl = this.applicationConfigService.getEndpointFor('api/worship-events');
+  protected resourceSearchUrl = this.applicationConfigService.getEndpointFor('api/worship-events/_search');
 
   create(worshipEvent: NewWorshipEvent): Observable<EntityResponseType> {
     const copy = this.convertDateFromClient(worshipEvent);
@@ -67,6 +71,15 @@ export class WorshipEventService {
 
   delete(id: number): Observable<HttpResponse<{}>> {
     return this.http.delete(`${this.resourceUrl}/${id}`, { observe: 'response' });
+  }
+
+  search(req: SearchWithPagination): Observable<EntityArrayResponseType> {
+    const options = createRequestOption(req);
+    return this.http.get<RestWorshipEvent[]>(this.resourceSearchUrl, { params: options, observe: 'response' }).pipe(
+      map(res => this.convertResponseArrayFromServer(res)),
+
+      catchError(() => scheduled([new HttpResponse<IWorshipEvent[]>()], asapScheduler)),
+    );
   }
 
   getWorshipEventIdentifier(worshipEvent: Pick<IWorshipEvent, 'id'>): number {

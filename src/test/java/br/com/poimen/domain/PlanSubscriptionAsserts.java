@@ -47,10 +47,13 @@ public class PlanSubscriptionAsserts {
     public static void assertPlanSubscriptionUpdatableFieldsEquals(PlanSubscription expected, PlanSubscription actual) {
         assertThat(expected)
             .as("Verify PlanSubscription relevant properties")
+            .satisfies(e -> assertThat(e.getDescription()).as("check description").isEqualTo(actual.getDescription()))
             .satisfies(e -> assertThat(e.getStartDate()).as("check startDate").isEqualTo(actual.getStartDate()))
             .satisfies(e -> assertThat(e.getEndDate()).as("check endDate").isEqualTo(actual.getEndDate()))
-            .satisfies(e -> assertThat(e.getActive()).as("check active").isEqualTo(actual.getActive()))
-            .satisfies(e -> assertThat(e.getPlanName()).as("check planName").isEqualTo(actual.getPlanName()));
+            .satisfies(e -> assertThat(e.getStatus()).as("check status").isEqualTo(actual.getStatus()))
+            .satisfies(e -> assertThat(e.getPaymentProvider()).as("check paymentProvider").isEqualTo(actual.getPaymentProvider()))
+            .satisfies(e -> assertThat(e.getPaymentStatus()).as("check paymentStatus").isEqualTo(actual.getPaymentStatus()))
+            .satisfies(e -> assertThat(e.getPaymentReference()).as("check paymentReference").isEqualTo(actual.getPaymentReference()));
     }
 
     /**
@@ -62,7 +65,8 @@ public class PlanSubscriptionAsserts {
     public static void assertPlanSubscriptionUpdatableRelationshipsEquals(PlanSubscription expected, PlanSubscription actual) {
         assertThat(expected)
             .as("Verify PlanSubscription relationships")
+            .satisfies(e -> assertThat(e.getChurch()).as("check church").isEqualTo(actual.getChurch()))
             .satisfies(e -> assertThat(e.getPlan()).as("check plan").isEqualTo(actual.getPlan()))
-            .satisfies(e -> assertThat(e.getChurch()).as("check church").isEqualTo(actual.getChurch()));
+            .satisfies(e -> assertThat(e.getUser()).as("check user").isEqualTo(actual.getUser()));
     }
 }

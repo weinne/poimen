@@ -4,6 +4,7 @@ import br.com.poimen.domain.WorshipEvent;
 import br.com.poimen.repository.WorshipEventRepository;
 import br.com.poimen.service.WorshipEventService;
 import br.com.poimen.web.rest.errors.BadRequestAlertException;
+import br.com.poimen.web.rest.errors.ElasticsearchExceptionMapper;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotNull;
 import java.net.URI;
@@ -184,5 +185,28 @@ public class WorshipEventResource {
         return ResponseEntity.noContent()
             .headers(HeaderUtil.createEntityDeletionAlert(applicationName, true, ENTITY_NAME, id.toString()))
             .build();
+    }
+
+    /**
+     * {@code SEARCH  /worship-events/_search?query=:query} : search for the worshipEvent corresponding
+     * to the query.
+     *
+     * @param query the query of the worshipEvent search.
+     * @param pageable the pagination information.
+     * @return the result of the search.
+     */
+    @GetMapping("/_search")
+    public ResponseEntity<List<WorshipEvent>> searchWorshipEvents(
+        @RequestParam("query") String query,
+        @org.springdoc.core.annotations.ParameterObject Pageable pageable
+    ) {
+        LOG.debug("REST request to search for a page of WorshipEvents for query {}", query);
+        try {
+            Page<WorshipEvent> page = worshipEventService.search(query, pageable);
+            HttpHeaders headers = PaginationUtil.generatePaginationHttpHeaders(ServletUriComponentsBuilder.fromCurrentRequest(), page);
+            return ResponseEntity.ok().headers(headers).body(page.getContent());
+        } catch (RuntimeException e) {
+            throw ElasticsearchExceptionMapper.mapException(e);
+        }
     }
 }

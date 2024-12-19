@@ -4,6 +4,7 @@ import br.com.poimen.domain.Hymn;
 import br.com.poimen.repository.HymnRepository;
 import br.com.poimen.service.HymnService;
 import br.com.poimen.web.rest.errors.BadRequestAlertException;
+import br.com.poimen.web.rest.errors.ElasticsearchExceptionMapper;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotNull;
 import java.net.URI;
@@ -165,5 +166,22 @@ public class HymnResource {
         return ResponseEntity.noContent()
             .headers(HeaderUtil.createEntityDeletionAlert(applicationName, true, ENTITY_NAME, id.toString()))
             .build();
+    }
+
+    /**
+     * {@code SEARCH  /hymns/_search?query=:query} : search for the hymn corresponding
+     * to the query.
+     *
+     * @param query the query of the hymn search.
+     * @return the result of the search.
+     */
+    @GetMapping("/_search")
+    public List<Hymn> searchHymns(@RequestParam("query") String query) {
+        LOG.debug("REST request to search Hymns for query {}", query);
+        try {
+            return hymnService.search(query);
+        } catch (RuntimeException e) {
+            throw ElasticsearchExceptionMapper.mapException(e);
+        }
     }
 }

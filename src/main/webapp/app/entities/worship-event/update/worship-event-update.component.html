@@ -54,15 +54,243 @@
         </div>
 
         <div class="mb-3">
-          <label class="form-label" for="field_description" jhiTranslate="poimenApp.worshipEvent.description">Description</label>
+          <label class="form-label" for="field_guestPreacher" jhiTranslate="poimenApp.worshipEvent.guestPreacher">Guest Preacher</label>
           <input
             type="text"
+            class="form-control"
+            name="guestPreacher"
+            id="field_guestPreacher"
+            data-cy="guestPreacher"
+            formControlName="guestPreacher"
+          />
+        </div>
+
+        <div class="mb-3">
+          <label class="form-label" for="field_description" jhiTranslate="poimenApp.worshipEvent.description">Description</label>
+          <textarea
             class="form-control"
             name="description"
             id="field_description"
             data-cy="description"
             formControlName="description"
+          ></textarea>
+        </div>
+
+        <div class="mb-3">
+          <label class="form-label" for="field_callToWorshipText" jhiTranslate="poimenApp.worshipEvent.callToWorshipText"
+            >Call To Worship Text</label
+          >
+          <input
+            type="text"
+            class="form-control"
+            name="callToWorshipText"
+            id="field_callToWorshipText"
+            data-cy="callToWorshipText"
+            formControlName="callToWorshipText"
           />
+        </div>
+
+        <div class="mb-3">
+          <label class="form-label" for="field_confessionOfSinText" jhiTranslate="poimenApp.worshipEvent.confessionOfSinText"
+            >Confession Of Sin Text</label
+          >
+          <input
+            type="text"
+            class="form-control"
+            name="confessionOfSinText"
+            id="field_confessionOfSinText"
+            data-cy="confessionOfSinText"
+            formControlName="confessionOfSinText"
+          />
+        </div>
+
+        <div class="mb-3">
+          <label class="form-label" for="field_assuranceOfPardonText" jhiTranslate="poimenApp.worshipEvent.assuranceOfPardonText"
+            >Assurance Of Pardon Text</label
+          >
+          <input
+            type="text"
+            class="form-control"
+            name="assuranceOfPardonText"
+            id="field_assuranceOfPardonText"
+            data-cy="assuranceOfPardonText"
+            formControlName="assuranceOfPardonText"
+          />
+        </div>
+
+        <div class="mb-3">
+          <label class="form-label" for="field_lordSupperText" jhiTranslate="poimenApp.worshipEvent.lordSupperText">Lord Supper Text</label>
+          <input
+            type="text"
+            class="form-control"
+            name="lordSupperText"
+            id="field_lordSupperText"
+            data-cy="lordSupperText"
+            formControlName="lordSupperText"
+          />
+        </div>
+
+        <div class="mb-3">
+          <label class="form-label" for="field_benedictionText" jhiTranslate="poimenApp.worshipEvent.benedictionText"
+            >Benediction Text</label
+          >
+          <input
+            type="text"
+            class="form-control"
+            name="benedictionText"
+            id="field_benedictionText"
+            data-cy="benedictionText"
+            formControlName="benedictionText"
+          />
+        </div>
+
+        <div class="mb-3">
+          <label class="form-label" for="field_confessionalText" jhiTranslate="poimenApp.worshipEvent.confessionalText"
+            >Confessional Text</label
+          >
+          <input
+            type="text"
+            class="form-control"
+            name="confessionalText"
+            id="field_confessionalText"
+            data-cy="confessionalText"
+            formControlName="confessionalText"
+          />
+        </div>
+
+        <div class="mb-3">
+          <label class="form-label" for="field_sermonText" jhiTranslate="poimenApp.worshipEvent.sermonText">Sermon Text</label>
+          <textarea
+            class="form-control"
+            name="sermonText"
+            id="field_sermonText"
+            data-cy="sermonText"
+            formControlName="sermonText"
+          ></textarea>
+        </div>
+
+        @let sermonFileRef = editForm.get('sermonFile')!;
+        <div class="mb-3">
+          <label class="form-label" for="field_sermonFile" jhiTranslate="poimenApp.worshipEvent.sermonFile">Sermon File</label>
+          <div>
+            @if (sermonFileRef.value) {
+              <div class="form-text text-danger clearfix">
+                <a
+                  class="pull-start"
+                  (click)="openFile(sermonFileRef.value!, editForm.get('sermonFileContentType')!.value!)"
+                  jhiTranslate="entity.action.open"
+                  >Open</a
+                ><br />
+                <span class="pull-start">{{ editForm.get('sermonFileContentType')!.value }}, {{ byteSize(sermonFileRef.value!) }}</span>
+                <button
+                  type="button"
+                  (click)="editForm.patchValue({ sermonFile: undefined, sermonFileContentType: undefined })"
+                  class="btn btn-secondary btn-xs pull-end"
+                >
+                  <fa-icon icon="times"></fa-icon>
+                </button>
+              </div>
+            }
+            <input
+              type="file"
+              id="file_sermonFile"
+              data-cy="sermonFile"
+              (change)="setFileData($event, 'sermonFile', false)"
+              jhiTranslate="entity.action.addblob"
+            />
+          </div>
+          <input
+            type="hidden"
+            class="form-control"
+            name="sermonFile"
+            id="field_sermonFile"
+            data-cy="sermonFile"
+            formControlName="sermonFile"
+          />
+          <input
+            type="hidden"
+            class="form-control"
+            name="sermonFileContentType"
+            id="field_sermonFileContentType"
+            formControlName="sermonFileContentType"
+          />
+          @if (sermonFileRef.invalid && (sermonFileRef.dirty || sermonFileRef.touched)) {
+            <div></div>
+          }
+        </div>
+
+        <div class="mb-3">
+          <label class="form-label" for="field_sermonLink" jhiTranslate="poimenApp.worshipEvent.sermonLink">Sermon Link</label>
+          <input
+            type="text"
+            class="form-control"
+            name="sermonLink"
+            id="field_sermonLink"
+            data-cy="sermonLink"
+            formControlName="sermonLink"
+          />
+        </div>
+
+        <div class="mb-3">
+          <label class="form-label" for="field_youtubeLink" jhiTranslate="poimenApp.worshipEvent.youtubeLink">Youtube Link</label>
+          <input
+            type="text"
+            class="form-control"
+            name="youtubeLink"
+            id="field_youtubeLink"
+            data-cy="youtubeLink"
+            formControlName="youtubeLink"
+          />
+        </div>
+
+        @let bulletinFileRef = editForm.get('bulletinFile')!;
+        <div class="mb-3">
+          <label class="form-label" for="field_bulletinFile" jhiTranslate="poimenApp.worshipEvent.bulletinFile">Bulletin File</label>
+          <div>
+            @if (bulletinFileRef.value) {
+              <div class="form-text text-danger clearfix">
+                <a
+                  class="pull-start"
+                  (click)="openFile(bulletinFileRef.value!, editForm.get('bulletinFileContentType')!.value!)"
+                  jhiTranslate="entity.action.open"
+                  >Open</a
+                ><br />
+                <span class="pull-start">{{ editForm.get('bulletinFileContentType')!.value }}, {{ byteSize(bulletinFileRef.value!) }}</span>
+                <button
+                  type="button"
+                  (click)="editForm.patchValue({ bulletinFile: undefined, bulletinFileContentType: undefined })"
+                  class="btn btn-secondary btn-xs pull-end"
+                >
+                  <fa-icon icon="times"></fa-icon>
+                </button>
+              </div>
+            }
+            <input
+              type="file"
+              id="file_bulletinFile"
+              data-cy="bulletinFile"
+              (change)="setFileData($event, 'bulletinFile', false)"
+              jhiTranslate="entity.action.addblob"
+            />
+          </div>
+          <input
+            type="hidden"
+            class="form-control"
+            name="bulletinFile"
+            id="field_bulletinFile"
+            data-cy="bulletinFile"
+            formControlName="bulletinFile"
+          />
+          <input
+            type="hidden"
+            class="form-control"
+            name="bulletinFileContentType"
+            id="field_bulletinFileContentType"
+            formControlName="bulletinFileContentType"
+          />
+          @if (bulletinFileRef.invalid && (bulletinFileRef.dirty || bulletinFileRef.touched)) {
+            <div></div>
+          }
         </div>
 
         @let worshipTypeRef = editForm.get('worshipType')!;
@@ -95,7 +323,7 @@
           >
             <option [ngValue]="null"></option>
             @for (churchOption of churchesSharedCollection; track $index) {
-              <option [ngValue]="churchOption">{{ churchOption.id }}</option>
+              <option [ngValue]="churchOption">{{ churchOption.name }}</option>
             }
           </select>
         </div>
@@ -112,7 +340,7 @@
           >
             <option [ngValue]="null"></option>
             @for (memberOption of membersSharedCollection; track $index) {
-              <option [ngValue]="memberOption">{{ memberOption.id }}</option>
+              <option [ngValue]="memberOption">{{ memberOption.name }}</option>
             }
           </select>
         </div>
@@ -129,24 +357,24 @@
           >
             <option [ngValue]="null"></option>
             @for (memberOption of membersSharedCollection; track $index) {
-              <option [ngValue]="memberOption">{{ memberOption.id }}</option>
+              <option [ngValue]="memberOption">{{ memberOption.name }}</option>
             }
           </select>
         </div>
 
         <div class="mb-3">
-          <label for="field_hymns" jhiTranslate="poimenApp.worshipEvent.hymn">Hymn</label>
+          <label for="field_hymns" jhiTranslate="poimenApp.worshipEvent.hymns">Hymns</label>
           <select
             class="form-control"
             id="field_hymns"
-            data-cy="hymn"
+            data-cy="hymns"
             multiple
             name="hymns"
             formControlName="hymns"
             [compareWith]="compareHymn"
           >
             @for (hymnOption of hymnsSharedCollection; track $index) {
-              <option [ngValue]="hymnOption">{{ hymnOption.id }}</option>
+              <option [ngValue]="hymnOption">{{ hymnOption.title }}</option>
             }
           </select>
         </div>
@@ -163,7 +391,24 @@
             [compareWith]="compareMember"
           >
             @for (memberOption of membersSharedCollection; track $index) {
-              <option [ngValue]="memberOption">{{ memberOption.id }}</option>
+              <option [ngValue]="memberOption">{{ memberOption.name }}</option>
+            }
+          </select>
+        </div>
+
+        <div class="mb-3">
+          <label for="field_participants" jhiTranslate="poimenApp.worshipEvent.participants">Participants</label>
+          <select
+            class="form-control"
+            id="field_participants"
+            data-cy="participants"
+            multiple
+            name="participants"
+            formControlName="participants"
+            [compareWith]="compareMember"
+          >
+            @for (memberOption of membersSharedCollection; track $index) {
+              <option [ngValue]="memberOption">{{ memberOption.name }}</option>
             }
           </select>
         </div>

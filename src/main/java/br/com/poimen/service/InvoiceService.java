@@ -2,6 +2,7 @@ package br.com.poimen.service;
 
 import br.com.poimen.domain.Invoice;
 import br.com.poimen.repository.InvoiceRepository;
+import br.com.poimen.repository.search.InvoiceSearchRepository;
 import java.util.Optional;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -21,8 +22,11 @@ public class InvoiceService {
 
     private final InvoiceRepository invoiceRepository;
 
-    public InvoiceService(InvoiceRepository invoiceRepository) {
+    private final InvoiceSearchRepository invoiceSearchRepository;
+
+    public InvoiceService(InvoiceRepository invoiceRepository, InvoiceSearchRepository invoiceSearchRepository) {
         this.invoiceRepository = invoiceRepository;
+        this.invoiceSearchRepository = invoiceSearchRepository;
     }
 
     /**
@@ -33,7 +37,9 @@ public class InvoiceService {
      */
     public Invoice save(Invoice invoice) {
         LOG.debug("Request to save Invoice : {}", invoice);
-        return invoiceRepository.save(invoice);
+        invoice = invoiceRepository.save(invoice);
+        invoiceSearchRepository.index(invoice);
+        return invoice;
     }
 
     /**
@@ -44,7 +50,9 @@ public class InvoiceService {
      */
     public Invoice update(Invoice invoice) {
         LOG.debug("Request to update Invoice : {}", invoice);
-        return invoiceRepository.save(invoice);
+        invoice = invoiceRepository.save(invoice);
+        invoiceSearchRepository.index(invoice);
+        return invoice;
     }
 
     /**
@@ -77,10 +85,17 @@ public class InvoiceService {
                 if (invoice.getInvoiceFile() != null) {
                     existingInvoice.setInvoiceFile(invoice.getInvoiceFile());
                 }
+                if (invoice.getInvoiceFileContentType() != null) {
+                    existingInvoice.setInvoiceFileContentType(invoice.getInvoiceFileContentType());
+                }
 
                 return existingInvoice;
             })
-            .map(invoiceRepository::save);
+            .map(invoiceRepository::save)
+            .map(savedInvoice -> {
+                invoiceSearchRepository.index(savedInvoice);
+                return savedInvoice;
+            });
     }
 
     /**
@@ -96,6 +111,15 @@ public class InvoiceService {
     }
 
     /**
+     * Get all the invoices with eager load of many-to-many relationships.
+     *
+     * @return the list of entities.
+     */
+    public Page<Invoice> findAllWithEagerRelationships(Pageable pageable) {
+        return invoiceRepository.findAllWithEagerRelationships(pageable);
+    }
+
+    /**
      * Get one invoice by id.
      *
      * @param id the id of the entity.
@@ -104,7 +128,7 @@ public class InvoiceService {
     @Transactional(readOnly = true)
     public Optional<Invoice> findOne(Long id) {
         LOG.debug("Request to get Invoice : {}", id);
-        return invoiceRepository.findById(id);
+        return invoiceRepository.findOneWithEagerRelationships(id);
     }
 
     /**
@@ -115,5 +139,19 @@ public class InvoiceService {
     public void delete(Long id) {
         LOG.debug("Request to delete Invoice : {}", id);
         invoiceRepository.deleteById(id);
+        invoiceSearchRepository.deleteFromIndexById(id);
+    }
+
+    /**
+     * Search for the invoice corresponding to the query.
+     *
+     * @param query the query of the search.
+     * @param pageable the pagination information.
+     * @return the list of entities.
+     */
+    @Transactional(readOnly = true)
+    public Page<Invoice> search(String query, Pageable pageable) {
+        LOG.debug("Request to search for a page of Invoices for query {}", query);
+        return invoiceSearchRepository.search(query, pageable);
     }
 }

@@ -20,8 +20,13 @@ describe('CounselingSession Form Service', () => {
         expect(formGroup.controls).toEqual(
           expect.objectContaining({
             id: expect.any(Object),
+            subject: expect.any(Object),
             date: expect.any(Object),
+            startTime: expect.any(Object),
+            endTime: expect.any(Object),
             notes: expect.any(Object),
+            counselingTasks: expect.any(Object),
+            status: expect.any(Object),
             church: expect.any(Object),
             member: expect.any(Object),
             user: expect.any(Object),
@@ -35,8 +40,13 @@ describe('CounselingSession Form Service', () => {
         expect(formGroup.controls).toEqual(
           expect.objectContaining({
             id: expect.any(Object),
+            subject: expect.any(Object),
             date: expect.any(Object),
+            startTime: expect.any(Object),
+            endTime: expect.any(Object),
             notes: expect.any(Object),
+            counselingTasks: expect.any(Object),
+            status: expect.any(Object),
             church: expect.any(Object),
             member: expect.any(Object),
             user: expect.any(Object),

@@ -4,6 +4,7 @@ import br.com.poimen.domain.CounselingSession;
 import br.com.poimen.repository.CounselingSessionRepository;
 import br.com.poimen.service.CounselingSessionService;
 import br.com.poimen.web.rest.errors.BadRequestAlertException;
+import br.com.poimen.web.rest.errors.ElasticsearchExceptionMapper;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotNull;
 import java.net.URI;
@@ -143,14 +144,21 @@ public class CounselingSessionResource {
      * {@code GET  /counseling-sessions} : get all the counselingSessions.
      *
      * @param pageable the pagination information.
+     * @param eagerload flag to eager load entities from relationships (This is applicable for many-to-many).
      * @return the {@link ResponseEntity} with status {@code 200 (OK)} and the list of counselingSessions in body.
      */
     @GetMapping("")
     public ResponseEntity<List<CounselingSession>> getAllCounselingSessions(
-        @org.springdoc.core.annotations.ParameterObject Pageable pageable
+        @org.springdoc.core.annotations.ParameterObject Pageable pageable,
+        @RequestParam(name = "eagerload", required = false, defaultValue = "true") boolean eagerload
     ) {
         LOG.debug("REST request to get a page of CounselingSessions");
-        Page<CounselingSession> page = counselingSessionService.findAll(pageable);
+        Page<CounselingSession> page;
+        if (eagerload) {
+            page = counselingSessionService.findAllWithEagerRelationships(pageable);
+        } else {
+            page = counselingSessionService.findAll(pageable);
+        }
         HttpHeaders headers = PaginationUtil.generatePaginationHttpHeaders(ServletUriComponentsBuilder.fromCurrentRequest(), page);
         return ResponseEntity.ok().headers(headers).body(page.getContent());
     }
@@ -181,5 +189,28 @@ public class CounselingSessionResource {
         return ResponseEntity.noContent()
             .headers(HeaderUtil.createEntityDeletionAlert(applicationName, true, ENTITY_NAME, id.toString()))
             .build();
+    }
+
+    /**
+     * {@code SEARCH  /counseling-sessions/_search?query=:query} : search for the counselingSession corresponding
+     * to the query.
+     *
+     * @param query the query of the counselingSession search.
+     * @param pageable the pagination information.
+     * @return the result of the search.
+     */
+    @GetMapping("/_search")
+    public ResponseEntity<List<CounselingSession>> searchCounselingSessions(
+        @RequestParam("query") String query,
+        @org.springdoc.core.annotations.ParameterObject Pageable pageable
+    ) {
+        LOG.debug("REST request to search for a page of CounselingSessions for query {}", query);
+        try {
+            Page<CounselingSession> page = counselingSessionService.search(query, pageable);
+            HttpHeaders headers = PaginationUtil.generatePaginationHttpHeaders(ServletUriComponentsBuilder.fromCurrentRequest(), page);
+            return ResponseEntity.ok().headers(headers).body(page.getContent());
+        } catch (RuntimeException e) {
+            throw ElasticsearchExceptionMapper.mapException(e);
+        }
     }
 }

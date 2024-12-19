@@ -19,84 +19,150 @@
           </div>
         }
 
+        @let descriptionRef = editForm.get('description')!;
+        <div class="mb-3">
+          <label class="form-label" for="field_description" jhiTranslate="poimenApp.planSubscription.description">Description</label>
+          <input
+            type="text"
+            class="form-control"
+            name="description"
+            id="field_description"
+            data-cy="description"
+            formControlName="description"
+          />
+          @if (descriptionRef.invalid && (descriptionRef.dirty || descriptionRef.touched)) {
+            <div>
+              @if (editForm.get('description')?.errors?.required) {
+                <small class="form-text text-danger" jhiTranslate="entity.validation.required">This field is required.</small>
+              }
+            </div>
+          }
+        </div>
+
         @let startDateRef = editForm.get('startDate')!;
         <div class="mb-3">
           <label class="form-label" for="field_startDate" jhiTranslate="poimenApp.planSubscription.startDate">Start Date</label>
-          <div class="d-flex">
+          <div class="input-group">
             <input
               id="field_startDate"
               data-cy="startDate"
-              type="datetime-local"
+              type="text"
               class="form-control"
               name="startDate"
+              ngbDatepicker
+              #startDateDp="ngbDatepicker"
               formControlName="startDate"
-              placeholder="YYYY-MM-DD HH:mm"
             />
+            <button type="button" class="btn btn-secondary" (click)="startDateDp.toggle()"><fa-icon icon="calendar-alt"></fa-icon></button>
           </div>
           @if (startDateRef.invalid && (startDateRef.dirty || startDateRef.touched)) {
             <div>
               @if (editForm.get('startDate')?.errors?.required) {
                 <small class="form-text text-danger" jhiTranslate="entity.validation.required">This field is required.</small>
               }
-              <small
-                class="form-text text-danger"
-                [hidden]="!editForm.get('startDate')?.errors?.datetimelocal"
-                jhiTranslate="entity.validation.datetimelocal"
-                >This field should be a date and time.</small
-              >
             </div>
           }
         </div>
 
         <div class="mb-3">
           <label class="form-label" for="field_endDate" jhiTranslate="poimenApp.planSubscription.endDate">End Date</label>
-          <div class="d-flex">
+          <div class="input-group">
             <input
               id="field_endDate"
               data-cy="endDate"
-              type="datetime-local"
+              type="text"
               class="form-control"
               name="endDate"
+              ngbDatepicker
+              #endDateDp="ngbDatepicker"
               formControlName="endDate"
-              placeholder="YYYY-MM-DD HH:mm"
             />
+            <button type="button" class="btn btn-secondary" (click)="endDateDp.toggle()"><fa-icon icon="calendar-alt"></fa-icon></button>
           </div>
         </div>
 
-        @let activeRef = editForm.get('active')!;
+        @let statusRef = editForm.get('status')!;
         <div class="mb-3">
-          <label class="form-label" for="field_active" jhiTranslate="poimenApp.planSubscription.active">Active</label>
-          <input type="checkbox" class="form-check" name="active" id="field_active" data-cy="active" formControlName="active" />
-          @if (activeRef.invalid && (activeRef.dirty || activeRef.touched)) {
-            <div>
-              @if (editForm.get('active')?.errors?.required) {
-                <small class="form-text text-danger" jhiTranslate="entity.validation.required">This field is required.</small>
-              }
-            </div>
-          }
-        </div>
-
-        @let planNameRef = editForm.get('planName')!;
-        <div class="mb-3">
-          <label class="form-label" for="field_planName" jhiTranslate="poimenApp.planSubscription.planName">Plan Name</label>
-          <input type="text" class="form-control" name="planName" id="field_planName" data-cy="planName" formControlName="planName" />
-          @if (planNameRef.invalid && (planNameRef.dirty || planNameRef.touched)) {
-            <div>
-              @if (editForm.get('planName')?.errors?.required) {
-                <small class="form-text text-danger" jhiTranslate="entity.validation.required">This field is required.</small>
-              }
-            </div>
-          }
-        </div>
-
-        <div class="mb-3">
-          <label class="form-label" for="field_plan" jhiTranslate="poimenApp.planSubscription.plan">Plan</label>
-          <select class="form-control" id="field_plan" data-cy="plan" name="plan" formControlName="plan" [compareWith]="comparePlan">
-            <option [ngValue]="null"></option>
-            @for (planOption of plansSharedCollection; track $index) {
-              <option [ngValue]="planOption">{{ planOption.id }}</option>
+          <label class="form-label" for="field_status" jhiTranslate="poimenApp.planSubscription.status">Status</label>
+          <select class="form-control" name="status" formControlName="status" id="field_status" data-cy="status">
+            <option [ngValue]="null">{{ 'poimenApp.PlanSubscriptionStatus.null' | translate }}</option>
+            @for (planSubscriptionStatus of planSubscriptionStatusValues; track $index) {
+              <option [value]="planSubscriptionStatus">
+                {{ 'poimenApp.PlanSubscriptionStatus.' + planSubscriptionStatus | translate }}
+              </option>
             }
           </select>
+          @if (statusRef.invalid && (statusRef.dirty || statusRef.touched)) {
+            <div>
+              @if (editForm.get('status')?.errors?.required) {
+                <small class="form-text text-danger" jhiTranslate="entity.validation.required">This field is required.</small>
+              }
+            </div>
+          }
+        </div>
+
+        @let paymentProviderRef = editForm.get('paymentProvider')!;
+        <div class="mb-3">
+          <label class="form-label" for="field_paymentProvider" jhiTranslate="poimenApp.planSubscription.paymentProvider"
+            >Payment Provider</label
+          >
+          <select
+            class="form-control"
+            name="paymentProvider"
+            formControlName="paymentProvider"
+            id="field_paymentProvider"
+            data-cy="paymentProvider"
+          >
+            <option [ngValue]="null">{{ 'poimenApp.PaymentProvider.null' | translate }}</option>
+            @for (paymentProvider of paymentProviderValues; track $index) {
+              <option [value]="paymentProvider">{{ 'poimenApp.PaymentProvider.' + paymentProvider | translate }}</option>
+            }
+          </select>
+          @if (paymentProviderRef.invalid && (paymentProviderRef.dirty || paymentProviderRef.touched)) {
+            <div>
+              @if (editForm.get('paymentProvider')?.errors?.required) {
+                <small class="form-text text-danger" jhiTranslate="entity.validation.required">This field is required.</small>
+              }
+            </div>
+          }
+        </div>
+
+        @let paymentStatusRef = editForm.get('paymentStatus')!;
+        <div class="mb-3">
+          <label class="form-label" for="field_paymentStatus" jhiTranslate="poimenApp.planSubscription.paymentStatus">Payment Status</label>
+          <select
+            class="form-control"
+            name="paymentStatus"
+            formControlName="paymentStatus"
+            id="field_paymentStatus"
+            data-cy="paymentStatus"
+          >
+            <option [ngValue]="null">{{ 'poimenApp.PaymentStatus.null' | translate }}</option>
+            @for (paymentStatus of paymentStatusValues; track $index) {
+              <option [value]="paymentStatus">{{ 'poimenApp.PaymentStatus.' + paymentStatus | translate }}</option>
+            }
+          </select>
+          @if (paymentStatusRef.invalid && (paymentStatusRef.dirty || paymentStatusRef.touched)) {
+            <div>
+              @if (editForm.get('paymentStatus')?.errors?.required) {
+                <small class="form-text text-danger" jhiTranslate="entity.validation.required">This field is required.</small>
+              }
+            </div>
+          }
+        </div>
+
+        <div class="mb-3">
+          <label class="form-label" for="field_paymentReference" jhiTranslate="poimenApp.planSubscription.paymentReference"
+            >Payment Reference</label
+          >
+          <input
+            type="text"
+            class="form-control"
+            name="paymentReference"
+            id="field_paymentReference"
+            data-cy="paymentReference"
+            formControlName="paymentReference"
+          />
         </div>
 
         <div class="mb-3">
@@ -111,17 +177,34 @@
           >
             <option [ngValue]="null"></option>
             @for (churchOption of churchesSharedCollection; track $index) {
-              <option [ngValue]="churchOption">{{ churchOption.id }}</option>
+              <option [ngValue]="churchOption">{{ churchOption.name }}</option>
+            }
+          </select>
+        </div>
+
+        <div class="mb-3">
+          <label class="form-label" for="field_plan" jhiTranslate="poimenApp.planSubscription.plan">Plan</label>
+          <select class="form-control" id="field_plan" data-cy="plan" name="plan" formControlName="plan" [compareWith]="comparePlan">
+            <option [ngValue]="null"></option>
+            @for (planOption of plansSharedCollection; track $index) {
+              <option [ngValue]="planOption">{{ planOption.name }}</option>
             }
           </select>
         </div>
 
         <div class="mb-3">
           <label class="form-label" for="field_user" jhiTranslate="poimenApp.planSubscription.user">User</label>
-          <select class="form-control" id="field_user" data-cy="user" name="user" formControlName="user" [compareWith]="compareUser">
+          <select
+            class="form-control"
+            id="field_user"
+            data-cy="user"
+            name="user"
+            formControlName="user"
+            [compareWith]="compareApplicationUser"
+          >
             <option [ngValue]="null"></option>
-            @for (userOption of usersSharedCollection; track $index) {
-              <option [ngValue]="userOption">{{ userOption.id }}</option>
+            @for (applicationUserOption of applicationUsersSharedCollection; track $index) {
+              <option [ngValue]="applicationUserOption">{{ applicationUserOption.name }}</option>
             }
           </select>
         </div>

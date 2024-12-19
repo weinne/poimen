@@ -2,8 +2,10 @@ package br.com.poimen.service;
 
 import br.com.poimen.domain.Hymn;
 import br.com.poimen.repository.HymnRepository;
+import br.com.poimen.repository.search.HymnSearchRepository;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.StreamSupport;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
@@ -20,8 +22,11 @@ public class HymnService {
 
     private final HymnRepository hymnRepository;
 
-    public HymnService(HymnRepository hymnRepository) {
+    private final HymnSearchRepository hymnSearchRepository;
+
+    public HymnService(HymnRepository hymnRepository, HymnSearchRepository hymnSearchRepository) {
         this.hymnRepository = hymnRepository;
+        this.hymnSearchRepository = hymnSearchRepository;
     }
 
     /**
@@ -32,7 +37,9 @@ public class HymnService {
      */
     public Hymn save(Hymn hymn) {
         LOG.debug("Request to save Hymn : {}", hymn);
-        return hymnRepository.save(hymn);
+        hymn = hymnRepository.save(hymn);
+        hymnSearchRepository.index(hymn);
+        return hymn;
     }
 
     /**
@@ -43,7 +50,9 @@ public class HymnService {
      */
     public Hymn update(Hymn hymn) {
         LOG.debug("Request to update Hymn : {}", hymn);
-        return hymnRepository.save(hymn);
+        hymn = hymnRepository.save(hymn);
+        hymnSearchRepository.index(hymn);
+        return hymn;
     }
 
     /**
@@ -61,11 +70,38 @@ public class HymnService {
                 if (hymn.getTitle() != null) {
                     existingHymn.setTitle(hymn.getTitle());
                 }
-                if (hymn.getAuthor() != null) {
-                    existingHymn.setAuthor(hymn.getAuthor());
+                if (hymn.getLyricsAuthor() != null) {
+                    existingHymn.setLyricsAuthor(hymn.getLyricsAuthor());
+                }
+                if (hymn.getMusicAuthor() != null) {
+                    existingHymn.setMusicAuthor(hymn.getMusicAuthor());
+                }
+                if (hymn.getHymnary() != null) {
+                    existingHymn.setHymnary(hymn.getHymnary());
                 }
                 if (hymn.getHymnNumber() != null) {
                     existingHymn.setHymnNumber(hymn.getHymnNumber());
+                }
+                if (hymn.getLink() != null) {
+                    existingHymn.setLink(hymn.getLink());
+                }
+                if (hymn.getYoutubeLink() != null) {
+                    existingHymn.setYoutubeLink(hymn.getYoutubeLink());
+                }
+                if (hymn.getSheetMusic() != null) {
+                    existingHymn.setSheetMusic(hymn.getSheetMusic());
+                }
+                if (hymn.getSheetMusicContentType() != null) {
+                    existingHymn.setSheetMusicContentType(hymn.getSheetMusicContentType());
+                }
+                if (hymn.getMidi() != null) {
+                    existingHymn.setMidi(hymn.getMidi());
+                }
+                if (hymn.getMidiContentType() != null) {
+                    existingHymn.setMidiContentType(hymn.getMidiContentType());
+                }
+                if (hymn.getTone() != null) {
+                    existingHymn.setTone(hymn.getTone());
                 }
                 if (hymn.getLyrics() != null) {
                     existingHymn.setLyrics(hymn.getLyrics());
@@ -73,7 +109,11 @@ public class HymnService {
 
                 return existingHymn;
             })
-            .map(hymnRepository::save);
+            .map(hymnRepository::save)
+            .map(savedHymn -> {
+                hymnSearchRepository.index(savedHymn);
+                return savedHymn;
+            });
     }
 
     /**
@@ -107,5 +147,22 @@ public class HymnService {
     public void delete(Long id) {
         LOG.debug("Request to delete Hymn : {}", id);
         hymnRepository.deleteById(id);
+        hymnSearchRepository.deleteFromIndexById(id);
+    }
+
+    /**
+     * Search for the hymn corresponding to the query.
+     *
+     * @param query the query of the search.
+     * @return the list of entities.
+     */
+    @Transactional(readOnly = true)
+    public List<Hymn> search(String query) {
+        LOG.debug("Request to search Hymns for query {}", query);
+        try {
+            return StreamSupport.stream(hymnSearchRepository.search(query).spliterator(), false).toList();
+        } catch (RuntimeException e) {
+            throw e;
+        }
     }
 }

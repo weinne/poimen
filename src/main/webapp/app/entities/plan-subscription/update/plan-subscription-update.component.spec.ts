@@ -4,12 +4,12 @@ import { FormBuilder } from '@angular/forms';
 import { ActivatedRoute } from '@angular/router';
 import { Subject, from, of } from 'rxjs';
 
-import { IPlan } from 'app/entities/plan/plan.model';
-import { PlanService } from 'app/entities/plan/service/plan.service';
 import { IChurch } from 'app/entities/church/church.model';
 import { ChurchService } from 'app/entities/church/service/church.service';
-import { IUser } from 'app/entities/user/user.model';
-import { UserService } from 'app/entities/user/service/user.service';
+import { IPlan } from 'app/entities/plan/plan.model';
+import { PlanService } from 'app/entities/plan/service/plan.service';
+import { IApplicationUser } from 'app/entities/application-user/application-user.model';
+import { ApplicationUserService } from 'app/entities/application-user/service/application-user.service';
 import { IPlanSubscription } from '../plan-subscription.model';
 import { PlanSubscriptionService } from '../service/plan-subscription.service';
 import { PlanSubscriptionFormService } from './plan-subscription-form.service';
@@ -22,9 +22,9 @@ describe('PlanSubscription Management Update Component', () => {
   let activatedRoute: ActivatedRoute;
   let planSubscriptionFormService: PlanSubscriptionFormService;
   let planSubscriptionService: PlanSubscriptionService;
-  let planService: PlanService;
   let churchService: ChurchService;
-  let userService: UserService;
+  let planService: PlanService;
+  let applicationUserService: ApplicationUserService;
 
   beforeEach(() => {
     TestBed.configureTestingModule({
@@ -47,42 +47,20 @@ describe('PlanSubscription Management Update Component', () => {
     activatedRoute = TestBed.inject(ActivatedRoute);
     planSubscriptionFormService = TestBed.inject(PlanSubscriptionFormService);
     planSubscriptionService = TestBed.inject(PlanSubscriptionService);
-    planService = TestBed.inject(PlanService);
     churchService = TestBed.inject(ChurchService);
-    userService = TestBed.inject(UserService);
+    planService = TestBed.inject(PlanService);
+    applicationUserService = TestBed.inject(ApplicationUserService);
 
     comp = fixture.componentInstance;
   });
 
   describe('ngOnInit', () => {
-    it('Should call Plan query and add missing value', () => {
-      const planSubscription: IPlanSubscription = { id: 456 };
-      const plan: IPlan = { id: 6605 };
-      planSubscription.plan = plan;
-
-      const planCollection: IPlan[] = [{ id: 27843 }];
-      jest.spyOn(planService, 'query').mockReturnValue(of(new HttpResponse({ body: planCollection })));
-      const additionalPlans = [plan];
-      const expectedCollection: IPlan[] = [...additionalPlans, ...planCollection];
-      jest.spyOn(planService, 'addPlanToCollectionIfMissing').mockReturnValue(expectedCollection);
-
-      activatedRoute.data = of({ planSubscription });
-      comp.ngOnInit();
-
-      expect(planService.query).toHaveBeenCalled();
-      expect(planService.addPlanToCollectionIfMissing).toHaveBeenCalledWith(
-        planCollection,
-        ...additionalPlans.map(expect.objectContaining),
-      );
-      expect(comp.plansSharedCollection).toEqual(expectedCollection);
-    });
-
     it('Should call Church query and add missing value', () => {
       const planSubscription: IPlanSubscription = { id: 456 };
-      const church: IChurch = { id: 24892 };
+      const church: IChurch = { id: 31606 };
       planSubscription.church = church;
 
-      const churchCollection: IChurch[] = [{ id: 116 }];
+      const churchCollection: IChurch[] = [{ id: 8971 }];
       jest.spyOn(churchService, 'query').mockReturnValue(of(new HttpResponse({ body: churchCollection })));
       const additionalChurches = [church];
       const expectedCollection: IChurch[] = [...additionalChurches, ...churchCollection];
@@ -99,43 +77,65 @@ describe('PlanSubscription Management Update Component', () => {
       expect(comp.churchesSharedCollection).toEqual(expectedCollection);
     });
 
-    it('Should call User query and add missing value', () => {
+    it('Should call Plan query and add missing value', () => {
       const planSubscription: IPlanSubscription = { id: 456 };
-      const user: IUser = { id: 13981 };
-      planSubscription.user = user;
+      const plan: IPlan = { id: 28575 };
+      planSubscription.plan = plan;
 
-      const userCollection: IUser[] = [{ id: 18194 }];
-      jest.spyOn(userService, 'query').mockReturnValue(of(new HttpResponse({ body: userCollection })));
-      const additionalUsers = [user];
-      const expectedCollection: IUser[] = [...additionalUsers, ...userCollection];
-      jest.spyOn(userService, 'addUserToCollectionIfMissing').mockReturnValue(expectedCollection);
+      const planCollection: IPlan[] = [{ id: 17780 }];
+      jest.spyOn(planService, 'query').mockReturnValue(of(new HttpResponse({ body: planCollection })));
+      const additionalPlans = [plan];
+      const expectedCollection: IPlan[] = [...additionalPlans, ...planCollection];
+      jest.spyOn(planService, 'addPlanToCollectionIfMissing').mockReturnValue(expectedCollection);
 
       activatedRoute.data = of({ planSubscription });
       comp.ngOnInit();
 
-      expect(userService.query).toHaveBeenCalled();
-      expect(userService.addUserToCollectionIfMissing).toHaveBeenCalledWith(
-        userCollection,
-        ...additionalUsers.map(expect.objectContaining),
+      expect(planService.query).toHaveBeenCalled();
+      expect(planService.addPlanToCollectionIfMissing).toHaveBeenCalledWith(
+        planCollection,
+        ...additionalPlans.map(expect.objectContaining),
       );
-      expect(comp.usersSharedCollection).toEqual(expectedCollection);
+      expect(comp.plansSharedCollection).toEqual(expectedCollection);
+    });
+
+    it('Should call ApplicationUser query and add missing value', () => {
+      const planSubscription: IPlanSubscription = { id: 456 };
+      const user: IApplicationUser = { id: 9537 };
+      planSubscription.user = user;
+
+      const applicationUserCollection: IApplicationUser[] = [{ id: 29660 }];
+      jest.spyOn(applicationUserService, 'query').mockReturnValue(of(new HttpResponse({ body: applicationUserCollection })));
+      const additionalApplicationUsers = [user];
+      const expectedCollection: IApplicationUser[] = [...additionalApplicationUsers, ...applicationUserCollection];
+      jest.spyOn(applicationUserService, 'addApplicationUserToCollectionIfMissing').mockReturnValue(expectedCollection);
+
+      activatedRoute.data = of({ planSubscription });
+      comp.ngOnInit();
+
+      expect(applicationUserService.query).toHaveBeenCalled();
+      expect(applicationUserService.addApplicationUserToCollectionIfMissing).toHaveBeenCalledWith(
+        applicationUserCollection,
+        ...additionalApplicationUsers.map(expect.objectContaining),
+      );
+      expect(comp.applicationUsersSharedCollection).toEqual(expectedCollection);
     });
 
     it('Should update editForm', () => {
       const planSubscription: IPlanSubscription = { id: 456 };
-      const plan: IPlan = { id: 9246 };
-      planSubscription.plan = plan;
-      const church: IChurch = { id: 17701 };
+      const church: IChurch = { id: 25945 };
       planSubscription.church = church;
-      const user: IUser = { id: 31932 };
+      const plan: IPlan = { id: 11087 };
+      planSubscription.plan = plan;
+      const user: IApplicationUser = { id: 10483 };
       planSubscription.user = user;
 
       activatedRoute.data = of({ planSubscription });
       comp.ngOnInit();
 
-      expect(comp.plansSharedCollection).toContain(plan);
       expect(comp.churchesSharedCollection).toContain(church);
-      expect(comp.usersSharedCollection).toContain(user);
+      expect(comp.plansSharedCollection).toContain(plan);
+      expect(comp.applicationUsersSharedCollection).toContain(user);
       expect(comp.planSubscription).toEqual(planSubscription);
     });
   });
@@ -209,16 +209,6 @@ describe('PlanSubscription Management Update Component', () => {
   });
 
   describe('Compare relationships', () => {
-    describe('comparePlan', () => {
-      it('Should forward to planService', () => {
-        const entity = { id: 123 };
-        const entity2 = { id: 456 };
-        jest.spyOn(planService, 'comparePlan');
-        comp.comparePlan(entity, entity2);
-        expect(planService.comparePlan).toHaveBeenCalledWith(entity, entity2);
-      });
-    });
-
     describe('compareChurch', () => {
       it('Should forward to churchService', () => {
         const entity = { id: 123 };
@@ -229,13 +219,23 @@ describe('PlanSubscription Management Update Component', () => {
       });
     });
 
-    describe('compareUser', () => {
-      it('Should forward to userService', () => {
+    describe('comparePlan', () => {
+      it('Should forward to planService', () => {
         const entity = { id: 123 };
         const entity2 = { id: 456 };
-        jest.spyOn(userService, 'compareUser');
-        comp.compareUser(entity, entity2);
-        expect(userService.compareUser).toHaveBeenCalledWith(entity, entity2);
+        jest.spyOn(planService, 'comparePlan');
+        comp.comparePlan(entity, entity2);
+        expect(planService.comparePlan).toHaveBeenCalledWith(entity, entity2);
+      });
+    });
+
+    describe('compareApplicationUser', () => {
+      it('Should forward to applicationUserService', () => {
+        const entity = { id: 123 };
+        const entity2 = { id: 456 };
+        jest.spyOn(applicationUserService, 'compareApplicationUser');
+        comp.compareApplicationUser(entity, entity2);
+        expect(applicationUserService.compareApplicationUser).toHaveBeenCalledWith(entity, entity2);
       });
     });
   });

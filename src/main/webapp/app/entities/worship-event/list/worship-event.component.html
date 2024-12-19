@@ -15,7 +15,7 @@
         [routerLink]="['/worship-event/new']"
       >
         <fa-icon icon="plus"></fa-icon>
-        <span jhiTranslate="poimenApp.worshipEvent.home.createLabel">Create a new Worship Event</span>
+        <span class="hidden-sm-down" jhiTranslate="poimenApp.worshipEvent.home.createLabel">Create a new Worship Event</span>
       </button>
     </div>
   </h2>
@@ -23,6 +23,34 @@
   <jhi-alert-error></jhi-alert-error>
 
   <jhi-alert></jhi-alert>
+
+  <form name="searchForm" class="row row-cols-sm-auto align-items-center">
+    <div class="col-sm-12">
+      <div class="input-group w-100 mt-3">
+        <label class="visually-hidden" for="currentSearch" jhiTranslate="poimenApp.worshipEvent.home.search"
+          >Search for Worship Event</label
+        >
+        <input
+          type="text"
+          class="form-control"
+          [(ngModel)]="currentSearch"
+          id="currentSearch"
+          name="currentSearch"
+          placeholder="{{ 'poimenApp.worshipEvent.home.search' | translate }}"
+        />
+
+        <button class="btn btn-info" (click)="search(currentSearch)">
+          <fa-icon icon="search"></fa-icon>
+        </button>
+
+        @if (currentSearch) {
+          <button class="btn btn-danger" (click)="search('')">
+            <fa-icon icon="trash-alt"></fa-icon>
+          </button>
+        }
+      </div>
+    </div>
+  </form>
 
   @if (worshipEvents?.length === 0) {
     <div class="alert alert-warning" id="no-result">
@@ -52,37 +80,136 @@
             <th scope="col" jhiSortBy="title">
               <div class="d-flex">
                 <span jhiTranslate="poimenApp.worshipEvent.title">Title</span>
-
-                <fa-icon class="p-1" icon="sort"></fa-icon>
+                @if (!currentSearch) {
+                  <fa-icon class="p-1" icon="sort"></fa-icon>
+                }
+              </div>
+            </th>
+            <th scope="col" jhiSortBy="guestPreacher">
+              <div class="d-flex">
+                <span jhiTranslate="poimenApp.worshipEvent.guestPreacher">Guest Preacher</span>
+                @if (!currentSearch) {
+                  <fa-icon class="p-1" icon="sort"></fa-icon>
+                }
               </div>
             </th>
             <th scope="col" jhiSortBy="description">
               <div class="d-flex">
                 <span jhiTranslate="poimenApp.worshipEvent.description">Description</span>
-
-                <fa-icon class="p-1" icon="sort"></fa-icon>
+                @if (!currentSearch) {
+                  <fa-icon class="p-1" icon="sort"></fa-icon>
+                }
+              </div>
+            </th>
+            <th scope="col" jhiSortBy="callToWorshipText">
+              <div class="d-flex">
+                <span jhiTranslate="poimenApp.worshipEvent.callToWorshipText">Call To Worship Text</span>
+                @if (!currentSearch) {
+                  <fa-icon class="p-1" icon="sort"></fa-icon>
+                }
+              </div>
+            </th>
+            <th scope="col" jhiSortBy="confessionOfSinText">
+              <div class="d-flex">
+                <span jhiTranslate="poimenApp.worshipEvent.confessionOfSinText">Confession Of Sin Text</span>
+                @if (!currentSearch) {
+                  <fa-icon class="p-1" icon="sort"></fa-icon>
+                }
+              </div>
+            </th>
+            <th scope="col" jhiSortBy="assuranceOfPardonText">
+              <div class="d-flex">
+                <span jhiTranslate="poimenApp.worshipEvent.assuranceOfPardonText">Assurance Of Pardon Text</span>
+                @if (!currentSearch) {
+                  <fa-icon class="p-1" icon="sort"></fa-icon>
+                }
+              </div>
+            </th>
+            <th scope="col" jhiSortBy="lordSupperText">
+              <div class="d-flex">
+                <span jhiTranslate="poimenApp.worshipEvent.lordSupperText">Lord Supper Text</span>
+                @if (!currentSearch) {
+                  <fa-icon class="p-1" icon="sort"></fa-icon>
+                }
+              </div>
+            </th>
+            <th scope="col" jhiSortBy="benedictionText">
+              <div class="d-flex">
+                <span jhiTranslate="poimenApp.worshipEvent.benedictionText">Benediction Text</span>
+                @if (!currentSearch) {
+                  <fa-icon class="p-1" icon="sort"></fa-icon>
+                }
+              </div>
+            </th>
+            <th scope="col" jhiSortBy="confessionalText">
+              <div class="d-flex">
+                <span jhiTranslate="poimenApp.worshipEvent.confessionalText">Confessional Text</span>
+                @if (!currentSearch) {
+                  <fa-icon class="p-1" icon="sort"></fa-icon>
+                }
+              </div>
+            </th>
+            <th scope="col" jhiSortBy="sermonText">
+              <div class="d-flex">
+                <span jhiTranslate="poimenApp.worshipEvent.sermonText">Sermon Text</span>
+                @if (!currentSearch) {
+                  <fa-icon class="p-1" icon="sort"></fa-icon>
+                }
+              </div>
+            </th>
+            <th scope="col" jhiSortBy="sermonFile">
+              <div class="d-flex">
+                <span jhiTranslate="poimenApp.worshipEvent.sermonFile">Sermon File</span>
+                @if (!currentSearch) {
+                  <fa-icon class="p-1" icon="sort"></fa-icon>
+                }
+              </div>
+            </th>
+            <th scope="col" jhiSortBy="sermonLink">
+              <div class="d-flex">
+                <span jhiTranslate="poimenApp.worshipEvent.sermonLink">Sermon Link</span>
+                @if (!currentSearch) {
+                  <fa-icon class="p-1" icon="sort"></fa-icon>
+                }
+              </div>
+            </th>
+            <th scope="col" jhiSortBy="youtubeLink">
+              <div class="d-flex">
+                <span jhiTranslate="poimenApp.worshipEvent.youtubeLink">Youtube Link</span>
+                @if (!currentSearch) {
+                  <fa-icon class="p-1" icon="sort"></fa-icon>
+                }
+              </div>
+            </th>
+            <th scope="col" jhiSortBy="bulletinFile">
+              <div class="d-flex">
+                <span jhiTranslate="poimenApp.worshipEvent.bulletinFile">Bulletin File</span>
+                @if (!currentSearch) {
+                  <fa-icon class="p-1" icon="sort"></fa-icon>
+                }
               </div>
             </th>
             <th scope="col" jhiSortBy="worshipType">
               <div class="d-flex">
                 <span jhiTranslate="poimenApp.worshipEvent.worshipType">Worship Type</span>
-
-                <fa-icon class="p-1" icon="sort"></fa-icon>
+                @if (!currentSearch) {
+                  <fa-icon class="p-1" icon="sort"></fa-icon>
+                }
               </div>
             </th>
-            <th scope="col" jhiSortBy="church.id">
+            <th scope="col" jhiSortBy="church.name">
               <div class="d-flex">
                 <span jhiTranslate="poimenApp.worshipEvent.church">Church</span>
                 <fa-icon class="p-1" icon="sort"></fa-icon>
               </div>
             </th>
-            <th scope="col" jhiSortBy="preacher.id">
+            <th scope="col" jhiSortBy="preacher.name">
               <div class="d-flex">
                 <span jhiTranslate="poimenApp.worshipEvent.preacher">Preacher</span>
                 <fa-icon class="p-1" icon="sort"></fa-icon>
               </div>
             </th>
-            <th scope="col" jhiSortBy="liturgist.id">
+            <th scope="col" jhiSortBy="liturgist.name">
               <div class="d-flex">
                 <span jhiTranslate="poimenApp.worshipEvent.liturgist">Liturgist</span>
                 <fa-icon class="p-1" icon="sort"></fa-icon>
@@ -99,37 +226,63 @@
               </td>
               <td>{{ worshipEvent.date | formatMediumDatetime }}</td>
               <td>{{ worshipEvent.title }}</td>
+              <td>{{ worshipEvent.guestPreacher }}</td>
               <td>{{ worshipEvent.description }}</td>
+              <td>{{ worshipEvent.callToWorshipText }}</td>
+              <td>{{ worshipEvent.confessionOfSinText }}</td>
+              <td>{{ worshipEvent.assuranceOfPardonText }}</td>
+              <td>{{ worshipEvent.lordSupperText }}</td>
+              <td>{{ worshipEvent.benedictionText }}</td>
+              <td>{{ worshipEvent.confessionalText }}</td>
+              <td>{{ worshipEvent.sermonText }}</td>
+              <td>
+                @if (worshipEvent.sermonFile) {
+                  <a (click)="openFile(worshipEvent.sermonFile, worshipEvent.sermonFileContentType)" jhiTranslate="entity.action.open"
+                    >Open</a
+                  >
+                  <span>{{ worshipEvent.sermonFileContentType }}, {{ byteSize(worshipEvent.sermonFile) }}</span>
+                }
+              </td>
+              <td>{{ worshipEvent.sermonLink }}</td>
+              <td>{{ worshipEvent.youtubeLink }}</td>
+              <td>
+                @if (worshipEvent.bulletinFile) {
+                  <a (click)="openFile(worshipEvent.bulletinFile, worshipEvent.bulletinFileContentType)" jhiTranslate="entity.action.open"
+                    >Open</a
+                  >
+                  <span>{{ worshipEvent.bulletinFileContentType }}, {{ byteSize(worshipEvent.bulletinFile) }}</span>
+                }
+              </td>
               <td [jhiTranslate]="'poimenApp.WorshipType.' + (worshipEvent.worshipType ?? 'null')">
                 {{
                   {
                     null: '',
-                    SUNDAY_SERVICE: 'SUNDAY_SERVICE',
-                    PRAYER_MEETING: 'PRAYER_MEETING',
-                    BIBLE_STUDY: 'BIBLE_STUDY',
-                    YOUTH_SERVICE: 'YOUTH_SERVICE',
-                    SPECIAL_EVENT: 'SPECIAL_EVENT',
+                    SUNDAY_SERVICE: 'Sunday Service',
+                    PRAYER_MEETING: 'Prayer Meeting',
+                    BIBLE_STUDY: 'Bible Study',
+                    SPECIAL_EVENT: 'Special Event',
+                    OTHER: 'Other',
                   }[worshipEvent.worshipType ?? 'null']
                 }}
               </td>
               <td>
                 @if (worshipEvent.church) {
                   <div>
-                    <a [routerLink]="['/church', worshipEvent.church.id, 'view']">{{ worshipEvent.church.id }}</a>
+                    <a [routerLink]="['/church', worshipEvent.church.id, 'view']">{{ worshipEvent.church.name }}</a>
                   </div>
                 }
               </td>
               <td>
                 @if (worshipEvent.preacher) {
                   <div>
-                    <a [routerLink]="['/member', worshipEvent.preacher.id, 'view']">{{ worshipEvent.preacher.id }}</a>
+                    <a [routerLink]="['/member', worshipEvent.preacher.id, 'view']">{{ worshipEvent.preacher.name }}</a>
                   </div>
                 }
               </td>
               <td>
                 @if (worshipEvent.liturgist) {
                   <div>
-                    <a [routerLink]="['/member', worshipEvent.liturgist.id, 'view']">{{ worshipEvent.liturgist.id }}</a>
+                    <a [routerLink]="['/member', worshipEvent.liturgist.id, 'view']">{{ worshipEvent.liturgist.name }}</a>
                   </div>
                 }
               </td>

@@ -15,7 +15,7 @@
         [routerLink]="['/member/new']"
       >
         <fa-icon icon="plus"></fa-icon>
-        <span jhiTranslate="poimenApp.member.home.createLabel">Create a new Member</span>
+        <span class="hidden-sm-down" jhiTranslate="poimenApp.member.home.createLabel">Create a new Member</span>
       </button>
     </div>
   </h2>
@@ -23,6 +23,32 @@
   <jhi-alert-error></jhi-alert-error>
 
   <jhi-alert></jhi-alert>
+
+  <form name="searchForm" class="row row-cols-sm-auto align-items-center">
+    <div class="col-sm-12">
+      <div class="input-group w-100 mt-3">
+        <label class="visually-hidden" for="currentSearch" jhiTranslate="poimenApp.member.home.search">Search for Member</label>
+        <input
+          type="text"
+          class="form-control"
+          [(ngModel)]="currentSearch"
+          id="currentSearch"
+          name="currentSearch"
+          placeholder="{{ 'poimenApp.member.home.search' | translate }}"
+        />
+
+        <button class="btn btn-info" (click)="search(currentSearch)">
+          <fa-icon icon="search"></fa-icon>
+        </button>
+
+        @if (currentSearch) {
+          <button class="btn btn-danger" (click)="search('')">
+            <fa-icon icon="trash-alt"></fa-icon>
+          </button>
+        }
+      </div>
+    </div>
+  </form>
 
   @if (members?.length === 0) {
     <div class="alert alert-warning" id="no-result">
@@ -42,32 +68,36 @@
                 <fa-icon class="p-1" icon="sort"></fa-icon>
               </div>
             </th>
-            <th scope="col" jhiSortBy="firstName">
+            <th scope="col" jhiSortBy="name">
               <div class="d-flex">
-                <span jhiTranslate="poimenApp.member.firstName">First Name</span>
-
-                <fa-icon class="p-1" icon="sort"></fa-icon>
+                <span jhiTranslate="poimenApp.member.name">Name</span>
+                @if (!currentSearch) {
+                  <fa-icon class="p-1" icon="sort"></fa-icon>
+                }
               </div>
             </th>
-            <th scope="col" jhiSortBy="lastName">
+            <th scope="col" jhiSortBy="photo">
               <div class="d-flex">
-                <span jhiTranslate="poimenApp.member.lastName">Last Name</span>
-
-                <fa-icon class="p-1" icon="sort"></fa-icon>
+                <span jhiTranslate="poimenApp.member.photo">Photo</span>
+                @if (!currentSearch) {
+                  <fa-icon class="p-1" icon="sort"></fa-icon>
+                }
               </div>
             </th>
             <th scope="col" jhiSortBy="email">
               <div class="d-flex">
                 <span jhiTranslate="poimenApp.member.email">Email</span>
-
-                <fa-icon class="p-1" icon="sort"></fa-icon>
+                @if (!currentSearch) {
+                  <fa-icon class="p-1" icon="sort"></fa-icon>
+                }
               </div>
             </th>
             <th scope="col" jhiSortBy="phoneNumber">
               <div class="d-flex">
                 <span jhiTranslate="poimenApp.member.phoneNumber">Phone Number</span>
-
-                <fa-icon class="p-1" icon="sort"></fa-icon>
+                @if (!currentSearch) {
+                  <fa-icon class="p-1" icon="sort"></fa-icon>
+                }
               </div>
             </th>
             <th scope="col" jhiSortBy="dateOfBirth">
@@ -80,11 +110,183 @@
             <th scope="col" jhiSortBy="address">
               <div class="d-flex">
                 <span jhiTranslate="poimenApp.member.address">Address</span>
+                @if (!currentSearch) {
+                  <fa-icon class="p-1" icon="sort"></fa-icon>
+                }
+              </div>
+            </th>
+            <th scope="col" jhiSortBy="city">
+              <div class="d-flex">
+                <span jhiTranslate="poimenApp.member.city">City</span>
+                @if (!currentSearch) {
+                  <fa-icon class="p-1" icon="sort"></fa-icon>
+                }
+              </div>
+            </th>
+            <th scope="col" jhiSortBy="state">
+              <div class="d-flex">
+                <span jhiTranslate="poimenApp.member.state">State</span>
+                @if (!currentSearch) {
+                  <fa-icon class="p-1" icon="sort"></fa-icon>
+                }
+              </div>
+            </th>
+            <th scope="col" jhiSortBy="zipCode">
+              <div class="d-flex">
+                <span jhiTranslate="poimenApp.member.zipCode">Zip Code</span>
+                @if (!currentSearch) {
+                  <fa-icon class="p-1" icon="sort"></fa-icon>
+                }
+              </div>
+            </th>
+            <th scope="col" jhiSortBy="cityOfBirth">
+              <div class="d-flex">
+                <span jhiTranslate="poimenApp.member.cityOfBirth">City Of Birth</span>
+                @if (!currentSearch) {
+                  <fa-icon class="p-1" icon="sort"></fa-icon>
+                }
+              </div>
+            </th>
+            <th scope="col" jhiSortBy="previousReligion">
+              <div class="d-flex">
+                <span jhiTranslate="poimenApp.member.previousReligion">Previous Religion</span>
+                @if (!currentSearch) {
+                  <fa-icon class="p-1" icon="sort"></fa-icon>
+                }
+              </div>
+            </th>
+            <th scope="col" jhiSortBy="maritalStatus">
+              <div class="d-flex">
+                <span jhiTranslate="poimenApp.member.maritalStatus">Marital Status</span>
+                @if (!currentSearch) {
+                  <fa-icon class="p-1" icon="sort"></fa-icon>
+                }
+              </div>
+            </th>
+            <th scope="col" jhiSortBy="spouseName">
+              <div class="d-flex">
+                <span jhiTranslate="poimenApp.member.spouseName">Spouse Name</span>
+                @if (!currentSearch) {
+                  <fa-icon class="p-1" icon="sort"></fa-icon>
+                }
+              </div>
+            </th>
+            <th scope="col" jhiSortBy="dateOfMarriage">
+              <div class="d-flex">
+                <span jhiTranslate="poimenApp.member.dateOfMarriage">Date Of Marriage</span>
 
                 <fa-icon class="p-1" icon="sort"></fa-icon>
               </div>
             </th>
-            <th scope="col" jhiSortBy="church.id">
+            <th scope="col" jhiSortBy="status">
+              <div class="d-flex">
+                <span jhiTranslate="poimenApp.member.status">Status</span>
+                @if (!currentSearch) {
+                  <fa-icon class="p-1" icon="sort"></fa-icon>
+                }
+              </div>
+            </th>
+            <th scope="col" jhiSortBy="cpf">
+              <div class="d-flex">
+                <span jhiTranslate="poimenApp.member.cpf">Cpf</span>
+                @if (!currentSearch) {
+                  <fa-icon class="p-1" icon="sort"></fa-icon>
+                }
+              </div>
+            </th>
+            <th scope="col" jhiSortBy="rg">
+              <div class="d-flex">
+                <span jhiTranslate="poimenApp.member.rg">Rg</span>
+                @if (!currentSearch) {
+                  <fa-icon class="p-1" icon="sort"></fa-icon>
+                }
+              </div>
+            </th>
+            <th scope="col" jhiSortBy="dateOfBaptism">
+              <div class="d-flex">
+                <span jhiTranslate="poimenApp.member.dateOfBaptism">Date Of Baptism</span>
+
+                <fa-icon class="p-1" icon="sort"></fa-icon>
+              </div>
+            </th>
+            <th scope="col" jhiSortBy="churchOfBaptism">
+              <div class="d-flex">
+                <span jhiTranslate="poimenApp.member.churchOfBaptism">Church Of Baptism</span>
+                @if (!currentSearch) {
+                  <fa-icon class="p-1" icon="sort"></fa-icon>
+                }
+              </div>
+            </th>
+            <th scope="col" jhiSortBy="dateOfMembership">
+              <div class="d-flex">
+                <span jhiTranslate="poimenApp.member.dateOfMembership">Date Of Membership</span>
+
+                <fa-icon class="p-1" icon="sort"></fa-icon>
+              </div>
+            </th>
+            <th scope="col" jhiSortBy="typeOfMembership">
+              <div class="d-flex">
+                <span jhiTranslate="poimenApp.member.typeOfMembership">Type Of Membership</span>
+                @if (!currentSearch) {
+                  <fa-icon class="p-1" icon="sort"></fa-icon>
+                }
+              </div>
+            </th>
+            <th scope="col" jhiSortBy="associationMeetingMinutes">
+              <div class="d-flex">
+                <span jhiTranslate="poimenApp.member.associationMeetingMinutes">Association Meeting Minutes</span>
+                @if (!currentSearch) {
+                  <fa-icon class="p-1" icon="sort"></fa-icon>
+                }
+              </div>
+            </th>
+            <th scope="col" jhiSortBy="dateOfDeath">
+              <div class="d-flex">
+                <span jhiTranslate="poimenApp.member.dateOfDeath">Date Of Death</span>
+
+                <fa-icon class="p-1" icon="sort"></fa-icon>
+              </div>
+            </th>
+            <th scope="col" jhiSortBy="dateOfExit">
+              <div class="d-flex">
+                <span jhiTranslate="poimenApp.member.dateOfExit">Date Of Exit</span>
+
+                <fa-icon class="p-1" icon="sort"></fa-icon>
+              </div>
+            </th>
+            <th scope="col" jhiSortBy="exitDestination">
+              <div class="d-flex">
+                <span jhiTranslate="poimenApp.member.exitDestination">Exit Destination</span>
+                @if (!currentSearch) {
+                  <fa-icon class="p-1" icon="sort"></fa-icon>
+                }
+              </div>
+            </th>
+            <th scope="col" jhiSortBy="exitReason">
+              <div class="d-flex">
+                <span jhiTranslate="poimenApp.member.exitReason">Exit Reason</span>
+                @if (!currentSearch) {
+                  <fa-icon class="p-1" icon="sort"></fa-icon>
+                }
+              </div>
+            </th>
+            <th scope="col" jhiSortBy="exitMeetingMinutes">
+              <div class="d-flex">
+                <span jhiTranslate="poimenApp.member.exitMeetingMinutes">Exit Meeting Minutes</span>
+                @if (!currentSearch) {
+                  <fa-icon class="p-1" icon="sort"></fa-icon>
+                }
+              </div>
+            </th>
+            <th scope="col" jhiSortBy="notes">
+              <div class="d-flex">
+                <span jhiTranslate="poimenApp.member.notes">Notes</span>
+                @if (!currentSearch) {
+                  <fa-icon class="p-1" icon="sort"></fa-icon>
+                }
+              </div>
+            </th>
+            <th scope="col" jhiSortBy="church.name">
               <div class="d-flex">
                 <span jhiTranslate="poimenApp.member.church">Church</span>
                 <fa-icon class="p-1" icon="sort"></fa-icon>
@@ -99,16 +301,92 @@
               <td>
                 <a [routerLink]="['/member', member.id, 'view']">{{ member.id }}</a>
               </td>
-              <td>{{ member.firstName }}</td>
-              <td>{{ member.lastName }}</td>
+              <td>{{ member.name }}</td>
+              <td>
+                @if (member.photo) {
+                  <a (click)="openFile(member.photo, member.photoContentType)">
+                    <img [src]="'data:' + member.photoContentType + ';base64,' + member.photo" style="max-height: 30px" alt="member" />
+                  </a>
+                  <span>{{ member.photoContentType }}, {{ byteSize(member.photo) }}</span>
+                }
+              </td>
               <td>{{ member.email }}</td>
               <td>{{ member.phoneNumber }}</td>
-              <td>{{ member.dateOfBirth | formatMediumDatetime }}</td>
+              <td>{{ member.dateOfBirth | formatMediumDate }}</td>
               <td>{{ member.address }}</td>
+              <td>{{ member.city }}</td>
+              <td>{{ member.state }}</td>
+              <td>{{ member.zipCode }}</td>
+              <td>{{ member.cityOfBirth }}</td>
+              <td>{{ member.previousReligion }}</td>
+              <td [jhiTranslate]="'poimenApp.MaritalStatus.' + (member.maritalStatus ?? 'null')">
+                {{
+                  { null: '', SINGLE: 'Single', MARRIED: 'Married', DIVORCED: 'Divorced', WIDOWED: 'Widowed' }[
+                    member.maritalStatus ?? 'null'
+                  ]
+                }}
+              </td>
+              <td>{{ member.spouseName }}</td>
+              <td>{{ member.dateOfMarriage | formatMediumDate }}</td>
+              <td [jhiTranslate]="'poimenApp.MemberStatus.' + (member.status ?? 'null')">
+                {{
+                  {
+                    null: '',
+                    COMUNGANT_MEMBER: 'Comungant',
+                    NON_COMUNGANT_MEMBER: 'Non-Comungant',
+                    VISITOR: 'Visitor',
+                    INACTIVE: 'Inactive',
+                    EXCOMMUNICATED: 'Excommunicated',
+                    DECEASED: 'Deceased',
+                    TRANSFERED: 'Transfered',
+                    CATECHUMENS: 'Catechumens',
+                    PASTOR: 'Pastor',
+                    SEMINARIST: 'Seminarist',
+                  }[member.status ?? 'null']
+                }}
+              </td>
+              <td>{{ member.cpf }}</td>
+              <td>{{ member.rg }}</td>
+              <td>{{ member.dateOfBaptism | formatMediumDate }}</td>
+              <td>{{ member.churchOfBaptism }}</td>
+              <td>{{ member.dateOfMembership | formatMediumDate }}</td>
+              <td [jhiTranslate]="'poimenApp.MembershipType.' + (member.typeOfMembership ?? 'null')">
+                {{
+                  {
+                    null: '',
+                    PROFESSION_OF_FAITH: 'Profession of Faith',
+                    TRANSFER: 'Transfer',
+                    BAPTISM: 'Baptism',
+                    BAPTISM_AND_PROFESSION_OF_FAITH: 'Baptism and Profession of Faith',
+                    JURISDICTION: 'Jurisdiction',
+                    JURISDICTION_ON_REQUEST: 'Jurisdiction on Request',
+                    PASTOR: 'Pastor',
+                  }[member.typeOfMembership ?? 'null']
+                }}
+              </td>
+              <td>{{ member.associationMeetingMinutes }}</td>
+              <td>{{ member.dateOfDeath | formatMediumDate }}</td>
+              <td>{{ member.dateOfExit | formatMediumDate }}</td>
+              <td>{{ member.exitDestination }}</td>
+              <td [jhiTranslate]="'poimenApp.ExitReason.' + (member.exitReason ?? 'null')">
+                {{
+                  {
+                    null: '',
+                    TRANSFER: 'Transfer',
+                    EXCOMMUNICATION: 'Excommunication',
+                    DEATH: 'Death',
+                    DISMISSAL: 'Dismissal',
+                    ORDENATION: 'Ordenation',
+                    OTHER: 'Other',
+                  }[member.exitReason ?? 'null']
+                }}
+              </td>
+              <td>{{ member.exitMeetingMinutes }}</td>
+              <td>{{ member.notes }}</td>
               <td>
                 @if (member.church) {
                   <div>
-                    <a [routerLink]="['/church', member.church.id, 'view']">{{ member.church.id }}</a>
+                    <a [routerLink]="['/church', member.church.id, 'view']">{{ member.church.name }}</a>
                   </div>
                 }
               </td>

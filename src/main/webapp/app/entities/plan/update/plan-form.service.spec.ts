@@ -22,6 +22,9 @@ describe('Plan Form Service', () => {
             id: expect.any(Object),
             name: expect.any(Object),
             price: expect.any(Object),
+            description: expect.any(Object),
+            features: expect.any(Object),
+            renewalPeriod: expect.any(Object),
           }),
         );
       });
@@ -34,6 +37,9 @@ describe('Plan Form Service', () => {
             id: expect.any(Object),
             name: expect.any(Object),
             price: expect.any(Object),
+            description: expect.any(Object),
+            features: expect.any(Object),
+            renewalPeriod: expect.any(Object),
           }),
         );
       });

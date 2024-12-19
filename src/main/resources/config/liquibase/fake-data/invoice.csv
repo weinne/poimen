@@ -1,11 +1,11 @@
-id;number;issue_date;total_amount;type;supplier;invoice_file
-1;huzzah;2024-12-17T16:23:24;16052.64;gah caring;unnecessarily supposing;since
-2;beneath unkempt;2024-12-17T06:12:55;24506.76;fussy;lovely;beneficial disappointment
-3;SUV;2024-12-17T04:45:01;6943.35;finally once;far except excluding;smoggy yum
-4;until stabilise gust;2024-12-17T22:04:46;24768.49;design ha especially;spherical stable;fooey majority overproduce
-5;ick boohoo relaunch;2024-12-17T05:59:03;17771.83;tenderly;phooey however;who judgementally intrepid
-6;trustworthy;2024-12-17T17:45:34;5801.54;rubbery enhance;concerning hydrolyse;geez
-7;provided;2024-12-17T13:16:48;26006.28;fabricate;oh seriously;aw probe instead
-8;yum dim;2024-12-17T14:59:05;9876.11;questioningly;incidentally darling humor;supplier
-9;heavy defensive;2024-12-17T09:26:28;2699.47;categorise;uneven gah gut;submissive
-10;larva;2024-12-18T01:03:22;607.64;searchingly;please however cemetery;gadzooks
+id;number;issue_date;total_amount;type;supplier;invoice_file;invoice_file_content_type
+1;huzzah;2024-12-18T15:23:44;16052.64;gah caring;unnecessarily supposing;../fake-data/blob/hipster.png;image/png
+2;since;2024-12-18T12:00:00;19657.99;scarcely;and;../fake-data/blob/hipster.png;image/png
+3;circumnavigate;2024-12-18T23:21:20;28511.5;pinion;father;../fake-data/blob/hipster.png;image/png
+4;concerning quicker finally;2024-12-18T21:52:48;23142.75;sniff given lest;incidentally;../fake-data/blob/hipster.png;image/png
+5;important;2024-12-18T03:37:37;11944.27;off vanish;upliftingly;../fake-data/blob/hipster.png;image/png
+6;whoever boo;2024-12-18T09:43:16;30703.3;especially proper bah;under duh per;../fake-data/blob/hipster.png;image/png
+7;geez lest;2024-12-18T04:24:58;3578.13;mutate woot;analyse duh meh;../fake-data/blob/hipster.png;image/png
+8;jubilantly;2024-12-18T09:43:47;10906.34;aside rosy radiant;jagged unaccountably;../fake-data/blob/hipster.png;image/png
+9;hmph vol;2024-12-18T14:30:42;7453.92;provided;provided inside;../fake-data/blob/hipster.png;image/png
+10;while ha;2024-12-18T12:11:04;2694.08;probe instead;yum dim;../fake-data/blob/hipster.png;image/png

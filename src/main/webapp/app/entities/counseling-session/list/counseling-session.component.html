@@ -15,7 +15,7 @@
         [routerLink]="['/counseling-session/new']"
       >
         <fa-icon icon="plus"></fa-icon>
-        <span jhiTranslate="poimenApp.counselingSession.home.createLabel">Create a new Counseling Session</span>
+        <span class="hidden-sm-down" jhiTranslate="poimenApp.counselingSession.home.createLabel">Create a new Counseling Session</span>
       </button>
     </div>
   </h2>
@@ -23,6 +23,34 @@
   <jhi-alert-error></jhi-alert-error>
 
   <jhi-alert></jhi-alert>
+
+  <form name="searchForm" class="row row-cols-sm-auto align-items-center">
+    <div class="col-sm-12">
+      <div class="input-group w-100 mt-3">
+        <label class="visually-hidden" for="currentSearch" jhiTranslate="poimenApp.counselingSession.home.search"
+          >Search for Counseling Session</label
+        >
+        <input
+          type="text"
+          class="form-control"
+          [(ngModel)]="currentSearch"
+          id="currentSearch"
+          name="currentSearch"
+          placeholder="{{ 'poimenApp.counselingSession.home.search' | translate }}"
+        />
+
+        <button class="btn btn-info" (click)="search(currentSearch)">
+          <fa-icon icon="search"></fa-icon>
+        </button>
+
+        @if (currentSearch) {
+          <button class="btn btn-danger" (click)="search('')">
+            <fa-icon icon="trash-alt"></fa-icon>
+          </button>
+        }
+      </div>
+    </div>
+  </form>
 
   @if (counselingSessions?.length === 0) {
     <div class="alert alert-warning" id="no-result">
@@ -42,6 +70,14 @@
                 <fa-icon class="p-1" icon="sort"></fa-icon>
               </div>
             </th>
+            <th scope="col" jhiSortBy="subject">
+              <div class="d-flex">
+                <span jhiTranslate="poimenApp.counselingSession.subject">Subject</span>
+                @if (!currentSearch) {
+                  <fa-icon class="p-1" icon="sort"></fa-icon>
+                }
+              </div>
+            </th>
             <th scope="col" jhiSortBy="date">
               <div class="d-flex">
                 <span jhiTranslate="poimenApp.counselingSession.date">Date</span>
@@ -49,26 +85,57 @@
                 <fa-icon class="p-1" icon="sort"></fa-icon>
               </div>
             </th>
-            <th scope="col" jhiSortBy="notes">
+            <th scope="col" jhiSortBy="startTime">
               <div class="d-flex">
-                <span jhiTranslate="poimenApp.counselingSession.notes">Notes</span>
+                <span jhiTranslate="poimenApp.counselingSession.startTime">Start Time</span>
 
                 <fa-icon class="p-1" icon="sort"></fa-icon>
               </div>
             </th>
-            <th scope="col" jhiSortBy="church.id">
+            <th scope="col" jhiSortBy="endTime">
+              <div class="d-flex">
+                <span jhiTranslate="poimenApp.counselingSession.endTime">End Time</span>
+
+                <fa-icon class="p-1" icon="sort"></fa-icon>
+              </div>
+            </th>
+            <th scope="col" jhiSortBy="notes">
+              <div class="d-flex">
+                <span jhiTranslate="poimenApp.counselingSession.notes">Notes</span>
+                @if (!currentSearch) {
+                  <fa-icon class="p-1" icon="sort"></fa-icon>
+                }
+              </div>
+            </th>
+            <th scope="col" jhiSortBy="counselingTasks">
+              <div class="d-flex">
+                <span jhiTranslate="poimenApp.counselingSession.counselingTasks">Counseling Tasks</span>
+                @if (!currentSearch) {
+                  <fa-icon class="p-1" icon="sort"></fa-icon>
+                }
+              </div>
+            </th>
+            <th scope="col" jhiSortBy="status">
+              <div class="d-flex">
+                <span jhiTranslate="poimenApp.counselingSession.status">Status</span>
+                @if (!currentSearch) {
+                  <fa-icon class="p-1" icon="sort"></fa-icon>
+                }
+              </div>
+            </th>
+            <th scope="col" jhiSortBy="church.name">
               <div class="d-flex">
                 <span jhiTranslate="poimenApp.counselingSession.church">Church</span>
                 <fa-icon class="p-1" icon="sort"></fa-icon>
               </div>
             </th>
-            <th scope="col" jhiSortBy="member.id">
+            <th scope="col" jhiSortBy="member.name">
               <div class="d-flex">
                 <span jhiTranslate="poimenApp.counselingSession.member">Member</span>
                 <fa-icon class="p-1" icon="sort"></fa-icon>
               </div>
             </th>
-            <th scope="col" jhiSortBy="user.id">
+            <th scope="col" jhiSortBy="user.name">
               <div class="d-flex">
                 <span jhiTranslate="poimenApp.counselingSession.user">User</span>
                 <fa-icon class="p-1" icon="sort"></fa-icon>
@@ -83,24 +150,39 @@
               <td>
                 <a [routerLink]="['/counseling-session', counselingSession.id, 'view']">{{ counselingSession.id }}</a>
               </td>
-              <td>{{ counselingSession.date | formatMediumDatetime }}</td>
+              <td>{{ counselingSession.subject }}</td>
+              <td>{{ counselingSession.date | formatMediumDate }}</td>
+              <td>{{ counselingSession.startTime | formatMediumDatetime }}</td>
+              <td>{{ counselingSession.endTime | formatMediumDatetime }}</td>
               <td>{{ counselingSession.notes }}</td>
+              <td>{{ counselingSession.counselingTasks }}</td>
+              <td [jhiTranslate]="'poimenApp.StatusCounseling.' + (counselingSession.status ?? 'null')">
+                {{
+                  { null: '', SCHEDULED: 'Scheduled', IN_PROGRESS: 'In Progress', DONE: 'Done', CANCELED: 'Canceled' }[
+                    counselingSession.status ?? 'null'
+                  ]
+                }}
+              </td>
               <td>
                 @if (counselingSession.church) {
                   <div>
-                    <a [routerLink]="['/church', counselingSession.church.id, 'view']">{{ counselingSession.church.id }}</a>
+                    <a [routerLink]="['/church', counselingSession.church.id, 'view']">{{ counselingSession.church.name }}</a>
                   </div>
                 }
               </td>
               <td>
                 @if (counselingSession.member) {
                   <div>
-                    <a [routerLink]="['/member', counselingSession.member.id, 'view']">{{ counselingSession.member.id }}</a>
+                    <a [routerLink]="['/member', counselingSession.member.id, 'view']">{{ counselingSession.member.name }}</a>
                   </div>
                 }
               </td>
               <td>
-                {{ counselingSession.user?.id }}
+                @if (counselingSession.user) {
+                  <div>
+                    <a [routerLink]="['/application-user', counselingSession.user.id, 'view']">{{ counselingSession.user.name }}</a>
+                  </div>
+                }
               </td>
               <td class="text-end">
                 <div class="btn-group">

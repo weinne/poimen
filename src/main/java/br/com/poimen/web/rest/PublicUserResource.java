@@ -1,9 +1,11 @@
 package br.com.poimen.web.rest;
 
+import br.com.poimen.repository.search.UserSearchRepository;
 import br.com.poimen.service.UserService;
 import br.com.poimen.service.dto.UserDTO;
 import java.util.*;
 import java.util.Collections;
+import java.util.stream.StreamSupport;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.data.domain.Page;
@@ -27,9 +29,11 @@ public class PublicUserResource {
     private static final Logger LOG = LoggerFactory.getLogger(PublicUserResource.class);
 
     private final UserService userService;
+    private final UserSearchRepository userSearchRepository;
 
-    public PublicUserResource(UserService userService) {
+    public PublicUserResource(UserSearchRepository userSearchRepository, UserService userService) {
         this.userService = userService;
+        this.userSearchRepository = userSearchRepository;
     }
 
     /**
@@ -52,5 +56,16 @@ public class PublicUserResource {
 
     private boolean onlyContainsAllowedProperties(Pageable pageable) {
         return pageable.getSort().stream().map(Sort.Order::getProperty).allMatch(ALLOWED_ORDERED_PROPERTIES::contains);
+    }
+
+    /**
+     * {@code SEARCH /users/_search/:query} : search for the User corresponding to the query.
+     *
+     * @param query the query to search.
+     * @return the result of the search.
+     */
+    @GetMapping("/users/_search/{query}")
+    public List<UserDTO> search(@PathVariable("query") String query) {
+        return StreamSupport.stream(userSearchRepository.search(query).spliterator(), false).map(UserDTO::new).toList();
     }
 }

@@ -48,7 +48,10 @@ public class PlanAsserts {
         assertThat(expected)
             .as("Verify Plan relevant properties")
             .satisfies(e -> assertThat(e.getName()).as("check name").isEqualTo(actual.getName()))
-            .satisfies(e -> assertThat(e.getPrice()).as("check price").isEqualTo(actual.getPrice()));
+            .satisfies(e -> assertThat(e.getPrice()).as("check price").isEqualTo(actual.getPrice()))
+            .satisfies(e -> assertThat(e.getDescription()).as("check description").isEqualTo(actual.getDescription()))
+            .satisfies(e -> assertThat(e.getFeatures()).as("check features").isEqualTo(actual.getFeatures()))
+            .satisfies(e -> assertThat(e.getRenewalPeriod()).as("check renewalPeriod").isEqualTo(actual.getRenewalPeriod()));
     }
 
     /**

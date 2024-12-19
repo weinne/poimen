@@ -39,6 +39,8 @@ spring:
     hikari:
       poolName: Hikari
       auto-commit: false
+  elasticsearch:
+    uris: http://localhost:9200
   # Replace by 'prod, faker' to add the faker context and have sample data loaded in production
   liquibase:
     contexts: prod
@@ -99,7 +101,7 @@ jhipster:
         # - In the Consul configserver
         # - In a separate `application-prod.yml` file, in the same folder as your executable JAR file
         # - In the `JHIPSTER_SECURITY_AUTHENTICATION_JWT_BASE64_SECRET` environment variable
-        base64-secret: OTQ3YTU1MzJkZWRhMzllOTMxYmEyNjU2OTNlM2YwYmM3NDVlZTUzYzJkYTEwZmE0NmY1YmFiZmY3NzVhMGJlODFiODZjNTYwZTk5NzA2N2QyM2M0ZTZhZWFiNjAyZDc5NzdiNGU1Y2NjNmJhZTBhMjcwMjg3OGFhNzhhOGYwY2Y=
+        base64-secret: NGY4YjY1ZmY0ZWM3MzIyZjU5M2E4YzU1Y2RjNzBiMjUxYzI4YTJiMDQ2OTllNzNkYmFiM2E3YjI3ZmFiNzc4NGVjNDJkNjlmZTU0MDY3NzIzMTA4MWVjNTIzYWEyYTFmMDFjNWE2OTkxYWM1YzYxYjIyMzgxZGIwYzkxMmFjZjg=
         # Token is valid 24 hours
         token-validity-in-seconds: 86400
         token-validity-in-seconds-for-remember-me: 2592000

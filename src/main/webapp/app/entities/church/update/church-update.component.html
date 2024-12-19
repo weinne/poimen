@@ -37,6 +37,11 @@
               @if (editForm.get('cnpj')?.errors?.required) {
                 <small class="form-text text-danger" jhiTranslate="entity.validation.required">This field is required.</small>
               }
+              @if (editForm.get('cnpj')?.errors?.pattern) {
+                <small class="form-text text-danger" jhiTranslate="entity.validation.pattern" [translateValues]="{ pattern: 'Cnpj' }"
+                  >This field should follow pattern for Cnpj.</small
+                >
+              }
             </div>
           }
         </div>
@@ -70,47 +75,68 @@
         @let dateFoundationRef = editForm.get('dateFoundation')!;
         <div class="mb-3">
           <label class="form-label" for="field_dateFoundation" jhiTranslate="poimenApp.church.dateFoundation">Date Foundation</label>
-          <div class="d-flex">
+          <div class="input-group">
             <input
               id="field_dateFoundation"
               data-cy="dateFoundation"
-              type="datetime-local"
+              type="text"
               class="form-control"
               name="dateFoundation"
+              ngbDatepicker
+              #dateFoundationDp="ngbDatepicker"
               formControlName="dateFoundation"
-              placeholder="YYYY-MM-DD HH:mm"
             />
+            <button type="button" class="btn btn-secondary" (click)="dateFoundationDp.toggle()">
+              <fa-icon icon="calendar-alt"></fa-icon>
+            </button>
           </div>
           @if (dateFoundationRef.invalid && (dateFoundationRef.dirty || dateFoundationRef.touched)) {
             <div>
               @if (editForm.get('dateFoundation')?.errors?.required) {
                 <small class="form-text text-danger" jhiTranslate="entity.validation.required">This field is required.</small>
               }
-              <small
-                class="form-text text-danger"
-                [hidden]="!editForm.get('dateFoundation')?.errors?.datetimelocal"
-                jhiTranslate="entity.validation.datetimelocal"
-                >This field should be a date and time.</small
-              >
             </div>
           }
         </div>
 
         <div class="mb-3">
-          <label for="field_users" jhiTranslate="poimenApp.church.user">User</label>
-          <select
-            class="form-control"
-            id="field_users"
-            data-cy="user"
-            multiple
-            name="users"
-            formControlName="users"
-            [compareWith]="compareUser"
-          >
-            @for (userOption of usersSharedCollection; track $index) {
-              <option [ngValue]="userOption">{{ userOption.id }}</option>
-            }
-          </select>
+          <label class="form-label" for="field_phone" jhiTranslate="poimenApp.church.phone">Phone</label>
+          <input type="text" class="form-control" name="phone" id="field_phone" data-cy="phone" formControlName="phone" />
+        </div>
+
+        <div class="mb-3">
+          <label class="form-label" for="field_email" jhiTranslate="poimenApp.church.email">Email</label>
+          <input type="text" class="form-control" name="email" id="field_email" data-cy="email" formControlName="email" />
+        </div>
+
+        <div class="mb-3">
+          <label class="form-label" for="field_website" jhiTranslate="poimenApp.church.website">Website</label>
+          <input type="text" class="form-control" name="website" id="field_website" data-cy="website" formControlName="website" />
+        </div>
+
+        <div class="mb-3">
+          <label class="form-label" for="field_facebook" jhiTranslate="poimenApp.church.facebook">Facebook</label>
+          <input type="text" class="form-control" name="facebook" id="field_facebook" data-cy="facebook" formControlName="facebook" />
+        </div>
+
+        <div class="mb-3">
+          <label class="form-label" for="field_instagram" jhiTranslate="poimenApp.church.instagram">Instagram</label>
+          <input type="text" class="form-control" name="instagram" id="field_instagram" data-cy="instagram" formControlName="instagram" />
+        </div>
+
+        <div class="mb-3">
+          <label class="form-label" for="field_twitter" jhiTranslate="poimenApp.church.twitter">Twitter</label>
+          <input type="text" class="form-control" name="twitter" id="field_twitter" data-cy="twitter" formControlName="twitter" />
+        </div>
+
+        <div class="mb-3">
+          <label class="form-label" for="field_youtube" jhiTranslate="poimenApp.church.youtube">Youtube</label>
+          <input type="text" class="form-control" name="youtube" id="field_youtube" data-cy="youtube" formControlName="youtube" />
+        </div>
+
+        <div class="mb-3">
+          <label class="form-label" for="field_about" jhiTranslate="poimenApp.church.about">About</label>
+          <textarea class="form-control" name="about" id="field_about" data-cy="about" formControlName="about"></textarea>
         </div>
       </div>
 

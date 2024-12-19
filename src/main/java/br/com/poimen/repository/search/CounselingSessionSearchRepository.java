@@ -1,0 +1,68 @@
+package br.com.poimen.repository.search;
+
+import br.com.poimen.domain.CounselingSession;
+import br.com.poimen.repository.CounselingSessionRepository;
+import co.elastic.clients.elasticsearch._types.query_dsl.QueryStringQuery;
+import java.util.List;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.elasticsearch.client.elc.ElasticsearchTemplate;
+import org.springframework.data.elasticsearch.client.elc.NativeQuery;
+import org.springframework.data.elasticsearch.core.SearchHit;
+import org.springframework.data.elasticsearch.core.SearchHits;
+import org.springframework.data.elasticsearch.core.query.Query;
+import org.springframework.data.elasticsearch.repository.ElasticsearchRepository;
+import org.springframework.scheduling.annotation.Async;
+
+/**
+ * Spring Data Elasticsearch repository for the {@link CounselingSession} entity.
+ */
+public interface CounselingSessionSearchRepository
+    extends ElasticsearchRepository<CounselingSession, Long>, CounselingSessionSearchRepositoryInternal {}
+
+interface CounselingSessionSearchRepositoryInternal {
+    Page<CounselingSession> search(String query, Pageable pageable);
+
+    Page<CounselingSession> search(Query query);
+
+    @Async
+    void index(CounselingSession entity);
+
+    @Async
+    void deleteFromIndexById(Long id);
+}
+
+class CounselingSessionSearchRepositoryInternalImpl implements CounselingSessionSearchRepositoryInternal {
+
+    private final ElasticsearchTemplate elasticsearchTemplate;
+    private final CounselingSessionRepository repository;
+
+    CounselingSessionSearchRepositoryInternalImpl(ElasticsearchTemplate elasticsearchTemplate, CounselingSessionRepository repository) {
+        this.elasticsearchTemplate = elasticsearchTemplate;
+        this.repository = repository;
+    }
+
+    @Override
+    public Page<CounselingSession> search(String query, Pageable pageable) {
+        NativeQuery nativeQuery = new NativeQuery(QueryStringQuery.of(qs -> qs.query(query))._toQuery());
+        return search(nativeQuery.setPageable(pageable));
+    }
+
+    @Override
+    public Page<CounselingSession> search(Query query) {
+        SearchHits<CounselingSession> searchHits = elasticsearchTemplate.search(query, CounselingSession.class);
+        List<CounselingSession> hits = searchHits.map(SearchHit::getContent).stream().toList();
+        return new PageImpl<>(hits, query.getPageable(), searchHits.getTotalHits());
+    }
+
+    @Override
+    public void index(CounselingSession entity) {
+        repository.findOneWithEagerRelationships(entity.getId()).ifPresent(elasticsearchTemplate::save);
+    }
+
+    @Override
+    public void deleteFromIndexById(Long id) {
+        elasticsearchTemplate.delete(String.valueOf(id), CounselingSession.class);
+    }
+}

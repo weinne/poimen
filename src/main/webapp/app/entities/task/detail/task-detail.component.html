@@ -25,17 +25,29 @@
           </dd>
           <dt><span jhiTranslate="poimenApp.task.dueDate">Due Date</span></dt>
           <dd>
-            <span>{{ taskRef.dueDate | formatMediumDatetime }}</span>
+            <span>{{ taskRef.dueDate | formatMediumDate }}</span>
           </dd>
-          <dt><span jhiTranslate="poimenApp.task.completed">Completed</span></dt>
+          <dt><span jhiTranslate="poimenApp.task.status">Status</span></dt>
           <dd>
-            <span>{{ taskRef.completed }}</span>
+            <span [jhiTranslate]="'poimenApp.StatusTask.' + (taskRef.status ?? 'null')">{{
+              { null: '', PENDING: 'Pending', IN_PROGRESS: 'In Progress', DONE: 'Done' }[taskRef.status ?? 'null']
+            }}</span>
+          </dd>
+          <dt><span jhiTranslate="poimenApp.task.priority">Priority</span></dt>
+          <dd>
+            <span [jhiTranslate]="'poimenApp.PriorityTask.' + (taskRef.priority ?? 'null')">{{
+              { null: '', LOW: 'Low', MEDIUM: 'Medium', HIGH: 'High' }[taskRef.priority ?? 'null']
+            }}</span>
+          </dd>
+          <dt><span jhiTranslate="poimenApp.task.notes">Notes</span></dt>
+          <dd>
+            <span>{{ taskRef.notes }}</span>
           </dd>
           <dt><span jhiTranslate="poimenApp.task.church">Church</span></dt>
           <dd>
             @if (task()!.church) {
               <div>
-                <a [routerLink]="['/church', task()!.church?.id, 'view']">{{ taskRef.church?.id }}</a>
+                <a [routerLink]="['/church', task()!.church?.id, 'view']">{{ taskRef.church?.name }}</a>
               </div>
             }
           </dd>
@@ -43,13 +55,17 @@
           <dd>
             @if (task()!.member) {
               <div>
-                <a [routerLink]="['/member', task()!.member?.id, 'view']">{{ taskRef.member?.id }}</a>
+                <a [routerLink]="['/member', task()!.member?.id, 'view']">{{ taskRef.member?.name }}</a>
               </div>
             }
           </dd>
           <dt><span jhiTranslate="poimenApp.task.user">User</span></dt>
           <dd>
-            <span>{{ taskRef.user?.id }}</span>
+            @if (task()!.user) {
+              <div>
+                <a [routerLink]="['/application-user', task()!.user?.id, 'view']">{{ taskRef.user?.name }}</a>
+              </div>
+            }
           </dd>
         </dl>
 

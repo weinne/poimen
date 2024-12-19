@@ -1,0 +1,10 @@
+{
+  "poimenApp": {
+    "StatusTask": {
+      "null": "",
+      "PENDING": "Pending",
+      "IN_PROGRESS": "In Progress",
+      "DONE": "Done"
+    }
+  }
+}

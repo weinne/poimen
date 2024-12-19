@@ -1,11 +1,11 @@
-id;title;description;due_date;completed
-1;indeed amidst;round;2024-12-17T13:14:51;false
-2;meanwhile but deform;dash;2024-12-17T17:02:17;true
-3;spectacles powerfully;once proofread;2024-12-17T23:27:03;true
-4;geez uncomfortable after;phooey hmph;2024-12-17T08:10:34;false
-5;after wherever;vestment messy;2024-12-17T14:20:20;true
-6;following;times;2024-12-17T10:21:17;false
-7;dimly tuxedo;rarely consequently;2024-12-17T03:29:26;true
-8;preclude yum;biodegrade upliftingly;2024-12-17T15:38:04;false
-9;meanwhile lest;option privilege;2024-12-17T10:33:46;false
-10;impractical;enlist gosh;2024-12-17T12:22:28;false
+id;title;description;due_date;status;priority;notes
+1;indeed amidst;round;2024-12-18;DONE;HIGH;../fake-data/blob/hipster.txt
+2;above ew colorfully;regularly fooey if;2024-12-18;IN_PROGRESS;MEDIUM;../fake-data/blob/hipster.txt
+3;past;behold when;2024-12-18;PENDING;LOW;../fake-data/blob/hipster.txt
+4;hurtful gah coolly;overproduce;2024-12-18;DONE;LOW;../fake-data/blob/hipster.txt
+5;coincide;shoddy;2024-12-18;IN_PROGRESS;HIGH;../fake-data/blob/hipster.txt
+6;neglected toward tomography;mmm that unwieldy;2024-12-18;DONE;HIGH;../fake-data/blob/hipster.txt
+7;internationalize after until;redraw marathon;2024-12-18;DONE;LOW;../fake-data/blob/hipster.txt
+8;voluminous;ignorance;2024-12-18;PENDING;MEDIUM;../fake-data/blob/hipster.txt
+9;option privilege;who yum;2024-12-18;IN_PROGRESS;LOW;../fake-data/blob/hipster.txt
+10;light with;fooey mismatch;2024-12-18;PENDING;MEDIUM;../fake-data/blob/hipster.txt

@@ -1,8 +1,6 @@
 import { Injectable } from '@angular/core';
 import { FormControl, FormGroup, Validators } from '@angular/forms';
 
-import dayjs from 'dayjs/esm';
-import { DATE_TIME_FORMAT } from 'app/config/input.constants';
 import { IMinistryGroup, NewMinistryGroup } from '../ministry-group.model';
 
 /**
@@ -16,27 +14,18 @@ type PartialWithRequiredKeyOf<T extends { id: unknown }> = Partial<Omit<T, 'id'>
  */
 type MinistryGroupFormGroupInput = IMinistryGroup | PartialWithRequiredKeyOf<NewMinistryGroup>;
 
-/**
- * Type that converts some properties for forms.
- */
-type FormValueOf<T extends IMinistryGroup | NewMinistryGroup> = Omit<T, 'establishedDate'> & {
-  establishedDate?: string | null;
-};
-
-type MinistryGroupFormRawValue = FormValueOf<IMinistryGroup>;
-
-type NewMinistryGroupFormRawValue = FormValueOf<NewMinistryGroup>;
-
-type MinistryGroupFormDefaults = Pick<NewMinistryGroup, 'id' | 'establishedDate'>;
+type MinistryGroupFormDefaults = Pick<NewMinistryGroup, 'id' | 'members'>;
 
 type MinistryGroupFormGroupContent = {
-  id: FormControl<MinistryGroupFormRawValue['id'] | NewMinistryGroup['id']>;
-  name: FormControl<MinistryGroupFormRawValue['name']>;
-  description: FormControl<MinistryGroupFormRawValue['description']>;
-  establishedDate: FormControl<MinistryGroupFormRawValue['establishedDate']>;
-  leader: FormControl<MinistryGroupFormRawValue['leader']>;
-  type: FormControl<MinistryGroupFormRawValue['type']>;
-  church: FormControl<MinistryGroupFormRawValue['church']>;
+  id: FormControl<IMinistryGroup['id'] | NewMinistryGroup['id']>;
+  name: FormControl<IMinistryGroup['name']>;
+  description: FormControl<IMinistryGroup['description']>;
+  establishedDate: FormControl<IMinistryGroup['establishedDate']>;
+  type: FormControl<IMinistryGroup['type']>;
+  church: FormControl<IMinistryGroup['church']>;
+  president: FormControl<IMinistryGroup['president']>;
+  supervisor: FormControl<IMinistryGroup['supervisor']>;
+  members: FormControl<IMinistryGroup['members']>;
 };
 
 export type MinistryGroupFormGroup = FormGroup<MinistryGroupFormGroupContent>;
@@ -44,10 +33,10 @@ export type MinistryGroupFormGroup = FormGroup<MinistryGroupFormGroupContent>;
 @Injectable({ providedIn: 'root' })
 export class MinistryGroupFormService {
   createMinistryGroupFormGroup(ministryGroup: MinistryGroupFormGroupInput = { id: null }): MinistryGroupFormGroup {
-    const ministryGroupRawValue = this.convertMinistryGroupToMinistryGroupRawValue({
+    const ministryGroupRawValue = {
       ...this.getFormDefaults(),
       ...ministryGroup,
-    });
+    };
     return new FormGroup<MinistryGroupFormGroupContent>({
       id: new FormControl(
         { value: ministryGroupRawValue.id, disabled: true },
@@ -61,20 +50,22 @@ export class MinistryGroupFormService {
       }),
       description: new FormControl(ministryGroupRawValue.description),
       establishedDate: new FormControl(ministryGroupRawValue.establishedDate),
-      leader: new FormControl(ministryGroupRawValue.leader),
       type: new FormControl(ministryGroupRawValue.type, {
         validators: [Validators.required],
       }),
       church: new FormControl(ministryGroupRawValue.church),
+      president: new FormControl(ministryGroupRawValue.president),
+      supervisor: new FormControl(ministryGroupRawValue.supervisor),
+      members: new FormControl(ministryGroupRawValue.members ?? []),
     });
   }
 
   getMinistryGroup(form: MinistryGroupFormGroup): IMinistryGroup | NewMinistryGroup {
-    return this.convertMinistryGroupRawValueToMinistryGroup(form.getRawValue() as MinistryGroupFormRawValue | NewMinistryGroupFormRawValue);
+    return form.getRawValue() as IMinistryGroup | NewMinistryGroup;
   }
 
   resetForm(form: MinistryGroupFormGroup, ministryGroup: MinistryGroupFormGroupInput): void {
-    const ministryGroupRawValue = this.convertMinistryGroupToMinistryGroupRawValue({ ...this.getFormDefaults(), ...ministryGroup });
+    const ministryGroupRawValue = { ...this.getFormDefaults(), ...ministryGroup };
     form.reset(
       {
         ...ministryGroupRawValue,
@@ -84,29 +75,9 @@ export class MinistryGroupFormService {
   }
 
   private getFormDefaults(): MinistryGroupFormDefaults {
-    const currentTime = dayjs();
-
     return {
       id: null,
-      establishedDate: currentTime,
-    };
-  }
-
-  private convertMinistryGroupRawValueToMinistryGroup(
-    rawMinistryGroup: MinistryGroupFormRawValue | NewMinistryGroupFormRawValue,
-  ): IMinistryGroup | NewMinistryGroup {
-    return {
-      ...rawMinistryGroup,
-      establishedDate: dayjs(rawMinistryGroup.establishedDate, DATE_TIME_FORMAT),
-    };
-  }
-
-  private convertMinistryGroupToMinistryGroupRawValue(
-    ministryGroup: IMinistryGroup | (Partial<NewMinistryGroup> & MinistryGroupFormDefaults),
-  ): MinistryGroupFormRawValue | PartialWithRequiredKeyOf<NewMinistryGroupFormRawValue> {
-    return {
-      ...ministryGroup,
-      establishedDate: ministryGroup.establishedDate ? ministryGroup.establishedDate.format(DATE_TIME_FORMAT) : undefined,
+      members: [],
     };
   }
 }

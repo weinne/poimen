@@ -6,6 +6,7 @@
         "refreshListLabel": "Refresh list",
         "createLabel": "Create a new Plan Subscription",
         "createOrEditLabel": "Create or edit a Plan Subscription",
+        "search": "Search for Plan Subscription",
         "notFound": "No Plan Subscriptions found"
       },
       "created": "A new Plan Subscription is created with identifier {{ param }}",
@@ -18,12 +19,15 @@
         "title": "Plan Subscription"
       },
       "id": "ID",
+      "description": "Description",
       "startDate": "Start Date",
       "endDate": "End Date",
-      "active": "Active",
-      "planName": "Plan Name",
-      "plan": "Plan",
+      "status": "Status",
+      "paymentProvider": "Payment Provider",
+      "paymentStatus": "Payment Status",
+      "paymentReference": "Payment Reference",
       "church": "Church",
+      "plan": "Plan",
       "user": "User"
     }
   }

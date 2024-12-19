@@ -1,23 +1,48 @@
 {
   "annotations": {
-    "changelogDate": "20241218011224"
+    "changelogDate": "20241219001244"
   },
   "applications": "*",
   "fields": [
     {
+      "fieldName": "subject",
+      "fieldType": "String",
+      "fieldValidateRules": ["required"]
+    },
+    {
       "fieldName": "date",
+      "fieldType": "LocalDate",
+      "fieldValidateRules": ["required"]
+    },
+    {
+      "fieldName": "startTime",
       "fieldType": "Instant",
       "fieldValidateRules": ["required"]
     },
     {
+      "fieldName": "endTime",
+      "fieldType": "Instant"
+    },
+    {
       "fieldName": "notes",
       "fieldType": "TextBlob"
+    },
+    {
+      "fieldName": "counselingTasks",
+      "fieldType": "TextBlob"
+    },
+    {
+      "fieldName": "status",
+      "fieldType": "StatusCounseling",
+      "fieldValidateRules": ["required"],
+      "fieldValues": "SCHEDULED (Scheduled),IN_PROGRESS (In Progress),DONE (Done),CANCELED (Canceled)"
     }
   ],
   "name": "CounselingSession",
   "pagination": "infinite-scroll",
   "relationships": [
     {
+      "otherEntityField": "name",
       "otherEntityName": "church",
       "otherEntityRelationshipName": "counselingSession",
       "relationshipName": "church",
@@ -25,21 +50,28 @@
       "relationshipType": "many-to-one"
     },
     {
+      "otherEntityField": "name",
       "otherEntityName": "member",
-      "otherEntityRelationshipName": "counselingSession",
+      "otherEntityRelationshipName": "counseling",
       "relationshipName": "member",
       "relationshipSide": "left",
       "relationshipType": "many-to-one"
     },
     {
-      "otherEntityName": "user",
-      "otherEntityRelationshipName": "counselingSession",
+      "otherEntityField": "name",
+      "otherEntityName": "applicationUser",
       "relationshipName": "user",
       "relationshipSide": "left",
-      "relationshipType": "many-to-one",
-      "relationshipWithBuiltInEntity": true
+      "relationshipType": "many-to-one"
+    },
+    {
+      "otherEntityField": "subject",
+      "otherEntityName": "appointment",
+      "otherEntityRelationshipName": "counselingSession",
+      "relationshipName": "appointment",
+      "relationshipSide": "right",
+      "relationshipType": "one-to-many"
     }
   ],
-  "searchEngine": "no",
   "service": "serviceClass"
 }

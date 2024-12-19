@@ -19,20 +19,26 @@ type CounselingSessionFormGroupInput = ICounselingSession | PartialWithRequiredK
 /**
  * Type that converts some properties for forms.
  */
-type FormValueOf<T extends ICounselingSession | NewCounselingSession> = Omit<T, 'date'> & {
-  date?: string | null;
+type FormValueOf<T extends ICounselingSession | NewCounselingSession> = Omit<T, 'startTime' | 'endTime'> & {
+  startTime?: string | null;
+  endTime?: string | null;
 };
 
 type CounselingSessionFormRawValue = FormValueOf<ICounselingSession>;
 
 type NewCounselingSessionFormRawValue = FormValueOf<NewCounselingSession>;
 
-type CounselingSessionFormDefaults = Pick<NewCounselingSession, 'id' | 'date'>;
+type CounselingSessionFormDefaults = Pick<NewCounselingSession, 'id' | 'startTime' | 'endTime'>;
 
 type CounselingSessionFormGroupContent = {
   id: FormControl<CounselingSessionFormRawValue['id'] | NewCounselingSession['id']>;
+  subject: FormControl<CounselingSessionFormRawValue['subject']>;
   date: FormControl<CounselingSessionFormRawValue['date']>;
+  startTime: FormControl<CounselingSessionFormRawValue['startTime']>;
+  endTime: FormControl<CounselingSessionFormRawValue['endTime']>;
   notes: FormControl<CounselingSessionFormRawValue['notes']>;
+  counselingTasks: FormControl<CounselingSessionFormRawValue['counselingTasks']>;
+  status: FormControl<CounselingSessionFormRawValue['status']>;
   church: FormControl<CounselingSessionFormRawValue['church']>;
   member: FormControl<CounselingSessionFormRawValue['member']>;
   user: FormControl<CounselingSessionFormRawValue['user']>;
@@ -55,10 +61,21 @@ export class CounselingSessionFormService {
           validators: [Validators.required],
         },
       ),
+      subject: new FormControl(counselingSessionRawValue.subject, {
+        validators: [Validators.required],
+      }),
       date: new FormControl(counselingSessionRawValue.date, {
         validators: [Validators.required],
       }),
+      startTime: new FormControl(counselingSessionRawValue.startTime, {
+        validators: [Validators.required],
+      }),
+      endTime: new FormControl(counselingSessionRawValue.endTime),
       notes: new FormControl(counselingSessionRawValue.notes),
+      counselingTasks: new FormControl(counselingSessionRawValue.counselingTasks),
+      status: new FormControl(counselingSessionRawValue.status, {
+        validators: [Validators.required],
+      }),
       church: new FormControl(counselingSessionRawValue.church),
       member: new FormControl(counselingSessionRawValue.member),
       user: new FormControl(counselingSessionRawValue.user),
@@ -89,7 +106,8 @@ export class CounselingSessionFormService {
 
     return {
       id: null,
-      date: currentTime,
+      startTime: currentTime,
+      endTime: currentTime,
     };
   }
 
@@ -98,7 +116,8 @@ export class CounselingSessionFormService {
   ): ICounselingSession | NewCounselingSession {
     return {
       ...rawCounselingSession,
-      date: dayjs(rawCounselingSession.date, DATE_TIME_FORMAT),
+      startTime: dayjs(rawCounselingSession.startTime, DATE_TIME_FORMAT),
+      endTime: dayjs(rawCounselingSession.endTime, DATE_TIME_FORMAT),
     };
   }
 
@@ -107,7 +126,8 @@ export class CounselingSessionFormService {
   ): CounselingSessionFormRawValue | PartialWithRequiredKeyOf<NewCounselingSessionFormRawValue> {
     return {
       ...counselingSession,
-      date: counselingSession.date ? counselingSession.date.format(DATE_TIME_FORMAT) : undefined,
+      startTime: counselingSession.startTime ? counselingSession.startTime.format(DATE_TIME_FORMAT) : undefined,
+      endTime: counselingSession.endTime ? counselingSession.endTime.format(DATE_TIME_FORMAT) : undefined,
     };
   }
 }

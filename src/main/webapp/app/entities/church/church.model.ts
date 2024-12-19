@@ -1,5 +1,4 @@
 import dayjs from 'dayjs/esm';
-import { IUser } from 'app/entities/user/user.model';
 
 export interface IChurch {
   id: number;
@@ -8,7 +7,14 @@ export interface IChurch {
   address?: string | null;
   city?: string | null;
   dateFoundation?: dayjs.Dayjs | null;
-  users?: Pick<IUser, 'id'>[] | null;
+  phone?: string | null;
+  email?: string | null;
+  website?: string | null;
+  facebook?: string | null;
+  instagram?: string | null;
+  twitter?: string | null;
+  youtube?: string | null;
+  about?: string | null;
 }
 
 export type NewChurch = Omit<IChurch, 'id'> & { id: null };

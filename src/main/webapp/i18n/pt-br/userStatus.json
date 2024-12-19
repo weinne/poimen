@@ -1,0 +1,10 @@
+{
+  "poimenApp": {
+    "UserStatus": {
+      "null": "",
+      "ACTIVE": "Active",
+      "INACTIVE": "Inactive",
+      "BLOCKED": "Blocked"
+    }
+  }
+}

@@ -23,6 +23,18 @@
           <dd>
             <span>{{ planRef.price }}</span>
           </dd>
+          <dt><span jhiTranslate="poimenApp.plan.description">Description</span></dt>
+          <dd>
+            <span>{{ planRef.description }}</span>
+          </dd>
+          <dt><span jhiTranslate="poimenApp.plan.features">Features</span></dt>
+          <dd>
+            <span>{{ planRef.features }}</span>
+          </dd>
+          <dt><span jhiTranslate="poimenApp.plan.renewalPeriod">Renewal Period</span></dt>
+          <dd>
+            <span>{{ planRef.renewalPeriod }}</span>
+          </dd>
         </dl>
 
         <button type="submit" (click)="previousState()" class="btn btn-info" data-cy="entityDetailsBackButton">

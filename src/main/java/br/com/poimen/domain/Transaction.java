@@ -17,6 +17,7 @@ import org.hibernate.annotations.CacheConcurrencyStrategy;
 @Entity
 @Table(name = "transaction")
 @Cache(usage = CacheConcurrencyStrategy.READ_WRITE)
+@org.springframework.data.elasticsearch.annotations.Document(indexName = "transaction")
 @SuppressWarnings("common-java:DuplicatedBlocks")
 public class Transaction implements Serializable {
 
@@ -30,6 +31,7 @@ public class Transaction implements Serializable {
 
     @NotNull
     @Column(name = "description", nullable = false)
+    @org.springframework.data.elasticsearch.annotations.Field(type = org.springframework.data.elasticsearch.annotations.FieldType.Text)
     private String description;
 
     @NotNull
@@ -41,20 +43,25 @@ public class Transaction implements Serializable {
     private Instant date;
 
     @Column(name = "payment_method")
+    @org.springframework.data.elasticsearch.annotations.Field(type = org.springframework.data.elasticsearch.annotations.FieldType.Text)
     private String paymentMethod;
 
     @NotNull
     @Column(name = "type", nullable = false)
+    @org.springframework.data.elasticsearch.annotations.Field(type = org.springframework.data.elasticsearch.annotations.FieldType.Text)
     private String type;
 
     @Column(name = "supplier_or_client")
+    @org.springframework.data.elasticsearch.annotations.Field(type = org.springframework.data.elasticsearch.annotations.FieldType.Text)
     private String supplierOrClient;
 
     @Column(name = "invoice_file")
+    @org.springframework.data.elasticsearch.annotations.Field(type = org.springframework.data.elasticsearch.annotations.FieldType.Text)
     private String invoiceFile;
 
     @OneToMany(fetch = FetchType.LAZY, mappedBy = "transaction")
     @Cache(usage = CacheConcurrencyStrategy.READ_WRITE)
+    @org.springframework.data.annotation.Transient
     @JsonIgnoreProperties(value = { "church", "transaction" }, allowSetters = true)
     private Set<Invoice> invoices = new HashSet<>();
 
@@ -63,13 +70,14 @@ public class Transaction implements Serializable {
         value = {
             "users",
             "members",
-            "ministryGroups",
-            "worshipEvents",
-            "tasks",
+            "subscriptions",
             "counselingSessions",
-            "invoices",
+            "tasks",
             "transactions",
-            "planSubscriptions",
+            "invoices",
+            "worshipEvents",
+            "appointments",
+            "ministryGroups",
         },
         allowSetters = true
     )
@@ -77,13 +85,26 @@ public class Transaction implements Serializable {
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JsonIgnoreProperties(
-        value = { "church", "counselingSessions", "ministryMemberships", "tasks", "transactions", "schedules", "worshipEvents" },
+        value = {
+            "church",
+            "counselings",
+            "tasks",
+            "preachIns",
+            "liturgyIns",
+            "appointments",
+            "presidentOfs",
+            "supervisorOfs",
+            "playIns",
+            "participateIns",
+            "memberOfs",
+        },
         allowSetters = true
     )
     private Member member;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    private User user;
+    @JsonIgnoreProperties(value = { "internalUser", "church" }, allowSetters = true)
+    private ApplicationUser user;
 
     // jhipster-needle-entity-add-field - JHipster will add fields here
 
@@ -210,13 +231,13 @@ public class Transaction implements Serializable {
         return this;
     }
 
-    public Transaction addInvoice(Invoice invoice) {
+    public Transaction addInvoices(Invoice invoice) {
         this.invoices.add(invoice);
         invoice.setTransaction(this);
         return this;
     }
 
-    public Transaction removeInvoice(Invoice invoice) {
+    public Transaction removeInvoices(Invoice invoice) {
         this.invoices.remove(invoice);
         invoice.setTransaction(null);
         return this;
@@ -248,16 +269,16 @@ public class Transaction implements Serializable {
         return this;
     }
 
-    public User getUser() {
+    public ApplicationUser getUser() {
         return this.user;
     }
 
-    public void setUser(User user) {
-        this.user = user;
+    public void setUser(ApplicationUser applicationUser) {
+        this.user = applicationUser;
     }
 
-    public Transaction user(User user) {
-        this.setUser(user);
+    public Transaction user(ApplicationUser applicationUser) {
+        this.setUser(applicationUser);
         return this;
     }
 

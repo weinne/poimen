@@ -1,10 +1,13 @@
 import { Injectable, inject } from '@angular/core';
 import { HttpClient, HttpResponse } from '@angular/common/http';
-import { Observable } from 'rxjs';
+import { Observable, asapScheduler, scheduled } from 'rxjs';
+
+import { catchError } from 'rxjs/operators';
 
 import { isPresent } from 'app/core/util/operators';
 import { ApplicationConfigService } from 'app/core/config/application-config.service';
 import { createRequestOption } from 'app/core/request/request-util';
+import { Search } from 'app/core/request/request.model';
 import { IPlan, NewPlan } from '../plan.model';
 
 export type PartialUpdatePlan = Partial<IPlan> & Pick<IPlan, 'id'>;
@@ -18,6 +21,7 @@ export class PlanService {
   protected readonly applicationConfigService = inject(ApplicationConfigService);
 
   protected resourceUrl = this.applicationConfigService.getEndpointFor('api/plans');
+  protected resourceSearchUrl = this.applicationConfigService.getEndpointFor('api/plans/_search');
 
   create(plan: NewPlan): Observable<EntityResponseType> {
     return this.http.post<IPlan>(this.resourceUrl, plan, { observe: 'response' });
@@ -42,6 +46,13 @@ export class PlanService {
 
   delete(id: number): Observable<HttpResponse<{}>> {
     return this.http.delete(`${this.resourceUrl}/${id}`, { observe: 'response' });
+  }
+
+  search(req: Search): Observable<EntityArrayResponseType> {
+    const options = createRequestOption(req);
+    return this.http
+      .get<IPlan[]>(this.resourceSearchUrl, { params: options, observe: 'response' })
+      .pipe(catchError(() => scheduled([new HttpResponse<IPlan[]>()], asapScheduler)));
   }
 
   getPlanIdentifier(plan: Pick<IPlan, 'id'>): number {

@@ -11,11 +11,13 @@
       "error": "Error"
     },
     "indicator": {
+      "binders": "Message broker",
       "diskSpace": "Disk space",
       "mail": "Email",
       "livenessState": "Liveness state",
       "readinessState": "Readiness state",
       "ping": "Application",
+      "elasticsearch": "Elasticsearch",
       "db": "Database"
     },
     "table": {

@@ -1,8 +1,9 @@
 package br.com.poimen.domain;
 
+import static br.com.poimen.domain.AppointmentTestSamples.*;
 import static br.com.poimen.domain.ChurchTestSamples.*;
+import static br.com.poimen.domain.MemberTestSamples.*;
 import static br.com.poimen.domain.MinistryGroupTestSamples.*;
-import static br.com.poimen.domain.MinistryMembershipTestSamples.*;
 import static org.assertj.core.api.Assertions.assertThat;
 
 import br.com.poimen.web.rest.TestUtil;
@@ -39,24 +40,66 @@ class MinistryGroupTest {
     }
 
     @Test
-    void ministryMembershipTest() {
+    void presidentTest() {
         MinistryGroup ministryGroup = getMinistryGroupRandomSampleGenerator();
-        MinistryMembership ministryMembershipBack = getMinistryMembershipRandomSampleGenerator();
+        Member memberBack = getMemberRandomSampleGenerator();
 
-        ministryGroup.addMinistryMembership(ministryMembershipBack);
-        assertThat(ministryGroup.getMinistryMemberships()).containsOnly(ministryMembershipBack);
-        assertThat(ministryMembershipBack.getMinistryGroup()).isEqualTo(ministryGroup);
+        ministryGroup.setPresident(memberBack);
+        assertThat(ministryGroup.getPresident()).isEqualTo(memberBack);
 
-        ministryGroup.removeMinistryMembership(ministryMembershipBack);
-        assertThat(ministryGroup.getMinistryMemberships()).doesNotContain(ministryMembershipBack);
-        assertThat(ministryMembershipBack.getMinistryGroup()).isNull();
+        ministryGroup.president(null);
+        assertThat(ministryGroup.getPresident()).isNull();
+    }
 
-        ministryGroup.ministryMemberships(new HashSet<>(Set.of(ministryMembershipBack)));
-        assertThat(ministryGroup.getMinistryMemberships()).containsOnly(ministryMembershipBack);
-        assertThat(ministryMembershipBack.getMinistryGroup()).isEqualTo(ministryGroup);
+    @Test
+    void supervisorTest() {
+        MinistryGroup ministryGroup = getMinistryGroupRandomSampleGenerator();
+        Member memberBack = getMemberRandomSampleGenerator();
 
-        ministryGroup.setMinistryMemberships(new HashSet<>());
-        assertThat(ministryGroup.getMinistryMemberships()).doesNotContain(ministryMembershipBack);
-        assertThat(ministryMembershipBack.getMinistryGroup()).isNull();
+        ministryGroup.setSupervisor(memberBack);
+        assertThat(ministryGroup.getSupervisor()).isEqualTo(memberBack);
+
+        ministryGroup.supervisor(null);
+        assertThat(ministryGroup.getSupervisor()).isNull();
+    }
+
+    @Test
+    void membersTest() {
+        MinistryGroup ministryGroup = getMinistryGroupRandomSampleGenerator();
+        Member memberBack = getMemberRandomSampleGenerator();
+
+        ministryGroup.addMembers(memberBack);
+        assertThat(ministryGroup.getMembers()).containsOnly(memberBack);
+
+        ministryGroup.removeMembers(memberBack);
+        assertThat(ministryGroup.getMembers()).doesNotContain(memberBack);
+
+        ministryGroup.members(new HashSet<>(Set.of(memberBack)));
+        assertThat(ministryGroup.getMembers()).containsOnly(memberBack);
+
+        ministryGroup.setMembers(new HashSet<>());
+        assertThat(ministryGroup.getMembers()).doesNotContain(memberBack);
+    }
+
+    @Test
+    void appointmentTest() {
+        MinistryGroup ministryGroup = getMinistryGroupRandomSampleGenerator();
+        Appointment appointmentBack = getAppointmentRandomSampleGenerator();
+
+        ministryGroup.addAppointment(appointmentBack);
+        assertThat(ministryGroup.getAppointments()).containsOnly(appointmentBack);
+        assertThat(appointmentBack.getGroup()).isEqualTo(ministryGroup);
+
+        ministryGroup.removeAppointment(appointmentBack);
+        assertThat(ministryGroup.getAppointments()).doesNotContain(appointmentBack);
+        assertThat(appointmentBack.getGroup()).isNull();
+
+        ministryGroup.appointments(new HashSet<>(Set.of(appointmentBack)));
+        assertThat(ministryGroup.getAppointments()).containsOnly(appointmentBack);
+        assertThat(appointmentBack.getGroup()).isEqualTo(ministryGroup);
+
+        ministryGroup.setAppointments(new HashSet<>());
+        assertThat(ministryGroup.getAppointments()).doesNotContain(appointmentBack);
+        assertThat(appointmentBack.getGroup()).isNull();
     }
 }

@@ -1,5 +1,6 @@
 package br.com.poimen.domain;
 
+import static br.com.poimen.domain.ApplicationUserTestSamples.*;
 import static br.com.poimen.domain.ChurchTestSamples.*;
 import static br.com.poimen.domain.InvoiceTestSamples.*;
 import static br.com.poimen.domain.MemberTestSamples.*;
@@ -28,15 +29,15 @@ class TransactionTest {
     }
 
     @Test
-    void invoiceTest() {
+    void invoicesTest() {
         Transaction transaction = getTransactionRandomSampleGenerator();
         Invoice invoiceBack = getInvoiceRandomSampleGenerator();
 
-        transaction.addInvoice(invoiceBack);
+        transaction.addInvoices(invoiceBack);
         assertThat(transaction.getInvoices()).containsOnly(invoiceBack);
         assertThat(invoiceBack.getTransaction()).isEqualTo(transaction);
 
-        transaction.removeInvoice(invoiceBack);
+        transaction.removeInvoices(invoiceBack);
         assertThat(transaction.getInvoices()).doesNotContain(invoiceBack);
         assertThat(invoiceBack.getTransaction()).isNull();
 
@@ -71,5 +72,17 @@ class TransactionTest {
 
         transaction.member(null);
         assertThat(transaction.getMember()).isNull();
+    }
+
+    @Test
+    void userTest() {
+        Transaction transaction = getTransactionRandomSampleGenerator();
+        ApplicationUser applicationUserBack = getApplicationUserRandomSampleGenerator();
+
+        transaction.setUser(applicationUserBack);
+        assertThat(transaction.getUser()).isEqualTo(applicationUserBack);
+
+        transaction.user(null);
+        assertThat(transaction.getUser()).isNull();
     }
 }

@@ -49,7 +49,31 @@ public class WorshipEventAsserts {
             .as("Verify WorshipEvent relevant properties")
             .satisfies(e -> assertThat(e.getDate()).as("check date").isEqualTo(actual.getDate()))
             .satisfies(e -> assertThat(e.getTitle()).as("check title").isEqualTo(actual.getTitle()))
+            .satisfies(e -> assertThat(e.getGuestPreacher()).as("check guestPreacher").isEqualTo(actual.getGuestPreacher()))
             .satisfies(e -> assertThat(e.getDescription()).as("check description").isEqualTo(actual.getDescription()))
+            .satisfies(e -> assertThat(e.getCallToWorshipText()).as("check callToWorshipText").isEqualTo(actual.getCallToWorshipText()))
+            .satisfies(e ->
+                assertThat(e.getConfessionOfSinText()).as("check confessionOfSinText").isEqualTo(actual.getConfessionOfSinText())
+            )
+            .satisfies(e ->
+                assertThat(e.getAssuranceOfPardonText()).as("check assuranceOfPardonText").isEqualTo(actual.getAssuranceOfPardonText())
+            )
+            .satisfies(e -> assertThat(e.getLordSupperText()).as("check lordSupperText").isEqualTo(actual.getLordSupperText()))
+            .satisfies(e -> assertThat(e.getBenedictionText()).as("check benedictionText").isEqualTo(actual.getBenedictionText()))
+            .satisfies(e -> assertThat(e.getConfessionalText()).as("check confessionalText").isEqualTo(actual.getConfessionalText()))
+            .satisfies(e -> assertThat(e.getSermonText()).as("check sermonText").isEqualTo(actual.getSermonText()))
+            .satisfies(e -> assertThat(e.getSermonFile()).as("check sermonFile").isEqualTo(actual.getSermonFile()))
+            .satisfies(e ->
+                assertThat(e.getSermonFileContentType()).as("check sermonFile contenty type").isEqualTo(actual.getSermonFileContentType())
+            )
+            .satisfies(e -> assertThat(e.getSermonLink()).as("check sermonLink").isEqualTo(actual.getSermonLink()))
+            .satisfies(e -> assertThat(e.getYoutubeLink()).as("check youtubeLink").isEqualTo(actual.getYoutubeLink()))
+            .satisfies(e -> assertThat(e.getBulletinFile()).as("check bulletinFile").isEqualTo(actual.getBulletinFile()))
+            .satisfies(e ->
+                assertThat(e.getBulletinFileContentType())
+                    .as("check bulletinFile contenty type")
+                    .isEqualTo(actual.getBulletinFileContentType())
+            )
             .satisfies(e -> assertThat(e.getWorshipType()).as("check worshipType").isEqualTo(actual.getWorshipType()));
     }
 
@@ -66,6 +90,7 @@ public class WorshipEventAsserts {
             .satisfies(e -> assertThat(e.getPreacher()).as("check preacher").isEqualTo(actual.getPreacher()))
             .satisfies(e -> assertThat(e.getLiturgist()).as("check liturgist").isEqualTo(actual.getLiturgist()))
             .satisfies(e -> assertThat(e.getHymns()).as("check hymns").isEqualTo(actual.getHymns()))
-            .satisfies(e -> assertThat(e.getMusicians()).as("check musicians").isEqualTo(actual.getMusicians()));
+            .satisfies(e -> assertThat(e.getMusicians()).as("check musicians").isEqualTo(actual.getMusicians()))
+            .satisfies(e -> assertThat(e.getParticipants()).as("check participants").isEqualTo(actual.getParticipants()));
     }
 }

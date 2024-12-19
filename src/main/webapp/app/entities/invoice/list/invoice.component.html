@@ -15,7 +15,7 @@
         [routerLink]="['/invoice/new']"
       >
         <fa-icon icon="plus"></fa-icon>
-        <span jhiTranslate="poimenApp.invoice.home.createLabel">Create a new Invoice</span>
+        <span class="hidden-sm-down" jhiTranslate="poimenApp.invoice.home.createLabel">Create a new Invoice</span>
       </button>
     </div>
   </h2>
@@ -23,6 +23,32 @@
   <jhi-alert-error></jhi-alert-error>
 
   <jhi-alert></jhi-alert>
+
+  <form name="searchForm" class="row row-cols-sm-auto align-items-center">
+    <div class="col-sm-12">
+      <div class="input-group w-100 mt-3">
+        <label class="visually-hidden" for="currentSearch" jhiTranslate="poimenApp.invoice.home.search">Search for Invoice</label>
+        <input
+          type="text"
+          class="form-control"
+          [(ngModel)]="currentSearch"
+          id="currentSearch"
+          name="currentSearch"
+          placeholder="{{ 'poimenApp.invoice.home.search' | translate }}"
+        />
+
+        <button class="btn btn-info" (click)="search(currentSearch)">
+          <fa-icon icon="search"></fa-icon>
+        </button>
+
+        @if (currentSearch) {
+          <button class="btn btn-danger" (click)="search('')">
+            <fa-icon icon="trash-alt"></fa-icon>
+          </button>
+        }
+      </div>
+    </div>
+  </form>
 
   @if (invoices?.length === 0) {
     <div class="alert alert-warning" id="no-result">
@@ -45,8 +71,9 @@
             <th scope="col" jhiSortBy="number">
               <div class="d-flex">
                 <span jhiTranslate="poimenApp.invoice.number">Number</span>
-
-                <fa-icon class="p-1" icon="sort"></fa-icon>
+                @if (!currentSearch) {
+                  <fa-icon class="p-1" icon="sort"></fa-icon>
+                }
               </div>
             </th>
             <th scope="col" jhiSortBy="issueDate">
@@ -66,31 +93,34 @@
             <th scope="col" jhiSortBy="type">
               <div class="d-flex">
                 <span jhiTranslate="poimenApp.invoice.type">Type</span>
-
-                <fa-icon class="p-1" icon="sort"></fa-icon>
+                @if (!currentSearch) {
+                  <fa-icon class="p-1" icon="sort"></fa-icon>
+                }
               </div>
             </th>
             <th scope="col" jhiSortBy="supplier">
               <div class="d-flex">
                 <span jhiTranslate="poimenApp.invoice.supplier">Supplier</span>
-
-                <fa-icon class="p-1" icon="sort"></fa-icon>
+                @if (!currentSearch) {
+                  <fa-icon class="p-1" icon="sort"></fa-icon>
+                }
               </div>
             </th>
             <th scope="col" jhiSortBy="invoiceFile">
               <div class="d-flex">
                 <span jhiTranslate="poimenApp.invoice.invoiceFile">Invoice File</span>
-
-                <fa-icon class="p-1" icon="sort"></fa-icon>
+                @if (!currentSearch) {
+                  <fa-icon class="p-1" icon="sort"></fa-icon>
+                }
               </div>
             </th>
-            <th scope="col" jhiSortBy="church.id">
+            <th scope="col" jhiSortBy="church.name">
               <div class="d-flex">
                 <span jhiTranslate="poimenApp.invoice.church">Church</span>
                 <fa-icon class="p-1" icon="sort"></fa-icon>
               </div>
             </th>
-            <th scope="col" jhiSortBy="transaction.id">
+            <th scope="col" jhiSortBy="transaction.description">
               <div class="d-flex">
                 <span jhiTranslate="poimenApp.invoice.transaction">Transaction</span>
                 <fa-icon class="p-1" icon="sort"></fa-icon>
@@ -110,18 +140,23 @@
               <td>{{ invoice.totalAmount }}</td>
               <td>{{ invoice.type }}</td>
               <td>{{ invoice.supplier }}</td>
-              <td>{{ invoice.invoiceFile }}</td>
+              <td>
+                @if (invoice.invoiceFile) {
+                  <a (click)="openFile(invoice.invoiceFile, invoice.invoiceFileContentType)" jhiTranslate="entity.action.open">Open</a>
+                  <span>{{ invoice.invoiceFileContentType }}, {{ byteSize(invoice.invoiceFile) }}</span>
+                }
+              </td>
               <td>
                 @if (invoice.church) {
                   <div>
-                    <a [routerLink]="['/church', invoice.church.id, 'view']">{{ invoice.church.id }}</a>
+                    <a [routerLink]="['/church', invoice.church.id, 'view']">{{ invoice.church.name }}</a>
                   </div>
                 }
               </td>
               <td>
                 @if (invoice.transaction) {
                   <div>
-                    <a [routerLink]="['/transaction', invoice.transaction.id, 'view']">{{ invoice.transaction.id }}</a>
+                    <a [routerLink]="['/transaction', invoice.transaction.id, 'view']">{{ invoice.transaction.description }}</a>
                   </div>
                 }
               </td>

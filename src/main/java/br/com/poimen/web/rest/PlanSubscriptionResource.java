@@ -4,6 +4,7 @@ import br.com.poimen.domain.PlanSubscription;
 import br.com.poimen.repository.PlanSubscriptionRepository;
 import br.com.poimen.service.PlanSubscriptionService;
 import br.com.poimen.web.rest.errors.BadRequestAlertException;
+import br.com.poimen.web.rest.errors.ElasticsearchExceptionMapper;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotNull;
 import java.net.URI;
@@ -137,10 +138,13 @@ public class PlanSubscriptionResource {
     /**
      * {@code GET  /plan-subscriptions} : get all the planSubscriptions.
      *
+     * @param eagerload flag to eager load entities from relationships (This is applicable for many-to-many).
      * @return the {@link ResponseEntity} with status {@code 200 (OK)} and the list of planSubscriptions in body.
      */
     @GetMapping("")
-    public List<PlanSubscription> getAllPlanSubscriptions() {
+    public List<PlanSubscription> getAllPlanSubscriptions(
+        @RequestParam(name = "eagerload", required = false, defaultValue = "true") boolean eagerload
+    ) {
         LOG.debug("REST request to get all PlanSubscriptions");
         return planSubscriptionService.findAll();
     }
@@ -171,5 +175,22 @@ public class PlanSubscriptionResource {
         return ResponseEntity.noContent()
             .headers(HeaderUtil.createEntityDeletionAlert(applicationName, true, ENTITY_NAME, id.toString()))
             .build();
+    }
+
+    /**
+     * {@code SEARCH  /plan-subscriptions/_search?query=:query} : search for the planSubscription corresponding
+     * to the query.
+     *
+     * @param query the query of the planSubscription search.
+     * @return the result of the search.
+     */
+    @GetMapping("/_search")
+    public List<PlanSubscription> searchPlanSubscriptions(@RequestParam("query") String query) {
+        LOG.debug("REST request to search PlanSubscriptions for query {}", query);
+        try {
+            return planSubscriptionService.search(query);
+        } catch (RuntimeException e) {
+            throw ElasticsearchExceptionMapper.mapException(e);
+        }
     }
 }

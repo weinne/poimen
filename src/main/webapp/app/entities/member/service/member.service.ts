@@ -1,18 +1,30 @@
 import { Injectable, inject } from '@angular/core';
 import { HttpClient, HttpResponse } from '@angular/common/http';
-import { Observable, map } from 'rxjs';
+import { Observable, asapScheduler, map, scheduled } from 'rxjs';
+
+import { catchError } from 'rxjs/operators';
 
 import dayjs from 'dayjs/esm';
 
 import { isPresent } from 'app/core/util/operators';
+import { DATE_FORMAT } from 'app/config/input.constants';
 import { ApplicationConfigService } from 'app/core/config/application-config.service';
 import { createRequestOption } from 'app/core/request/request-util';
+import { SearchWithPagination } from 'app/core/request/request.model';
 import { IMember, NewMember } from '../member.model';
 
 export type PartialUpdateMember = Partial<IMember> & Pick<IMember, 'id'>;
 
-type RestOf<T extends IMember | NewMember> = Omit<T, 'dateOfBirth'> & {
+type RestOf<T extends IMember | NewMember> = Omit<
+  T,
+  'dateOfBirth' | 'dateOfMarriage' | 'dateOfBaptism' | 'dateOfMembership' | 'dateOfDeath' | 'dateOfExit'
+> & {
   dateOfBirth?: string | null;
+  dateOfMarriage?: string | null;
+  dateOfBaptism?: string | null;
+  dateOfMembership?: string | null;
+  dateOfDeath?: string | null;
+  dateOfExit?: string | null;
 };
 
 export type RestMember = RestOf<IMember>;
@@ -30,6 +42,7 @@ export class MemberService {
   protected readonly applicationConfigService = inject(ApplicationConfigService);
 
   protected resourceUrl = this.applicationConfigService.getEndpointFor('api/members');
+  protected resourceSearchUrl = this.applicationConfigService.getEndpointFor('api/members/_search');
 
   create(member: NewMember): Observable<EntityResponseType> {
     const copy = this.convertDateFromClient(member);
@@ -69,6 +82,15 @@ export class MemberService {
     return this.http.delete(`${this.resourceUrl}/${id}`, { observe: 'response' });
   }
 
+  search(req: SearchWithPagination): Observable<EntityArrayResponseType> {
+    const options = createRequestOption(req);
+    return this.http.get<RestMember[]>(this.resourceSearchUrl, { params: options, observe: 'response' }).pipe(
+      map(res => this.convertResponseArrayFromServer(res)),
+
+      catchError(() => scheduled([new HttpResponse<IMember[]>()], asapScheduler)),
+    );
+  }
+
   getMemberIdentifier(member: Pick<IMember, 'id'>): number {
     return member.id;
   }
@@ -100,7 +122,12 @@ export class MemberService {
   protected convertDateFromClient<T extends IMember | NewMember | PartialUpdateMember>(member: T): RestOf<T> {
     return {
       ...member,
-      dateOfBirth: member.dateOfBirth?.toJSON() ?? null,
+      dateOfBirth: member.dateOfBirth?.format(DATE_FORMAT) ?? null,
+      dateOfMarriage: member.dateOfMarriage?.format(DATE_FORMAT) ?? null,
+      dateOfBaptism: member.dateOfBaptism?.format(DATE_FORMAT) ?? null,
+      dateOfMembership: member.dateOfMembership?.format(DATE_FORMAT) ?? null,
+      dateOfDeath: member.dateOfDeath?.format(DATE_FORMAT) ?? null,
+      dateOfExit: member.dateOfExit?.format(DATE_FORMAT) ?? null,
     };
   }
 
@@ -108,6 +135,11 @@ export class MemberService {
     return {
       ...restMember,
       dateOfBirth: restMember.dateOfBirth ? dayjs(restMember.dateOfBirth) : undefined,
+      dateOfMarriage: restMember.dateOfMarriage ? dayjs(restMember.dateOfMarriage) : undefined,
+      dateOfBaptism: restMember.dateOfBaptism ? dayjs(restMember.dateOfBaptism) : undefined,
+      dateOfMembership: restMember.dateOfMembership ? dayjs(restMember.dateOfMembership) : undefined,
+      dateOfDeath: restMember.dateOfDeath ? dayjs(restMember.dateOfDeath) : undefined,
+      dateOfExit: restMember.dateOfExit ? dayjs(restMember.dateOfExit) : undefined,
     };
   }
 

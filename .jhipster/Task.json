@@ -1,6 +1,6 @@
 {
   "annotations": {
-    "changelogDate": "20241218011233"
+    "changelogDate": "20241219001251"
   },
   "applications": "*",
   "fields": [
@@ -15,16 +15,29 @@
     },
     {
       "fieldName": "dueDate",
-      "fieldType": "Instant"
+      "fieldType": "LocalDate"
     },
     {
-      "fieldName": "completed",
-      "fieldType": "Boolean"
+      "fieldName": "status",
+      "fieldType": "StatusTask",
+      "fieldValidateRules": ["required"],
+      "fieldValues": "PENDING (Pending),IN_PROGRESS (In Progress),DONE (Done)"
+    },
+    {
+      "fieldName": "priority",
+      "fieldType": "PriorityTask",
+      "fieldValidateRules": ["required"],
+      "fieldValues": "LOW (Low),MEDIUM (Medium),HIGH (High)"
+    },
+    {
+      "fieldName": "notes",
+      "fieldType": "TextBlob"
     }
   ],
   "name": "Task",
   "relationships": [
     {
+      "otherEntityField": "name",
       "otherEntityName": "church",
       "otherEntityRelationshipName": "task",
       "relationshipName": "church",
@@ -32,21 +45,20 @@
       "relationshipType": "many-to-one"
     },
     {
+      "otherEntityField": "name",
       "otherEntityName": "member",
-      "otherEntityRelationshipName": "task",
+      "otherEntityRelationshipName": "tasks",
       "relationshipName": "member",
       "relationshipSide": "left",
       "relationshipType": "many-to-one"
     },
     {
-      "otherEntityName": "user",
-      "otherEntityRelationshipName": "task",
+      "otherEntityField": "name",
+      "otherEntityName": "applicationUser",
       "relationshipName": "user",
       "relationshipSide": "left",
-      "relationshipType": "many-to-one",
-      "relationshipWithBuiltInEntity": true
+      "relationshipType": "many-to-one"
     }
   ],
-  "searchEngine": "no",
   "service": "serviceClass"
 }

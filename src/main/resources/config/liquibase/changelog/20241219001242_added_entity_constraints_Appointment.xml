@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="utf-8"?>
+<databaseChangeLog
+    xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+    xmlns:ext="http://www.liquibase.org/xml/ns/dbchangelog-ext"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-latest.xsd
+                        http://www.liquibase.org/xml/ns/dbchangelog-ext http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-ext.xsd">
+    <!--
+        Added the constraints for entity Appointment.
+    -->
+    <changeSet id="20241219001242-2" author="jhipster">
+
+        <addForeignKeyConstraint baseColumnNames="church_id"
+                                 baseTableName="appointment"
+                                 constraintName="fk_appointment__church_id"
+                                 referencedColumnNames="id"
+                                 referencedTableName="church"
+                                 />
+
+        <addForeignKeyConstraint baseColumnNames="member_id"
+                                 baseTableName="appointment"
+                                 constraintName="fk_appointment__member_id"
+                                 referencedColumnNames="id"
+                                 referencedTableName="member"
+                                 />
+
+        <addForeignKeyConstraint baseColumnNames="service_id"
+                                 baseTableName="appointment"
+                                 constraintName="fk_appointment__service_id"
+                                 referencedColumnNames="id"
+                                 referencedTableName="worship_event"
+                                 />
+
+        <addForeignKeyConstraint baseColumnNames="group_id"
+                                 baseTableName="appointment"
+                                 constraintName="fk_appointment__group_id"
+                                 referencedColumnNames="id"
+                                 referencedTableName="ministry_group"
+                                 />
+
+        <addForeignKeyConstraint baseColumnNames="counseling_session_id"
+                                 baseTableName="appointment"
+                                 constraintName="fk_appointment__counseling_session_id"
+                                 referencedColumnNames="id"
+                                 referencedTableName="counseling_session"
+                                 />
+
+        <addForeignKeyConstraint baseColumnNames="user_id"
+                                 baseTableName="appointment"
+                                 constraintName="fk_appointment__user_id"
+                                 referencedColumnNames="id"
+                                 referencedTableName="application_user"
+                                 />
+    </changeSet>
+</databaseChangeLog>

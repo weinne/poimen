@@ -1,6 +1,6 @@
 {
   "annotations": {
-    "changelogDate": "20241218011225"
+    "changelogDate": "20241219001245"
   },
   "applications": "*",
   "fields": [
@@ -10,12 +10,46 @@
       "fieldValidateRules": ["required"]
     },
     {
-      "fieldName": "author",
+      "fieldName": "lyricsAuthor",
+      "fieldType": "String"
+    },
+    {
+      "fieldName": "musicAuthor",
+      "fieldType": "String"
+    },
+    {
+      "fieldName": "hymnary",
       "fieldType": "String"
     },
     {
       "fieldName": "hymnNumber",
       "fieldType": "String"
+    },
+    {
+      "fieldName": "link",
+      "fieldType": "String"
+    },
+    {
+      "fieldName": "youtubeLink",
+      "fieldType": "String"
+    },
+    {
+      "fieldName": "sheetMusic",
+      "fieldType": "AnyBlob",
+      "fieldValidateRules": ["maxbytes"],
+      "fieldValidateRulesMaxbytes": "5242880"
+    },
+    {
+      "fieldName": "midi",
+      "fieldType": "AnyBlob",
+      "fieldValidateRules": ["maxbytes"],
+      "fieldValidateRulesMaxbytes": "5242880"
+    },
+    {
+      "fieldName": "tone",
+      "fieldType": "String",
+      "fieldValidateRules": ["maxlength"],
+      "fieldValidateRulesMaxlength": "5"
     },
     {
       "fieldName": "lyrics",
@@ -25,13 +59,13 @@
   "name": "Hymn",
   "relationships": [
     {
+      "otherEntityField": "title",
       "otherEntityName": "worshipEvent",
-      "otherEntityRelationshipName": "hymn",
-      "relationshipName": "worshipEvent",
+      "otherEntityRelationshipName": "hymns",
+      "relationshipName": "services",
       "relationshipSide": "right",
       "relationshipType": "many-to-many"
     }
   ],
-  "searchEngine": "no",
   "service": "serviceClass"
 }

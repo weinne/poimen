@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="utf-8"?>
+<databaseChangeLog
+    xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+    xmlns:ext="http://www.liquibase.org/xml/ns/dbchangelog-ext"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-latest.xsd
+                        http://www.liquibase.org/xml/ns/dbchangelog-ext http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-ext.xsd">
+    <!--
+        Added the constraints for entity PlanSubscription.
+    -->
+    <changeSet id="20241219001250-2" author="jhipster">
+
+        <addForeignKeyConstraint baseColumnNames="church_id"
+                                 baseTableName="plan_subscription"
+                                 constraintName="fk_plan_subscription__church_id"
+                                 referencedColumnNames="id"
+                                 referencedTableName="church"
+                                 />
+
+        <addForeignKeyConstraint baseColumnNames="plan_id"
+                                 baseTableName="plan_subscription"
+                                 constraintName="fk_plan_subscription__plan_id"
+                                 referencedColumnNames="id"
+                                 referencedTableName="plan"
+                                 />
+
+        <addForeignKeyConstraint baseColumnNames="user_id"
+                                 baseTableName="plan_subscription"
+                                 constraintName="fk_plan_subscription__user_id"
+                                 referencedColumnNames="id"
+                                 referencedTableName="application_user"
+                                 />
+    </changeSet>
+</databaseChangeLog>

@@ -50,7 +50,6 @@ public class MinistryGroupAsserts {
             .satisfies(e -> assertThat(e.getName()).as("check name").isEqualTo(actual.getName()))
             .satisfies(e -> assertThat(e.getDescription()).as("check description").isEqualTo(actual.getDescription()))
             .satisfies(e -> assertThat(e.getEstablishedDate()).as("check establishedDate").isEqualTo(actual.getEstablishedDate()))
-            .satisfies(e -> assertThat(e.getLeader()).as("check leader").isEqualTo(actual.getLeader()))
             .satisfies(e -> assertThat(e.getType()).as("check type").isEqualTo(actual.getType()));
     }
 
@@ -63,6 +62,9 @@ public class MinistryGroupAsserts {
     public static void assertMinistryGroupUpdatableRelationshipsEquals(MinistryGroup expected, MinistryGroup actual) {
         assertThat(expected)
             .as("Verify MinistryGroup relationships")
-            .satisfies(e -> assertThat(e.getChurch()).as("check church").isEqualTo(actual.getChurch()));
+            .satisfies(e -> assertThat(e.getChurch()).as("check church").isEqualTo(actual.getChurch()))
+            .satisfies(e -> assertThat(e.getPresident()).as("check president").isEqualTo(actual.getPresident()))
+            .satisfies(e -> assertThat(e.getSupervisor()).as("check supervisor").isEqualTo(actual.getSupervisor()))
+            .satisfies(e -> assertThat(e.getMembers()).as("check members").isEqualTo(actual.getMembers()));
     }
 }

@@ -6,6 +6,7 @@
         "refreshListLabel": "Atualizar lista",
         "createLabel": "Criar novo Task",
         "createOrEditLabel": "Criar ou editar Task",
+        "search": "Pesquisar por Task",
         "notFound": "Nenhum Task encontrado"
       },
       "created": "Um novo Task foi criado com o identificador {{ param }}",
@@ -21,7 +22,9 @@
       "title": "Title",
       "description": "Description",
       "dueDate": "Due Date",
-      "completed": "Completed",
+      "status": "Status",
+      "priority": "Priority",
+      "notes": "Notes",
       "church": "Church",
       "member": "Member",
       "user": "User"

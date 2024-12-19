@@ -1,0 +1,11 @@
+{
+  "poimenApp": {
+    "MaritalStatus": {
+      "null": "",
+      "SINGLE": "Single",
+      "MARRIED": "Married",
+      "DIVORCED": "Divorced",
+      "WIDOWED": "Widowed"
+    }
+  }
+}

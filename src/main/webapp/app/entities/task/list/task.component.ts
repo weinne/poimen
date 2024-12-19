@@ -8,6 +8,7 @@ import { SortByDirective, SortDirective, SortService, type SortState, sortStateS
 import { DurationPipe, FormatMediumDatePipe, FormatMediumDatetimePipe } from 'app/shared/date';
 import { FormsModule } from '@angular/forms';
 import { DEFAULT_SORT_DATA, ITEM_DELETED_EVENT, SORT } from 'app/config/navigation.constants';
+import { DataUtils } from 'app/core/util/data-util.service';
 import { ITask } from '../task.model';
 import { EntityArrayResponseType, TaskService } from '../service/task.service';
 import { TaskDeleteDialogComponent } from '../delete/task-delete-dialog.component';
@@ -28,16 +29,20 @@ import { TaskDeleteDialogComponent } from '../delete/task-delete-dialog.componen
   ],
 })
 export class TaskComponent implements OnInit {
+  private static readonly NOT_SORTABLE_FIELDS_AFTER_SEARCH = ['title', 'description', 'status', 'priority', 'notes'];
+
   subscription: Subscription | null = null;
   tasks?: ITask[];
   isLoading = false;
 
   sortState = sortStateSignal({});
+  currentSearch = '';
 
   public readonly router = inject(Router);
   protected readonly taskService = inject(TaskService);
   protected readonly activatedRoute = inject(ActivatedRoute);
   protected readonly sortService = inject(SortService);
+  protected dataUtils = inject(DataUtils);
   protected modalService = inject(NgbModal);
   protected ngZone = inject(NgZone);
 
@@ -47,13 +52,30 @@ export class TaskComponent implements OnInit {
     this.subscription = combineLatest([this.activatedRoute.queryParamMap, this.activatedRoute.data])
       .pipe(
         tap(([params, data]) => this.fillComponentAttributeFromRoute(params, data)),
-        tap(() => {
-          if (!this.tasks || this.tasks.length === 0) {
-            this.load();
-          }
-        }),
+        tap(() => this.load()),
       )
       .subscribe();
+  }
+
+  search(query: string): void {
+    const { predicate } = this.sortState();
+    if (query && predicate && TaskComponent.NOT_SORTABLE_FIELDS_AFTER_SEARCH.includes(predicate)) {
+      this.loadDefaultSortState();
+    }
+    this.currentSearch = query;
+    this.navigateToWithComponentValues(this.sortState());
+  }
+
+  loadDefaultSortState(): void {
+    this.sortState.set(this.sortService.parseSortParam(this.activatedRoute.snapshot.data[DEFAULT_SORT_DATA]));
+  }
+
+  byteSize(base64String: string): string {
+    return this.dataUtils.byteSize(base64String);
+  }
+
+  openFile(base64String: string, contentType: string | null | undefined): void {
+    return this.dataUtils.openFile(base64String, contentType);
   }
 
   delete(task: ITask): void {
@@ -77,11 +99,18 @@ export class TaskComponent implements OnInit {
   }
 
   navigateToWithComponentValues(event: SortState): void {
-    this.handleNavigation(event);
+    this.handleNavigation(event, this.currentSearch);
   }
 
   protected fillComponentAttributeFromRoute(params: ParamMap, data: Data): void {
     this.sortState.set(this.sortService.parseSortParam(params.get(SORT) ?? data[DEFAULT_SORT_DATA]));
+    if (params.has('search') && params.get('search') !== '') {
+      this.currentSearch = params.get('search') as string;
+      const { predicate } = this.sortState();
+      if (predicate && TaskComponent.NOT_SORTABLE_FIELDS_AFTER_SEARCH.includes(predicate)) {
+        this.sortState.set({});
+      }
+    }
   }
 
   protected onResponseSuccess(response: EntityArrayResponseType): void {
@@ -99,15 +128,23 @@ export class TaskComponent implements OnInit {
   }
 
   protected queryBackend(): Observable<EntityArrayResponseType> {
+    const { currentSearch } = this;
+
     this.isLoading = true;
     const queryObject: any = {
+      eagerload: true,
+      query: currentSearch,
       sort: this.sortService.buildSortParam(this.sortState()),
     };
+    if (this.currentSearch && this.currentSearch !== '') {
+      return this.taskService.search(queryObject).pipe(tap(() => (this.isLoading = false)));
+    }
     return this.taskService.query(queryObject).pipe(tap(() => (this.isLoading = false)));
   }
 
-  protected handleNavigation(sortState: SortState): void {
+  protected handleNavigation(sortState: SortState, currentSearch?: string): void {
     const queryParamsObj = {
+      search: currentSearch,
       sort: this.sortService.buildSortParam(sortState),
     };
 

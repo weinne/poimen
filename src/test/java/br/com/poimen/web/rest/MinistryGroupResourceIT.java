@@ -3,7 +3,9 @@ package br.com.poimen.web.rest;
 import static br.com.poimen.domain.MinistryGroupAsserts.*;
 import static br.com.poimen.web.rest.TestUtil.createUpdateProxyForBean;
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.awaitility.Awaitility.await;
 import static org.hamcrest.Matchers.hasItem;
+import static org.mockito.Mockito.*;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
@@ -11,17 +13,29 @@ import br.com.poimen.IntegrationTest;
 import br.com.poimen.domain.MinistryGroup;
 import br.com.poimen.domain.enumeration.GroupType;
 import br.com.poimen.repository.MinistryGroupRepository;
+import br.com.poimen.repository.search.MinistryGroupSearchRepository;
+import br.com.poimen.service.MinistryGroupService;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import jakarta.persistence.EntityManager;
-import java.time.Instant;
-import java.time.temporal.ChronoUnit;
+import java.time.LocalDate;
+import java.time.ZoneId;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Random;
+import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicLong;
+import org.assertj.core.util.IterableUtil;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.Mock;
+import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.util.Streamable;
 import org.springframework.http.MediaType;
 import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.web.servlet.MockMvc;
@@ -31,6 +45,7 @@ import org.springframework.transaction.annotation.Transactional;
  * Integration tests for the {@link MinistryGroupResource} REST controller.
  */
 @IntegrationTest
+@ExtendWith(MockitoExtension.class)
 @AutoConfigureMockMvc
 @WithMockUser
 class MinistryGroupResourceIT {
@@ -41,17 +56,15 @@ class MinistryGroupResourceIT {
     private static final String DEFAULT_DESCRIPTION = "AAAAAAAAAA";
     private static final String UPDATED_DESCRIPTION = "BBBBBBBBBB";
 
-    private static final Instant DEFAULT_ESTABLISHED_DATE = Instant.ofEpochMilli(0L);
-    private static final Instant UPDATED_ESTABLISHED_DATE = Instant.now().truncatedTo(ChronoUnit.MILLIS);
-
-    private static final String DEFAULT_LEADER = "AAAAAAAAAA";
-    private static final String UPDATED_LEADER = "BBBBBBBBBB";
+    private static final LocalDate DEFAULT_ESTABLISHED_DATE = LocalDate.ofEpochDay(0L);
+    private static final LocalDate UPDATED_ESTABLISHED_DATE = LocalDate.now(ZoneId.systemDefault());
 
     private static final GroupType DEFAULT_TYPE = GroupType.DEPARTMENT;
     private static final GroupType UPDATED_TYPE = GroupType.INTERNAL_SOCIETY;
 
     private static final String ENTITY_API_URL = "/api/ministry-groups";
     private static final String ENTITY_API_URL_ID = ENTITY_API_URL + "/{id}";
+    private static final String ENTITY_SEARCH_API_URL = "/api/ministry-groups/_search";
 
     private static Random random = new Random();
     private static AtomicLong longCount = new AtomicLong(random.nextInt() + (2 * Integer.MAX_VALUE));
@@ -61,6 +74,15 @@ class MinistryGroupResourceIT {
 
     @Autowired
     private MinistryGroupRepository ministryGroupRepository;
+
+    @Mock
+    private MinistryGroupRepository ministryGroupRepositoryMock;
+
+    @Mock
+    private MinistryGroupService ministryGroupServiceMock;
+
+    @Autowired
+    private MinistryGroupSearchRepository ministryGroupSearchRepository;
 
     @Autowired
     private EntityManager em;
@@ -83,7 +105,6 @@ class MinistryGroupResourceIT {
             .name(DEFAULT_NAME)
             .description(DEFAULT_DESCRIPTION)
             .establishedDate(DEFAULT_ESTABLISHED_DATE)
-            .leader(DEFAULT_LEADER)
             .type(DEFAULT_TYPE);
     }
 
@@ -98,7 +119,6 @@ class MinistryGroupResourceIT {
             .name(UPDATED_NAME)
             .description(UPDATED_DESCRIPTION)
             .establishedDate(UPDATED_ESTABLISHED_DATE)
-            .leader(UPDATED_LEADER)
             .type(UPDATED_TYPE);
     }
 
@@ -111,6 +131,7 @@ class MinistryGroupResourceIT {
     public void cleanup() {
         if (insertedMinistryGroup != null) {
             ministryGroupRepository.delete(insertedMinistryGroup);
+            ministryGroupSearchRepository.delete(insertedMinistryGroup);
             insertedMinistryGroup = null;
         }
     }
@@ -119,6 +140,7 @@ class MinistryGroupResourceIT {
     @Transactional
     void createMinistryGroup() throws Exception {
         long databaseSizeBeforeCreate = getRepositoryCount();
+        int searchDatabaseSizeBefore = IterableUtil.sizeOf(ministryGroupSearchRepository.findAll());
         // Create the MinistryGroup
         var returnedMinistryGroup = om.readValue(
             restMinistryGroupMockMvc
@@ -134,6 +156,13 @@ class MinistryGroupResourceIT {
         assertIncrementedRepositoryCount(databaseSizeBeforeCreate);
         assertMinistryGroupUpdatableFieldsEquals(returnedMinistryGroup, getPersistedMinistryGroup(returnedMinistryGroup));
 
+        await()
+            .atMost(5, TimeUnit.SECONDS)
+            .untilAsserted(() -> {
+                int searchDatabaseSizeAfter = IterableUtil.sizeOf(ministryGroupSearchRepository.findAll());
+                assertThat(searchDatabaseSizeAfter).isEqualTo(searchDatabaseSizeBefore + 1);
+            });
+
         insertedMinistryGroup = returnedMinistryGroup;
     }
 
@@ -144,6 +173,7 @@ class MinistryGroupResourceIT {
         ministryGroup.setId(1L);
 
         long databaseSizeBeforeCreate = getRepositoryCount();
+        int searchDatabaseSizeBefore = IterableUtil.sizeOf(ministryGroupSearchRepository.findAll());
 
         // An entity with an existing ID cannot be created, so this API call must fail
         restMinistryGroupMockMvc
@@ -152,12 +182,15 @@ class MinistryGroupResourceIT {
 
         // Validate the MinistryGroup in the database
         assertSameRepositoryCount(databaseSizeBeforeCreate);
+        int searchDatabaseSizeAfter = IterableUtil.sizeOf(ministryGroupSearchRepository.findAll());
+        assertThat(searchDatabaseSizeAfter).isEqualTo(searchDatabaseSizeBefore);
     }
 
     @Test
     @Transactional
     void checkNameIsRequired() throws Exception {
         long databaseSizeBeforeTest = getRepositoryCount();
+        int searchDatabaseSizeBefore = IterableUtil.sizeOf(ministryGroupSearchRepository.findAll());
         // set the field null
         ministryGroup.setName(null);
 
@@ -168,12 +201,16 @@ class MinistryGroupResourceIT {
             .andExpect(status().isBadRequest());
 
         assertSameRepositoryCount(databaseSizeBeforeTest);
+
+        int searchDatabaseSizeAfter = IterableUtil.sizeOf(ministryGroupSearchRepository.findAll());
+        assertThat(searchDatabaseSizeAfter).isEqualTo(searchDatabaseSizeBefore);
     }
 
     @Test
     @Transactional
     void checkTypeIsRequired() throws Exception {
         long databaseSizeBeforeTest = getRepositoryCount();
+        int searchDatabaseSizeBefore = IterableUtil.sizeOf(ministryGroupSearchRepository.findAll());
         // set the field null
         ministryGroup.setType(null);
 
@@ -184,6 +221,9 @@ class MinistryGroupResourceIT {
             .andExpect(status().isBadRequest());
 
         assertSameRepositoryCount(databaseSizeBeforeTest);
+
+        int searchDatabaseSizeAfter = IterableUtil.sizeOf(ministryGroupSearchRepository.findAll());
+        assertThat(searchDatabaseSizeAfter).isEqualTo(searchDatabaseSizeBefore);
     }
 
     @Test
@@ -201,8 +241,24 @@ class MinistryGroupResourceIT {
             .andExpect(jsonPath("$.[*].name").value(hasItem(DEFAULT_NAME)))
             .andExpect(jsonPath("$.[*].description").value(hasItem(DEFAULT_DESCRIPTION)))
             .andExpect(jsonPath("$.[*].establishedDate").value(hasItem(DEFAULT_ESTABLISHED_DATE.toString())))
-            .andExpect(jsonPath("$.[*].leader").value(hasItem(DEFAULT_LEADER)))
             .andExpect(jsonPath("$.[*].type").value(hasItem(DEFAULT_TYPE.toString())));
+    }
+
+    @SuppressWarnings({ "unchecked" })
+    void getAllMinistryGroupsWithEagerRelationshipsIsEnabled() throws Exception {
+        when(ministryGroupServiceMock.findAllWithEagerRelationships(any())).thenReturn(new PageImpl(new ArrayList<>()));
+
+        restMinistryGroupMockMvc.perform(get(ENTITY_API_URL + "?eagerload=true")).andExpect(status().isOk());
+
+        verify(ministryGroupServiceMock, times(1)).findAllWithEagerRelationships(any());
+    }
+
+    @SuppressWarnings({ "unchecked" })
+    void getAllMinistryGroupsWithEagerRelationshipsIsNotEnabled() throws Exception {
+        when(ministryGroupServiceMock.findAllWithEagerRelationships(any())).thenReturn(new PageImpl(new ArrayList<>()));
+
+        restMinistryGroupMockMvc.perform(get(ENTITY_API_URL + "?eagerload=false")).andExpect(status().isOk());
+        verify(ministryGroupRepositoryMock, times(1)).findAll(any(Pageable.class));
     }
 
     @Test
@@ -220,7 +276,6 @@ class MinistryGroupResourceIT {
             .andExpect(jsonPath("$.name").value(DEFAULT_NAME))
             .andExpect(jsonPath("$.description").value(DEFAULT_DESCRIPTION))
             .andExpect(jsonPath("$.establishedDate").value(DEFAULT_ESTABLISHED_DATE.toString()))
-            .andExpect(jsonPath("$.leader").value(DEFAULT_LEADER))
             .andExpect(jsonPath("$.type").value(DEFAULT_TYPE.toString()));
     }
 
@@ -238,6 +293,8 @@ class MinistryGroupResourceIT {
         insertedMinistryGroup = ministryGroupRepository.saveAndFlush(ministryGroup);
 
         long databaseSizeBeforeUpdate = getRepositoryCount();
+        ministryGroupSearchRepository.save(ministryGroup);
+        int searchDatabaseSizeBefore = IterableUtil.sizeOf(ministryGroupSearchRepository.findAll());
 
         // Update the ministryGroup
         MinistryGroup updatedMinistryGroup = ministryGroupRepository.findById(ministryGroup.getId()).orElseThrow();
@@ -247,7 +304,6 @@ class MinistryGroupResourceIT {
             .name(UPDATED_NAME)
             .description(UPDATED_DESCRIPTION)
             .establishedDate(UPDATED_ESTABLISHED_DATE)
-            .leader(UPDATED_LEADER)
             .type(UPDATED_TYPE);
 
         restMinistryGroupMockMvc
@@ -261,12 +317,24 @@ class MinistryGroupResourceIT {
         // Validate the MinistryGroup in the database
         assertSameRepositoryCount(databaseSizeBeforeUpdate);
         assertPersistedMinistryGroupToMatchAllProperties(updatedMinistryGroup);
+
+        await()
+            .atMost(5, TimeUnit.SECONDS)
+            .untilAsserted(() -> {
+                int searchDatabaseSizeAfter = IterableUtil.sizeOf(ministryGroupSearchRepository.findAll());
+                assertThat(searchDatabaseSizeAfter).isEqualTo(searchDatabaseSizeBefore);
+                List<MinistryGroup> ministryGroupSearchList = Streamable.of(ministryGroupSearchRepository.findAll()).toList();
+                MinistryGroup testMinistryGroupSearch = ministryGroupSearchList.get(searchDatabaseSizeAfter - 1);
+
+                assertMinistryGroupAllPropertiesEquals(testMinistryGroupSearch, updatedMinistryGroup);
+            });
     }
 
     @Test
     @Transactional
     void putNonExistingMinistryGroup() throws Exception {
         long databaseSizeBeforeUpdate = getRepositoryCount();
+        int searchDatabaseSizeBefore = IterableUtil.sizeOf(ministryGroupSearchRepository.findAll());
         ministryGroup.setId(longCount.incrementAndGet());
 
         // If the entity doesn't have an ID, it will throw BadRequestAlertException
@@ -280,12 +348,15 @@ class MinistryGroupResourceIT {
 
         // Validate the MinistryGroup in the database
         assertSameRepositoryCount(databaseSizeBeforeUpdate);
+        int searchDatabaseSizeAfter = IterableUtil.sizeOf(ministryGroupSearchRepository.findAll());
+        assertThat(searchDatabaseSizeAfter).isEqualTo(searchDatabaseSizeBefore);
     }
 
     @Test
     @Transactional
     void putWithIdMismatchMinistryGroup() throws Exception {
         long databaseSizeBeforeUpdate = getRepositoryCount();
+        int searchDatabaseSizeBefore = IterableUtil.sizeOf(ministryGroupSearchRepository.findAll());
         ministryGroup.setId(longCount.incrementAndGet());
 
         // If url ID doesn't match entity ID, it will throw BadRequestAlertException
@@ -299,12 +370,15 @@ class MinistryGroupResourceIT {
 
         // Validate the MinistryGroup in the database
         assertSameRepositoryCount(databaseSizeBeforeUpdate);
+        int searchDatabaseSizeAfter = IterableUtil.sizeOf(ministryGroupSearchRepository.findAll());
+        assertThat(searchDatabaseSizeAfter).isEqualTo(searchDatabaseSizeBefore);
     }
 
     @Test
     @Transactional
     void putWithMissingIdPathParamMinistryGroup() throws Exception {
         long databaseSizeBeforeUpdate = getRepositoryCount();
+        int searchDatabaseSizeBefore = IterableUtil.sizeOf(ministryGroupSearchRepository.findAll());
         ministryGroup.setId(longCount.incrementAndGet());
 
         // If url ID doesn't match entity ID, it will throw BadRequestAlertException
@@ -314,6 +388,8 @@ class MinistryGroupResourceIT {
 
         // Validate the MinistryGroup in the database
         assertSameRepositoryCount(databaseSizeBeforeUpdate);
+        int searchDatabaseSizeAfter = IterableUtil.sizeOf(ministryGroupSearchRepository.findAll());
+        assertThat(searchDatabaseSizeAfter).isEqualTo(searchDatabaseSizeBefore);
     }
 
     @Test
@@ -363,7 +439,6 @@ class MinistryGroupResourceIT {
             .name(UPDATED_NAME)
             .description(UPDATED_DESCRIPTION)
             .establishedDate(UPDATED_ESTABLISHED_DATE)
-            .leader(UPDATED_LEADER)
             .type(UPDATED_TYPE);
 
         restMinistryGroupMockMvc
@@ -384,6 +459,7 @@ class MinistryGroupResourceIT {
     @Transactional
     void patchNonExistingMinistryGroup() throws Exception {
         long databaseSizeBeforeUpdate = getRepositoryCount();
+        int searchDatabaseSizeBefore = IterableUtil.sizeOf(ministryGroupSearchRepository.findAll());
         ministryGroup.setId(longCount.incrementAndGet());
 
         // If the entity doesn't have an ID, it will throw BadRequestAlertException
@@ -397,12 +473,15 @@ class MinistryGroupResourceIT {
 
         // Validate the MinistryGroup in the database
         assertSameRepositoryCount(databaseSizeBeforeUpdate);
+        int searchDatabaseSizeAfter = IterableUtil.sizeOf(ministryGroupSearchRepository.findAll());
+        assertThat(searchDatabaseSizeAfter).isEqualTo(searchDatabaseSizeBefore);
     }
 
     @Test
     @Transactional
     void patchWithIdMismatchMinistryGroup() throws Exception {
         long databaseSizeBeforeUpdate = getRepositoryCount();
+        int searchDatabaseSizeBefore = IterableUtil.sizeOf(ministryGroupSearchRepository.findAll());
         ministryGroup.setId(longCount.incrementAndGet());
 
         // If url ID doesn't match entity ID, it will throw BadRequestAlertException
@@ -416,12 +495,15 @@ class MinistryGroupResourceIT {
 
         // Validate the MinistryGroup in the database
         assertSameRepositoryCount(databaseSizeBeforeUpdate);
+        int searchDatabaseSizeAfter = IterableUtil.sizeOf(ministryGroupSearchRepository.findAll());
+        assertThat(searchDatabaseSizeAfter).isEqualTo(searchDatabaseSizeBefore);
     }
 
     @Test
     @Transactional
     void patchWithMissingIdPathParamMinistryGroup() throws Exception {
         long databaseSizeBeforeUpdate = getRepositoryCount();
+        int searchDatabaseSizeBefore = IterableUtil.sizeOf(ministryGroupSearchRepository.findAll());
         ministryGroup.setId(longCount.incrementAndGet());
 
         // If url ID doesn't match entity ID, it will throw BadRequestAlertException
@@ -431,6 +513,8 @@ class MinistryGroupResourceIT {
 
         // Validate the MinistryGroup in the database
         assertSameRepositoryCount(databaseSizeBeforeUpdate);
+        int searchDatabaseSizeAfter = IterableUtil.sizeOf(ministryGroupSearchRepository.findAll());
+        assertThat(searchDatabaseSizeAfter).isEqualTo(searchDatabaseSizeBefore);
     }
 
     @Test
@@ -438,8 +522,12 @@ class MinistryGroupResourceIT {
     void deleteMinistryGroup() throws Exception {
         // Initialize the database
         insertedMinistryGroup = ministryGroupRepository.saveAndFlush(ministryGroup);
+        ministryGroupRepository.save(ministryGroup);
+        ministryGroupSearchRepository.save(ministryGroup);
 
         long databaseSizeBeforeDelete = getRepositoryCount();
+        int searchDatabaseSizeBefore = IterableUtil.sizeOf(ministryGroupSearchRepository.findAll());
+        assertThat(searchDatabaseSizeBefore).isEqualTo(databaseSizeBeforeDelete);
 
         // Delete the ministryGroup
         restMinistryGroupMockMvc
@@ -448,6 +536,27 @@ class MinistryGroupResourceIT {
 
         // Validate the database contains one less item
         assertDecrementedRepositoryCount(databaseSizeBeforeDelete);
+        int searchDatabaseSizeAfter = IterableUtil.sizeOf(ministryGroupSearchRepository.findAll());
+        assertThat(searchDatabaseSizeAfter).isEqualTo(searchDatabaseSizeBefore - 1);
+    }
+
+    @Test
+    @Transactional
+    void searchMinistryGroup() throws Exception {
+        // Initialize the database
+        insertedMinistryGroup = ministryGroupRepository.saveAndFlush(ministryGroup);
+        ministryGroupSearchRepository.save(ministryGroup);
+
+        // Search the ministryGroup
+        restMinistryGroupMockMvc
+            .perform(get(ENTITY_SEARCH_API_URL + "?query=id:" + ministryGroup.getId()))
+            .andExpect(status().isOk())
+            .andExpect(content().contentType(MediaType.APPLICATION_JSON_VALUE))
+            .andExpect(jsonPath("$.[*].id").value(hasItem(ministryGroup.getId().intValue())))
+            .andExpect(jsonPath("$.[*].name").value(hasItem(DEFAULT_NAME)))
+            .andExpect(jsonPath("$.[*].description").value(hasItem(DEFAULT_DESCRIPTION)))
+            .andExpect(jsonPath("$.[*].establishedDate").value(hasItem(DEFAULT_ESTABLISHED_DATE.toString())))
+            .andExpect(jsonPath("$.[*].type").value(hasItem(DEFAULT_TYPE.toString())));
     }
 
     protected long getRepositoryCount() {

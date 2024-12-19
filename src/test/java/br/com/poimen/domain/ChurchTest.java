@@ -1,5 +1,7 @@
 package br.com.poimen.domain;
 
+import static br.com.poimen.domain.ApplicationUserTestSamples.*;
+import static br.com.poimen.domain.AppointmentTestSamples.*;
 import static br.com.poimen.domain.ChurchTestSamples.*;
 import static br.com.poimen.domain.CounselingSessionTestSamples.*;
 import static br.com.poimen.domain.InvoiceTestSamples.*;
@@ -33,6 +35,28 @@ class ChurchTest {
     }
 
     @Test
+    void userTest() {
+        Church church = getChurchRandomSampleGenerator();
+        ApplicationUser applicationUserBack = getApplicationUserRandomSampleGenerator();
+
+        church.addUser(applicationUserBack);
+        assertThat(church.getUsers()).containsOnly(applicationUserBack);
+        assertThat(applicationUserBack.getChurch()).isEqualTo(church);
+
+        church.removeUser(applicationUserBack);
+        assertThat(church.getUsers()).doesNotContain(applicationUserBack);
+        assertThat(applicationUserBack.getChurch()).isNull();
+
+        church.users(new HashSet<>(Set.of(applicationUserBack)));
+        assertThat(church.getUsers()).containsOnly(applicationUserBack);
+        assertThat(applicationUserBack.getChurch()).isEqualTo(church);
+
+        church.setUsers(new HashSet<>());
+        assertThat(church.getUsers()).doesNotContain(applicationUserBack);
+        assertThat(applicationUserBack.getChurch()).isNull();
+    }
+
+    @Test
     void memberTest() {
         Church church = getChurchRandomSampleGenerator();
         Member memberBack = getMemberRandomSampleGenerator();
@@ -55,69 +79,25 @@ class ChurchTest {
     }
 
     @Test
-    void ministryGroupTest() {
+    void subscriptionTest() {
         Church church = getChurchRandomSampleGenerator();
-        MinistryGroup ministryGroupBack = getMinistryGroupRandomSampleGenerator();
+        PlanSubscription planSubscriptionBack = getPlanSubscriptionRandomSampleGenerator();
 
-        church.addMinistryGroup(ministryGroupBack);
-        assertThat(church.getMinistryGroups()).containsOnly(ministryGroupBack);
-        assertThat(ministryGroupBack.getChurch()).isEqualTo(church);
+        church.addSubscription(planSubscriptionBack);
+        assertThat(church.getSubscriptions()).containsOnly(planSubscriptionBack);
+        assertThat(planSubscriptionBack.getChurch()).isEqualTo(church);
 
-        church.removeMinistryGroup(ministryGroupBack);
-        assertThat(church.getMinistryGroups()).doesNotContain(ministryGroupBack);
-        assertThat(ministryGroupBack.getChurch()).isNull();
+        church.removeSubscription(planSubscriptionBack);
+        assertThat(church.getSubscriptions()).doesNotContain(planSubscriptionBack);
+        assertThat(planSubscriptionBack.getChurch()).isNull();
 
-        church.ministryGroups(new HashSet<>(Set.of(ministryGroupBack)));
-        assertThat(church.getMinistryGroups()).containsOnly(ministryGroupBack);
-        assertThat(ministryGroupBack.getChurch()).isEqualTo(church);
+        church.subscriptions(new HashSet<>(Set.of(planSubscriptionBack)));
+        assertThat(church.getSubscriptions()).containsOnly(planSubscriptionBack);
+        assertThat(planSubscriptionBack.getChurch()).isEqualTo(church);
 
-        church.setMinistryGroups(new HashSet<>());
-        assertThat(church.getMinistryGroups()).doesNotContain(ministryGroupBack);
-        assertThat(ministryGroupBack.getChurch()).isNull();
-    }
-
-    @Test
-    void worshipEventTest() {
-        Church church = getChurchRandomSampleGenerator();
-        WorshipEvent worshipEventBack = getWorshipEventRandomSampleGenerator();
-
-        church.addWorshipEvent(worshipEventBack);
-        assertThat(church.getWorshipEvents()).containsOnly(worshipEventBack);
-        assertThat(worshipEventBack.getChurch()).isEqualTo(church);
-
-        church.removeWorshipEvent(worshipEventBack);
-        assertThat(church.getWorshipEvents()).doesNotContain(worshipEventBack);
-        assertThat(worshipEventBack.getChurch()).isNull();
-
-        church.worshipEvents(new HashSet<>(Set.of(worshipEventBack)));
-        assertThat(church.getWorshipEvents()).containsOnly(worshipEventBack);
-        assertThat(worshipEventBack.getChurch()).isEqualTo(church);
-
-        church.setWorshipEvents(new HashSet<>());
-        assertThat(church.getWorshipEvents()).doesNotContain(worshipEventBack);
-        assertThat(worshipEventBack.getChurch()).isNull();
-    }
-
-    @Test
-    void taskTest() {
-        Church church = getChurchRandomSampleGenerator();
-        Task taskBack = getTaskRandomSampleGenerator();
-
-        church.addTask(taskBack);
-        assertThat(church.getTasks()).containsOnly(taskBack);
-        assertThat(taskBack.getChurch()).isEqualTo(church);
-
-        church.removeTask(taskBack);
-        assertThat(church.getTasks()).doesNotContain(taskBack);
-        assertThat(taskBack.getChurch()).isNull();
-
-        church.tasks(new HashSet<>(Set.of(taskBack)));
-        assertThat(church.getTasks()).containsOnly(taskBack);
-        assertThat(taskBack.getChurch()).isEqualTo(church);
-
-        church.setTasks(new HashSet<>());
-        assertThat(church.getTasks()).doesNotContain(taskBack);
-        assertThat(taskBack.getChurch()).isNull();
+        church.setSubscriptions(new HashSet<>());
+        assertThat(church.getSubscriptions()).doesNotContain(planSubscriptionBack);
+        assertThat(planSubscriptionBack.getChurch()).isNull();
     }
 
     @Test
@@ -143,25 +123,25 @@ class ChurchTest {
     }
 
     @Test
-    void invoiceTest() {
+    void taskTest() {
         Church church = getChurchRandomSampleGenerator();
-        Invoice invoiceBack = getInvoiceRandomSampleGenerator();
+        Task taskBack = getTaskRandomSampleGenerator();
 
-        church.addInvoice(invoiceBack);
-        assertThat(church.getInvoices()).containsOnly(invoiceBack);
-        assertThat(invoiceBack.getChurch()).isEqualTo(church);
+        church.addTask(taskBack);
+        assertThat(church.getTasks()).containsOnly(taskBack);
+        assertThat(taskBack.getChurch()).isEqualTo(church);
 
-        church.removeInvoice(invoiceBack);
-        assertThat(church.getInvoices()).doesNotContain(invoiceBack);
-        assertThat(invoiceBack.getChurch()).isNull();
+        church.removeTask(taskBack);
+        assertThat(church.getTasks()).doesNotContain(taskBack);
+        assertThat(taskBack.getChurch()).isNull();
 
-        church.invoices(new HashSet<>(Set.of(invoiceBack)));
-        assertThat(church.getInvoices()).containsOnly(invoiceBack);
-        assertThat(invoiceBack.getChurch()).isEqualTo(church);
+        church.tasks(new HashSet<>(Set.of(taskBack)));
+        assertThat(church.getTasks()).containsOnly(taskBack);
+        assertThat(taskBack.getChurch()).isEqualTo(church);
 
-        church.setInvoices(new HashSet<>());
-        assertThat(church.getInvoices()).doesNotContain(invoiceBack);
-        assertThat(invoiceBack.getChurch()).isNull();
+        church.setTasks(new HashSet<>());
+        assertThat(church.getTasks()).doesNotContain(taskBack);
+        assertThat(taskBack.getChurch()).isNull();
     }
 
     @Test
@@ -187,24 +167,90 @@ class ChurchTest {
     }
 
     @Test
-    void planSubscriptionTest() {
+    void invoiceTest() {
         Church church = getChurchRandomSampleGenerator();
-        PlanSubscription planSubscriptionBack = getPlanSubscriptionRandomSampleGenerator();
+        Invoice invoiceBack = getInvoiceRandomSampleGenerator();
 
-        church.addPlanSubscription(planSubscriptionBack);
-        assertThat(church.getPlanSubscriptions()).containsOnly(planSubscriptionBack);
-        assertThat(planSubscriptionBack.getChurch()).isEqualTo(church);
+        church.addInvoice(invoiceBack);
+        assertThat(church.getInvoices()).containsOnly(invoiceBack);
+        assertThat(invoiceBack.getChurch()).isEqualTo(church);
 
-        church.removePlanSubscription(planSubscriptionBack);
-        assertThat(church.getPlanSubscriptions()).doesNotContain(planSubscriptionBack);
-        assertThat(planSubscriptionBack.getChurch()).isNull();
+        church.removeInvoice(invoiceBack);
+        assertThat(church.getInvoices()).doesNotContain(invoiceBack);
+        assertThat(invoiceBack.getChurch()).isNull();
 
-        church.planSubscriptions(new HashSet<>(Set.of(planSubscriptionBack)));
-        assertThat(church.getPlanSubscriptions()).containsOnly(planSubscriptionBack);
-        assertThat(planSubscriptionBack.getChurch()).isEqualTo(church);
+        church.invoices(new HashSet<>(Set.of(invoiceBack)));
+        assertThat(church.getInvoices()).containsOnly(invoiceBack);
+        assertThat(invoiceBack.getChurch()).isEqualTo(church);
 
-        church.setPlanSubscriptions(new HashSet<>());
-        assertThat(church.getPlanSubscriptions()).doesNotContain(planSubscriptionBack);
-        assertThat(planSubscriptionBack.getChurch()).isNull();
+        church.setInvoices(new HashSet<>());
+        assertThat(church.getInvoices()).doesNotContain(invoiceBack);
+        assertThat(invoiceBack.getChurch()).isNull();
+    }
+
+    @Test
+    void worshipEventTest() {
+        Church church = getChurchRandomSampleGenerator();
+        WorshipEvent worshipEventBack = getWorshipEventRandomSampleGenerator();
+
+        church.addWorshipEvent(worshipEventBack);
+        assertThat(church.getWorshipEvents()).containsOnly(worshipEventBack);
+        assertThat(worshipEventBack.getChurch()).isEqualTo(church);
+
+        church.removeWorshipEvent(worshipEventBack);
+        assertThat(church.getWorshipEvents()).doesNotContain(worshipEventBack);
+        assertThat(worshipEventBack.getChurch()).isNull();
+
+        church.worshipEvents(new HashSet<>(Set.of(worshipEventBack)));
+        assertThat(church.getWorshipEvents()).containsOnly(worshipEventBack);
+        assertThat(worshipEventBack.getChurch()).isEqualTo(church);
+
+        church.setWorshipEvents(new HashSet<>());
+        assertThat(church.getWorshipEvents()).doesNotContain(worshipEventBack);
+        assertThat(worshipEventBack.getChurch()).isNull();
+    }
+
+    @Test
+    void appointmentTest() {
+        Church church = getChurchRandomSampleGenerator();
+        Appointment appointmentBack = getAppointmentRandomSampleGenerator();
+
+        church.addAppointment(appointmentBack);
+        assertThat(church.getAppointments()).containsOnly(appointmentBack);
+        assertThat(appointmentBack.getChurch()).isEqualTo(church);
+
+        church.removeAppointment(appointmentBack);
+        assertThat(church.getAppointments()).doesNotContain(appointmentBack);
+        assertThat(appointmentBack.getChurch()).isNull();
+
+        church.appointments(new HashSet<>(Set.of(appointmentBack)));
+        assertThat(church.getAppointments()).containsOnly(appointmentBack);
+        assertThat(appointmentBack.getChurch()).isEqualTo(church);
+
+        church.setAppointments(new HashSet<>());
+        assertThat(church.getAppointments()).doesNotContain(appointmentBack);
+        assertThat(appointmentBack.getChurch()).isNull();
+    }
+
+    @Test
+    void ministryGroupTest() {
+        Church church = getChurchRandomSampleGenerator();
+        MinistryGroup ministryGroupBack = getMinistryGroupRandomSampleGenerator();
+
+        church.addMinistryGroup(ministryGroupBack);
+        assertThat(church.getMinistryGroups()).containsOnly(ministryGroupBack);
+        assertThat(ministryGroupBack.getChurch()).isEqualTo(church);
+
+        church.removeMinistryGroup(ministryGroupBack);
+        assertThat(church.getMinistryGroups()).doesNotContain(ministryGroupBack);
+        assertThat(ministryGroupBack.getChurch()).isNull();
+
+        church.ministryGroups(new HashSet<>(Set.of(ministryGroupBack)));
+        assertThat(church.getMinistryGroups()).containsOnly(ministryGroupBack);
+        assertThat(ministryGroupBack.getChurch()).isEqualTo(church);
+
+        church.setMinistryGroups(new HashSet<>());
+        assertThat(church.getMinistryGroups()).doesNotContain(ministryGroupBack);
+        assertThat(ministryGroupBack.getChurch()).isNull();
     }
 }

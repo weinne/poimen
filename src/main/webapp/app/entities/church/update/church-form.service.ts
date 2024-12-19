@@ -1,8 +1,6 @@
 import { Injectable } from '@angular/core';
 import { FormControl, FormGroup, Validators } from '@angular/forms';
 
-import dayjs from 'dayjs/esm';
-import { DATE_TIME_FORMAT } from 'app/config/input.constants';
 import { IChurch, NewChurch } from '../church.model';
 
 /**
@@ -16,27 +14,23 @@ type PartialWithRequiredKeyOf<T extends { id: unknown }> = Partial<Omit<T, 'id'>
  */
 type ChurchFormGroupInput = IChurch | PartialWithRequiredKeyOf<NewChurch>;
 
-/**
- * Type that converts some properties for forms.
- */
-type FormValueOf<T extends IChurch | NewChurch> = Omit<T, 'dateFoundation'> & {
-  dateFoundation?: string | null;
-};
-
-type ChurchFormRawValue = FormValueOf<IChurch>;
-
-type NewChurchFormRawValue = FormValueOf<NewChurch>;
-
-type ChurchFormDefaults = Pick<NewChurch, 'id' | 'dateFoundation' | 'users'>;
+type ChurchFormDefaults = Pick<NewChurch, 'id'>;
 
 type ChurchFormGroupContent = {
-  id: FormControl<ChurchFormRawValue['id'] | NewChurch['id']>;
-  name: FormControl<ChurchFormRawValue['name']>;
-  cnpj: FormControl<ChurchFormRawValue['cnpj']>;
-  address: FormControl<ChurchFormRawValue['address']>;
-  city: FormControl<ChurchFormRawValue['city']>;
-  dateFoundation: FormControl<ChurchFormRawValue['dateFoundation']>;
-  users: FormControl<ChurchFormRawValue['users']>;
+  id: FormControl<IChurch['id'] | NewChurch['id']>;
+  name: FormControl<IChurch['name']>;
+  cnpj: FormControl<IChurch['cnpj']>;
+  address: FormControl<IChurch['address']>;
+  city: FormControl<IChurch['city']>;
+  dateFoundation: FormControl<IChurch['dateFoundation']>;
+  phone: FormControl<IChurch['phone']>;
+  email: FormControl<IChurch['email']>;
+  website: FormControl<IChurch['website']>;
+  facebook: FormControl<IChurch['facebook']>;
+  instagram: FormControl<IChurch['instagram']>;
+  twitter: FormControl<IChurch['twitter']>;
+  youtube: FormControl<IChurch['youtube']>;
+  about: FormControl<IChurch['about']>;
 };
 
 export type ChurchFormGroup = FormGroup<ChurchFormGroupContent>;
@@ -44,10 +38,10 @@ export type ChurchFormGroup = FormGroup<ChurchFormGroupContent>;
 @Injectable({ providedIn: 'root' })
 export class ChurchFormService {
   createChurchFormGroup(church: ChurchFormGroupInput = { id: null }): ChurchFormGroup {
-    const churchRawValue = this.convertChurchToChurchRawValue({
+    const churchRawValue = {
       ...this.getFormDefaults(),
       ...church,
-    });
+    };
     return new FormGroup<ChurchFormGroupContent>({
       id: new FormControl(
         { value: churchRawValue.id, disabled: true },
@@ -60,7 +54,7 @@ export class ChurchFormService {
         validators: [Validators.required],
       }),
       cnpj: new FormControl(churchRawValue.cnpj, {
-        validators: [Validators.required],
+        validators: [Validators.required, Validators.pattern('^\\d{14}$')],
       }),
       address: new FormControl(churchRawValue.address, {
         validators: [Validators.required],
@@ -71,16 +65,23 @@ export class ChurchFormService {
       dateFoundation: new FormControl(churchRawValue.dateFoundation, {
         validators: [Validators.required],
       }),
-      users: new FormControl(churchRawValue.users ?? []),
+      phone: new FormControl(churchRawValue.phone),
+      email: new FormControl(churchRawValue.email),
+      website: new FormControl(churchRawValue.website),
+      facebook: new FormControl(churchRawValue.facebook),
+      instagram: new FormControl(churchRawValue.instagram),
+      twitter: new FormControl(churchRawValue.twitter),
+      youtube: new FormControl(churchRawValue.youtube),
+      about: new FormControl(churchRawValue.about),
     });
   }
 
   getChurch(form: ChurchFormGroup): IChurch | NewChurch {
-    return this.convertChurchRawValueToChurch(form.getRawValue() as ChurchFormRawValue | NewChurchFormRawValue);
+    return form.getRawValue() as IChurch | NewChurch;
   }
 
   resetForm(form: ChurchFormGroup, church: ChurchFormGroupInput): void {
-    const churchRawValue = this.convertChurchToChurchRawValue({ ...this.getFormDefaults(), ...church });
+    const churchRawValue = { ...this.getFormDefaults(), ...church };
     form.reset(
       {
         ...churchRawValue,
@@ -90,29 +91,8 @@ export class ChurchFormService {
   }
 
   private getFormDefaults(): ChurchFormDefaults {
-    const currentTime = dayjs();
-
     return {
       id: null,
-      dateFoundation: currentTime,
-      users: [],
-    };
-  }
-
-  private convertChurchRawValueToChurch(rawChurch: ChurchFormRawValue | NewChurchFormRawValue): IChurch | NewChurch {
-    return {
-      ...rawChurch,
-      dateFoundation: dayjs(rawChurch.dateFoundation, DATE_TIME_FORMAT),
-    };
-  }
-
-  private convertChurchToChurchRawValue(
-    church: IChurch | (Partial<NewChurch> & ChurchFormDefaults),
-  ): ChurchFormRawValue | PartialWithRequiredKeyOf<NewChurchFormRawValue> {
-    return {
-      ...church,
-      dateFoundation: church.dateFoundation ? church.dateFoundation.format(DATE_TIME_FORMAT) : undefined,
-      users: church.users ?? [],
     };
   }
 }

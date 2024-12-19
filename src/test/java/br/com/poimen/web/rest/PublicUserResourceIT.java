@@ -7,6 +7,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import br.com.poimen.IntegrationTest;
 import br.com.poimen.domain.User;
 import br.com.poimen.repository.UserRepository;
+import br.com.poimen.repository.search.UserSearchRepository;
 import br.com.poimen.security.AuthoritiesConstants;
 import br.com.poimen.service.UserService;
 import java.util.Objects;
@@ -36,6 +37,14 @@ class PublicUserResourceIT {
 
     @Autowired
     private UserService userService;
+
+    /**
+     * This repository is mocked in the br.com.poimen.repository.search test package.
+     *
+     * @see br.com.poimen.repository.search.UserSearchRepositoryMockConfiguration
+     */
+    @Autowired
+    private UserSearchRepository mockUserSearchRepository;
 
     @Autowired
     private CacheManager cacheManager;

@@ -1,11 +1,11 @@
-id;name;price
-1;provided yet;rosin juicy
-2;navigate enormously;giggle
-3;arrogantly;forager unnaturally
-4;unnaturally manipulate encouragement;across tattered
-5;across thorn;especially bleakly propound
-6;sizzle;stained vice mobilize
-7;deflect;tabletop tousle
-8;modulo;card
-9;freely above judicious;with beneath courageously
-10;but requite;mostly
+id;name;price;description;features;renewal_period
+1;provided yet;rosin juicy;navigate enormously;../fake-data/blob/hipster.txt;giggle
+2;arrogantly;forager unnaturally;unnaturally manipulate encouragement;../fake-data/blob/hipster.txt;across tattered
+3;across thorn;especially bleakly propound;sizzle;../fake-data/blob/hipster.txt;stained vice mobilize
+4;deflect;tabletop tousle;modulo;../fake-data/blob/hipster.txt;card
+5;freely above judicious;with beneath courageously;but requite;../fake-data/blob/hipster.txt;mostly
+6;tame;pish;upward gah;../fake-data/blob/hipster.txt;unibody whose ew
+7;weekly ick flame;scar astride;neglect lest inwardly;../fake-data/blob/hipster.txt;rebel commonly
+8;amidst;vastly phooey inasmuch;hence;../fake-data/blob/hipster.txt;or allegation confusion
+9;along;hope;pale phew;../fake-data/blob/hipster.txt;selfishly opposite
+10;another ugh;brisk juggernaut below;iterate bicycle busily;../fake-data/blob/hipster.txt;biodegrade

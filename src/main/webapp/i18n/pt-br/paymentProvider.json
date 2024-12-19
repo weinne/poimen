@@ -1,0 +1,10 @@
+{
+  "poimenApp": {
+    "PaymentProvider": {
+      "null": "",
+      "STRIPE": "Stripe",
+      "PAYPAL": "PayPal",
+      "OTHER": "Other"
+    }
+  }
+}

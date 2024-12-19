@@ -1,6 +1,7 @@
 package br.com.poimen;
 
 import br.com.poimen.config.AsyncSyncConfiguration;
+import br.com.poimen.config.EmbeddedElasticsearch;
 import br.com.poimen.config.EmbeddedSQL;
 import br.com.poimen.config.JacksonConfiguration;
 import java.lang.annotation.ElementType;
@@ -15,6 +16,7 @@ import org.springframework.boot.test.context.SpringBootTest;
 @Target(ElementType.TYPE)
 @Retention(RetentionPolicy.RUNTIME)
 @SpringBootTest(classes = { PoimenApp.class, JacksonConfiguration.class, AsyncSyncConfiguration.class })
+@EmbeddedElasticsearch
 @EmbeddedSQL
 public @interface IntegrationTest {
 }

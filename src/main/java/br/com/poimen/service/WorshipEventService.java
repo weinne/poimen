@@ -2,6 +2,7 @@ package br.com.poimen.service;
 
 import br.com.poimen.domain.WorshipEvent;
 import br.com.poimen.repository.WorshipEventRepository;
+import br.com.poimen.repository.search.WorshipEventSearchRepository;
 import java.util.Optional;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -21,8 +22,11 @@ public class WorshipEventService {
 
     private final WorshipEventRepository worshipEventRepository;
 
-    public WorshipEventService(WorshipEventRepository worshipEventRepository) {
+    private final WorshipEventSearchRepository worshipEventSearchRepository;
+
+    public WorshipEventService(WorshipEventRepository worshipEventRepository, WorshipEventSearchRepository worshipEventSearchRepository) {
         this.worshipEventRepository = worshipEventRepository;
+        this.worshipEventSearchRepository = worshipEventSearchRepository;
     }
 
     /**
@@ -33,7 +37,9 @@ public class WorshipEventService {
      */
     public WorshipEvent save(WorshipEvent worshipEvent) {
         LOG.debug("Request to save WorshipEvent : {}", worshipEvent);
-        return worshipEventRepository.save(worshipEvent);
+        worshipEvent = worshipEventRepository.save(worshipEvent);
+        worshipEventSearchRepository.index(worshipEvent);
+        return worshipEvent;
     }
 
     /**
@@ -44,7 +50,9 @@ public class WorshipEventService {
      */
     public WorshipEvent update(WorshipEvent worshipEvent) {
         LOG.debug("Request to update WorshipEvent : {}", worshipEvent);
-        return worshipEventRepository.save(worshipEvent);
+        worshipEvent = worshipEventRepository.save(worshipEvent);
+        worshipEventSearchRepository.index(worshipEvent);
+        return worshipEvent;
     }
 
     /**
@@ -65,8 +73,50 @@ public class WorshipEventService {
                 if (worshipEvent.getTitle() != null) {
                     existingWorshipEvent.setTitle(worshipEvent.getTitle());
                 }
+                if (worshipEvent.getGuestPreacher() != null) {
+                    existingWorshipEvent.setGuestPreacher(worshipEvent.getGuestPreacher());
+                }
                 if (worshipEvent.getDescription() != null) {
                     existingWorshipEvent.setDescription(worshipEvent.getDescription());
+                }
+                if (worshipEvent.getCallToWorshipText() != null) {
+                    existingWorshipEvent.setCallToWorshipText(worshipEvent.getCallToWorshipText());
+                }
+                if (worshipEvent.getConfessionOfSinText() != null) {
+                    existingWorshipEvent.setConfessionOfSinText(worshipEvent.getConfessionOfSinText());
+                }
+                if (worshipEvent.getAssuranceOfPardonText() != null) {
+                    existingWorshipEvent.setAssuranceOfPardonText(worshipEvent.getAssuranceOfPardonText());
+                }
+                if (worshipEvent.getLordSupperText() != null) {
+                    existingWorshipEvent.setLordSupperText(worshipEvent.getLordSupperText());
+                }
+                if (worshipEvent.getBenedictionText() != null) {
+                    existingWorshipEvent.setBenedictionText(worshipEvent.getBenedictionText());
+                }
+                if (worshipEvent.getConfessionalText() != null) {
+                    existingWorshipEvent.setConfessionalText(worshipEvent.getConfessionalText());
+                }
+                if (worshipEvent.getSermonText() != null) {
+                    existingWorshipEvent.setSermonText(worshipEvent.getSermonText());
+                }
+                if (worshipEvent.getSermonFile() != null) {
+                    existingWorshipEvent.setSermonFile(worshipEvent.getSermonFile());
+                }
+                if (worshipEvent.getSermonFileContentType() != null) {
+                    existingWorshipEvent.setSermonFileContentType(worshipEvent.getSermonFileContentType());
+                }
+                if (worshipEvent.getSermonLink() != null) {
+                    existingWorshipEvent.setSermonLink(worshipEvent.getSermonLink());
+                }
+                if (worshipEvent.getYoutubeLink() != null) {
+                    existingWorshipEvent.setYoutubeLink(worshipEvent.getYoutubeLink());
+                }
+                if (worshipEvent.getBulletinFile() != null) {
+                    existingWorshipEvent.setBulletinFile(worshipEvent.getBulletinFile());
+                }
+                if (worshipEvent.getBulletinFileContentType() != null) {
+                    existingWorshipEvent.setBulletinFileContentType(worshipEvent.getBulletinFileContentType());
                 }
                 if (worshipEvent.getWorshipType() != null) {
                     existingWorshipEvent.setWorshipType(worshipEvent.getWorshipType());
@@ -74,7 +124,11 @@ public class WorshipEventService {
 
                 return existingWorshipEvent;
             })
-            .map(worshipEventRepository::save);
+            .map(worshipEventRepository::save)
+            .map(savedWorshipEvent -> {
+                worshipEventSearchRepository.index(savedWorshipEvent);
+                return savedWorshipEvent;
+            });
     }
 
     /**
@@ -118,5 +172,19 @@ public class WorshipEventService {
     public void delete(Long id) {
         LOG.debug("Request to delete WorshipEvent : {}", id);
         worshipEventRepository.deleteById(id);
+        worshipEventSearchRepository.deleteFromIndexById(id);
+    }
+
+    /**
+     * Search for the worshipEvent corresponding to the query.
+     *
+     * @param query the query of the search.
+     * @param pageable the pagination information.
+     * @return the list of entities.
+     */
+    @Transactional(readOnly = true)
+    public Page<WorshipEvent> search(String query, Pageable pageable) {
+        LOG.debug("Request to search for a page of WorshipEvents for query {}", query);
+        return worshipEventSearchRepository.search(query, pageable);
     }
 }

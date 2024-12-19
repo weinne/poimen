@@ -51,7 +51,15 @@ public class ChurchAsserts {
             .satisfies(e -> assertThat(e.getCnpj()).as("check cnpj").isEqualTo(actual.getCnpj()))
             .satisfies(e -> assertThat(e.getAddress()).as("check address").isEqualTo(actual.getAddress()))
             .satisfies(e -> assertThat(e.getCity()).as("check city").isEqualTo(actual.getCity()))
-            .satisfies(e -> assertThat(e.getDateFoundation()).as("check dateFoundation").isEqualTo(actual.getDateFoundation()));
+            .satisfies(e -> assertThat(e.getDateFoundation()).as("check dateFoundation").isEqualTo(actual.getDateFoundation()))
+            .satisfies(e -> assertThat(e.getPhone()).as("check phone").isEqualTo(actual.getPhone()))
+            .satisfies(e -> assertThat(e.getEmail()).as("check email").isEqualTo(actual.getEmail()))
+            .satisfies(e -> assertThat(e.getWebsite()).as("check website").isEqualTo(actual.getWebsite()))
+            .satisfies(e -> assertThat(e.getFacebook()).as("check facebook").isEqualTo(actual.getFacebook()))
+            .satisfies(e -> assertThat(e.getInstagram()).as("check instagram").isEqualTo(actual.getInstagram()))
+            .satisfies(e -> assertThat(e.getTwitter()).as("check twitter").isEqualTo(actual.getTwitter()))
+            .satisfies(e -> assertThat(e.getYoutube()).as("check youtube").isEqualTo(actual.getYoutube()))
+            .satisfies(e -> assertThat(e.getAbout()).as("check about").isEqualTo(actual.getAbout()));
     }
 
     /**

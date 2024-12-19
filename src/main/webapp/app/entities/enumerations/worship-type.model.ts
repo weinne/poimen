@@ -1,11 +1,11 @@
 export enum WorshipType {
-  SUNDAY_SERVICE = 'SUNDAY_SERVICE',
+  SUNDAY_SERVICE = 'Sunday Service',
 
-  PRAYER_MEETING = 'PRAYER_MEETING',
+  PRAYER_MEETING = 'Prayer Meeting',
 
-  BIBLE_STUDY = 'BIBLE_STUDY',
+  BIBLE_STUDY = 'Bible Study',
 
-  YOUTH_SERVICE = 'YOUTH_SERVICE',
+  SPECIAL_EVENT = 'Special Event',
 
-  SPECIAL_EVENT = 'SPECIAL_EVENT',
+  OTHER = 'Other',
 }

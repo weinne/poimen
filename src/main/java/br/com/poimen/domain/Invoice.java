@@ -15,6 +15,7 @@ import org.hibernate.annotations.CacheConcurrencyStrategy;
 @Entity
 @Table(name = "invoice")
 @Cache(usage = CacheConcurrencyStrategy.READ_WRITE)
+@org.springframework.data.elasticsearch.annotations.Document(indexName = "invoice")
 @SuppressWarnings("common-java:DuplicatedBlocks")
 public class Invoice implements Serializable {
 
@@ -28,6 +29,7 @@ public class Invoice implements Serializable {
 
     @NotNull
     @Column(name = "number", nullable = false)
+    @org.springframework.data.elasticsearch.annotations.Field(type = org.springframework.data.elasticsearch.annotations.FieldType.Text)
     private String number;
 
     @NotNull
@@ -40,26 +42,33 @@ public class Invoice implements Serializable {
 
     @NotNull
     @Column(name = "type", nullable = false)
+    @org.springframework.data.elasticsearch.annotations.Field(type = org.springframework.data.elasticsearch.annotations.FieldType.Text)
     private String type;
 
     @Column(name = "supplier")
+    @org.springframework.data.elasticsearch.annotations.Field(type = org.springframework.data.elasticsearch.annotations.FieldType.Text)
     private String supplier;
 
+    @Lob
     @Column(name = "invoice_file")
-    private String invoiceFile;
+    private byte[] invoiceFile;
+
+    @Column(name = "invoice_file_content_type")
+    private String invoiceFileContentType;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JsonIgnoreProperties(
         value = {
             "users",
             "members",
-            "ministryGroups",
-            "worshipEvents",
-            "tasks",
+            "subscriptions",
             "counselingSessions",
-            "invoices",
+            "tasks",
             "transactions",
-            "planSubscriptions",
+            "invoices",
+            "worshipEvents",
+            "appointments",
+            "ministryGroups",
         },
         allowSetters = true
     )
@@ -149,17 +158,30 @@ public class Invoice implements Serializable {
         this.supplier = supplier;
     }
 
-    public String getInvoiceFile() {
+    public byte[] getInvoiceFile() {
         return this.invoiceFile;
     }
 
-    public Invoice invoiceFile(String invoiceFile) {
+    public Invoice invoiceFile(byte[] invoiceFile) {
         this.setInvoiceFile(invoiceFile);
         return this;
     }
 
-    public void setInvoiceFile(String invoiceFile) {
+    public void setInvoiceFile(byte[] invoiceFile) {
         this.invoiceFile = invoiceFile;
+    }
+
+    public String getInvoiceFileContentType() {
+        return this.invoiceFileContentType;
+    }
+
+    public Invoice invoiceFileContentType(String invoiceFileContentType) {
+        this.invoiceFileContentType = invoiceFileContentType;
+        return this;
+    }
+
+    public void setInvoiceFileContentType(String invoiceFileContentType) {
+        this.invoiceFileContentType = invoiceFileContentType;
     }
 
     public Church getChurch() {
@@ -218,6 +240,7 @@ public class Invoice implements Serializable {
             ", type='" + getType() + "'" +
             ", supplier='" + getSupplier() + "'" +
             ", invoiceFile='" + getInvoiceFile() + "'" +
+            ", invoiceFileContentType='" + getInvoiceFileContentType() + "'" +
             "}";
     }
 }

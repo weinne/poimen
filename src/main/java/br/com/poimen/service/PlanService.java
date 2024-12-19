@@ -2,8 +2,10 @@ package br.com.poimen.service;
 
 import br.com.poimen.domain.Plan;
 import br.com.poimen.repository.PlanRepository;
+import br.com.poimen.repository.search.PlanSearchRepository;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.StreamSupport;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
@@ -20,8 +22,11 @@ public class PlanService {
 
     private final PlanRepository planRepository;
 
-    public PlanService(PlanRepository planRepository) {
+    private final PlanSearchRepository planSearchRepository;
+
+    public PlanService(PlanRepository planRepository, PlanSearchRepository planSearchRepository) {
         this.planRepository = planRepository;
+        this.planSearchRepository = planSearchRepository;
     }
 
     /**
@@ -32,7 +37,9 @@ public class PlanService {
      */
     public Plan save(Plan plan) {
         LOG.debug("Request to save Plan : {}", plan);
-        return planRepository.save(plan);
+        plan = planRepository.save(plan);
+        planSearchRepository.index(plan);
+        return plan;
     }
 
     /**
@@ -43,7 +50,9 @@ public class PlanService {
      */
     public Plan update(Plan plan) {
         LOG.debug("Request to update Plan : {}", plan);
-        return planRepository.save(plan);
+        plan = planRepository.save(plan);
+        planSearchRepository.index(plan);
+        return plan;
     }
 
     /**
@@ -64,10 +73,23 @@ public class PlanService {
                 if (plan.getPrice() != null) {
                     existingPlan.setPrice(plan.getPrice());
                 }
+                if (plan.getDescription() != null) {
+                    existingPlan.setDescription(plan.getDescription());
+                }
+                if (plan.getFeatures() != null) {
+                    existingPlan.setFeatures(plan.getFeatures());
+                }
+                if (plan.getRenewalPeriod() != null) {
+                    existingPlan.setRenewalPeriod(plan.getRenewalPeriod());
+                }
 
                 return existingPlan;
             })
-            .map(planRepository::save);
+            .map(planRepository::save)
+            .map(savedPlan -> {
+                planSearchRepository.index(savedPlan);
+                return savedPlan;
+            });
     }
 
     /**
@@ -101,5 +123,22 @@ public class PlanService {
     public void delete(Long id) {
         LOG.debug("Request to delete Plan : {}", id);
         planRepository.deleteById(id);
+        planSearchRepository.deleteFromIndexById(id);
+    }
+
+    /**
+     * Search for the plan corresponding to the query.
+     *
+     * @param query the query of the search.
+     * @return the list of entities.
+     */
+    @Transactional(readOnly = true)
+    public List<Plan> search(String query) {
+        LOG.debug("Request to search Plans for query {}", query);
+        try {
+            return StreamSupport.stream(planSearchRepository.search(query).spliterator(), false).toList();
+        } catch (RuntimeException e) {
+            throw e;
+        }
     }
 }

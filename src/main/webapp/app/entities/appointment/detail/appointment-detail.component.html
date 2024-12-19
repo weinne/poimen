@@ -1,0 +1,117 @@
+<div class="d-flex justify-content-center">
+  <div class="col-8">
+    @if (appointment(); as appointmentRef) {
+      <div>
+        <h2 data-cy="appointmentDetailsHeading"><span jhiTranslate="poimenApp.appointment.detail.title">Appointment</span></h2>
+
+        <hr />
+
+        <jhi-alert-error></jhi-alert-error>
+
+        <jhi-alert></jhi-alert>
+
+        <dl class="row-md jh-entity-details">
+          <dt><span jhiTranslate="global.field.id">ID</span></dt>
+          <dd>
+            <span>{{ appointmentRef.id }}</span>
+          </dd>
+          <dt><span jhiTranslate="poimenApp.appointment.subject">Subject</span></dt>
+          <dd>
+            <span>{{ appointmentRef.subject }}</span>
+          </dd>
+          <dt><span jhiTranslate="poimenApp.appointment.startTime">Start Time</span></dt>
+          <dd>
+            <span>{{ appointmentRef.startTime | formatMediumDatetime }}</span>
+          </dd>
+          <dt><span jhiTranslate="poimenApp.appointment.endTime">End Time</span></dt>
+          <dd>
+            <span>{{ appointmentRef.endTime | formatMediumDatetime }}</span>
+          </dd>
+          <dt><span jhiTranslate="poimenApp.appointment.notes">Notes</span></dt>
+          <dd>
+            <span>{{ appointmentRef.notes }}</span>
+          </dd>
+          <dt><span jhiTranslate="poimenApp.appointment.local">Local</span></dt>
+          <dd>
+            <span>{{ appointmentRef.local }}</span>
+          </dd>
+          <dt><span jhiTranslate="poimenApp.appointment.appointmentType">Appointment Type</span></dt>
+          <dd>
+            <span [jhiTranslate]="'poimenApp.AppointmentType.' + (appointmentRef.appointmentType ?? 'null')">{{
+              {
+                null: '',
+                SERVICE: 'Worship Service',
+                MEETING: 'Meeting',
+                EVENT: 'Event',
+                REHEARSAL: 'Rehearsal',
+                VISIT: 'Visit',
+                COUNSELING: 'Counseling',
+                DISCIPLESHIP: 'Discipleship',
+                SMALL_GROUP: 'Small Group',
+                OTHER: 'Other',
+              }[appointmentRef.appointmentType ?? 'null']
+            }}</span>
+          </dd>
+          <dt><span jhiTranslate="poimenApp.appointment.church">Church</span></dt>
+          <dd>
+            @if (appointment()!.church) {
+              <div>
+                <a [routerLink]="['/church', appointment()!.church?.id, 'view']">{{ appointmentRef.church?.name }}</a>
+              </div>
+            }
+          </dd>
+          <dt><span jhiTranslate="poimenApp.appointment.member">Member</span></dt>
+          <dd>
+            @if (appointment()!.member) {
+              <div>
+                <a [routerLink]="['/member', appointment()!.member?.id, 'view']">{{ appointmentRef.member?.name }}</a>
+              </div>
+            }
+          </dd>
+          <dt><span jhiTranslate="poimenApp.appointment.service">Service</span></dt>
+          <dd>
+            @if (appointment()!.service) {
+              <div>
+                <a [routerLink]="['/worship-event', appointment()!.service?.id, 'view']">{{ appointmentRef.service?.title }}</a>
+              </div>
+            }
+          </dd>
+          <dt><span jhiTranslate="poimenApp.appointment.group">Group</span></dt>
+          <dd>
+            @if (appointment()!.group) {
+              <div>
+                <a [routerLink]="['/ministry-group', appointment()!.group?.id, 'view']">{{ appointmentRef.group?.name }}</a>
+              </div>
+            }
+          </dd>
+          <dt><span jhiTranslate="poimenApp.appointment.counselingSession">Counseling Session</span></dt>
+          <dd>
+            @if (appointment()!.counselingSession) {
+              <div>
+                <a [routerLink]="['/counseling-session', appointment()!.counselingSession?.id, 'view']">{{
+                  appointmentRef.counselingSession?.subject
+                }}</a>
+              </div>
+            }
+          </dd>
+          <dt><span jhiTranslate="poimenApp.appointment.user">User</span></dt>
+          <dd>
+            @if (appointment()!.user) {
+              <div>
+                <a [routerLink]="['/application-user', appointment()!.user?.id, 'view']">{{ appointmentRef.user?.name }}</a>
+              </div>
+            }
+          </dd>
+        </dl>
+
+        <button type="submit" (click)="previousState()" class="btn btn-info" data-cy="entityDetailsBackButton">
+          <fa-icon icon="arrow-left"></fa-icon>&nbsp;<span jhiTranslate="entity.action.back">Back</span>
+        </button>
+
+        <button type="button" [routerLink]="['/appointment', appointmentRef.id, 'edit']" class="btn btn-primary">
+          <fa-icon icon="pencil-alt"></fa-icon>&nbsp;<span jhiTranslate="entity.action.edit">Edit</span>
+        </button>
+      </div>
+    }
+  </div>
+</div>

@@ -3,31 +3,40 @@ import dayjs from 'dayjs/esm';
 import { IPlanSubscription, NewPlanSubscription } from './plan-subscription.model';
 
 export const sampleWithRequiredData: IPlanSubscription = {
-  id: 5018,
-  startDate: dayjs('2024-12-17T14:23'),
-  active: false,
-  planName: 'worth requirement glum',
+  id: 27660,
+  description: 'incidentally unfurl sermon',
+  startDate: dayjs('2024-12-18'),
+  status: 'PAUSED',
+  paymentProvider: 'STRIPE',
+  paymentStatus: 'PENDING',
 };
 
 export const sampleWithPartialData: IPlanSubscription = {
-  id: 20760,
-  startDate: dayjs('2024-12-17T23:23'),
-  active: true,
-  planName: 'anxiously',
+  id: 32490,
+  description: 'oh faithfully knowingly',
+  startDate: dayjs('2024-12-18'),
+  status: 'PAUSED',
+  paymentProvider: 'STRIPE',
+  paymentStatus: 'FAILED',
 };
 
 export const sampleWithFullData: IPlanSubscription = {
-  id: 11066,
-  startDate: dayjs('2024-12-17T23:19'),
-  endDate: dayjs('2024-12-17T07:32'),
-  active: true,
-  planName: 'slowly bravely',
+  id: 11685,
+  description: 'emerge requite deflect',
+  startDate: dayjs('2024-12-18'),
+  endDate: dayjs('2024-12-18'),
+  status: 'CANCELED',
+  paymentProvider: 'PAYPAL',
+  paymentStatus: 'REFUNDED',
+  paymentReference: 'upbeat puritan attend',
 };
 
 export const sampleWithNewData: NewPlanSubscription = {
-  startDate: dayjs('2024-12-17T20:20'),
-  active: true,
-  planName: 'pace pearl',
+  description: 'marvelous',
+  startDate: dayjs('2024-12-18'),
+  status: 'ACTIVE',
+  paymentProvider: 'PAYPAL',
+  paymentStatus: 'REFUNDED',
   id: null,
 };
 

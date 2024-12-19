@@ -2,6 +2,7 @@ import { TestBed } from '@angular/core/testing';
 import { HttpTestingController, provideHttpClientTesting } from '@angular/common/http/testing';
 import { provideHttpClient } from '@angular/common/http';
 
+import { DATE_FORMAT } from 'app/config/input.constants';
 import { ICounselingSession } from '../counseling-session.model';
 import { sampleWithFullData, sampleWithNewData, sampleWithPartialData, sampleWithRequiredData } from '../counseling-session.test-samples';
 
@@ -9,7 +10,9 @@ import { CounselingSessionService, RestCounselingSession } from './counseling-se
 
 const requireRestSample: RestCounselingSession = {
   ...sampleWithRequiredData,
-  date: sampleWithRequiredData.date?.toJSON(),
+  date: sampleWithRequiredData.date?.format(DATE_FORMAT),
+  startTime: sampleWithRequiredData.startTime?.toJSON(),
+  endTime: sampleWithRequiredData.endTime?.toJSON(),
 };
 
 describe('CounselingSession Service', () => {
@@ -95,6 +98,20 @@ describe('CounselingSession Service', () => {
       const req = httpMock.expectOne({ method: 'DELETE' });
       req.flush({ status: 200 });
       expect(expectedResult).toBe(expected);
+    });
+
+    it('should handle exceptions for searching a CounselingSession', () => {
+      const queryObject: any = {
+        page: 0,
+        size: 20,
+        query: '',
+        sort: [],
+      };
+      service.search(queryObject).subscribe(() => expectedResult);
+
+      const req = httpMock.expectOne({ method: 'GET' });
+      req.flush(null, { status: 500, statusText: 'Internal Server Error' });
+      expect(expectedResult).toBe(null);
     });
 
     describe('addCounselingSessionToCollectionIfMissing', () => {

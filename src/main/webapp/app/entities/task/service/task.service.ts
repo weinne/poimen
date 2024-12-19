@@ -1,12 +1,16 @@
 import { Injectable, inject } from '@angular/core';
 import { HttpClient, HttpResponse } from '@angular/common/http';
-import { Observable, map } from 'rxjs';
+import { Observable, asapScheduler, map, scheduled } from 'rxjs';
+
+import { catchError } from 'rxjs/operators';
 
 import dayjs from 'dayjs/esm';
 
 import { isPresent } from 'app/core/util/operators';
+import { DATE_FORMAT } from 'app/config/input.constants';
 import { ApplicationConfigService } from 'app/core/config/application-config.service';
 import { createRequestOption } from 'app/core/request/request-util';
+import { Search } from 'app/core/request/request.model';
 import { ITask, NewTask } from '../task.model';
 
 export type PartialUpdateTask = Partial<ITask> & Pick<ITask, 'id'>;
@@ -30,6 +34,7 @@ export class TaskService {
   protected readonly applicationConfigService = inject(ApplicationConfigService);
 
   protected resourceUrl = this.applicationConfigService.getEndpointFor('api/tasks');
+  protected resourceSearchUrl = this.applicationConfigService.getEndpointFor('api/tasks/_search');
 
   create(task: NewTask): Observable<EntityResponseType> {
     const copy = this.convertDateFromClient(task);
@@ -67,6 +72,15 @@ export class TaskService {
     return this.http.delete(`${this.resourceUrl}/${id}`, { observe: 'response' });
   }
 
+  search(req: Search): Observable<EntityArrayResponseType> {
+    const options = createRequestOption(req);
+    return this.http.get<RestTask[]>(this.resourceSearchUrl, { params: options, observe: 'response' }).pipe(
+      map(res => this.convertResponseArrayFromServer(res)),
+
+      catchError(() => scheduled([new HttpResponse<ITask[]>()], asapScheduler)),
+    );
+  }
+
   getTaskIdentifier(task: Pick<ITask, 'id'>): number {
     return task.id;
   }
@@ -98,7 +112,7 @@ export class TaskService {
   protected convertDateFromClient<T extends ITask | NewTask | PartialUpdateTask>(task: T): RestOf<T> {
     return {
       ...task,
-      dueDate: task.dueDate?.toJSON() ?? null,
+      dueDate: task.dueDate?.format(DATE_FORMAT) ?? null,
     };
   }
 

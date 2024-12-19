@@ -1,12 +1,16 @@
 import { Injectable, inject } from '@angular/core';
 import { HttpClient, HttpResponse } from '@angular/common/http';
-import { Observable, map } from 'rxjs';
+import { Observable, asapScheduler, map, scheduled } from 'rxjs';
+
+import { catchError } from 'rxjs/operators';
 
 import dayjs from 'dayjs/esm';
 
 import { isPresent } from 'app/core/util/operators';
+import { DATE_FORMAT } from 'app/config/input.constants';
 import { ApplicationConfigService } from 'app/core/config/application-config.service';
 import { createRequestOption } from 'app/core/request/request-util';
+import { Search } from 'app/core/request/request.model';
 import { IPlanSubscription, NewPlanSubscription } from '../plan-subscription.model';
 
 export type PartialUpdatePlanSubscription = Partial<IPlanSubscription> & Pick<IPlanSubscription, 'id'>;
@@ -31,6 +35,7 @@ export class PlanSubscriptionService {
   protected readonly applicationConfigService = inject(ApplicationConfigService);
 
   protected resourceUrl = this.applicationConfigService.getEndpointFor('api/plan-subscriptions');
+  protected resourceSearchUrl = this.applicationConfigService.getEndpointFor('api/plan-subscriptions/_search');
 
   create(planSubscription: NewPlanSubscription): Observable<EntityResponseType> {
     const copy = this.convertDateFromClient(planSubscription);
@@ -74,6 +79,15 @@ export class PlanSubscriptionService {
     return this.http.delete(`${this.resourceUrl}/${id}`, { observe: 'response' });
   }
 
+  search(req: Search): Observable<EntityArrayResponseType> {
+    const options = createRequestOption(req);
+    return this.http.get<RestPlanSubscription[]>(this.resourceSearchUrl, { params: options, observe: 'response' }).pipe(
+      map(res => this.convertResponseArrayFromServer(res)),
+
+      catchError(() => scheduled([new HttpResponse<IPlanSubscription[]>()], asapScheduler)),
+    );
+  }
+
   getPlanSubscriptionIdentifier(planSubscription: Pick<IPlanSubscription, 'id'>): number {
     return planSubscription.id;
   }
@@ -109,8 +123,8 @@ export class PlanSubscriptionService {
   ): RestOf<T> {
     return {
       ...planSubscription,
-      startDate: planSubscription.startDate?.toJSON() ?? null,
-      endDate: planSubscription.endDate?.toJSON() ?? null,
+      startDate: planSubscription.startDate?.format(DATE_FORMAT) ?? null,
+      endDate: planSubscription.endDate?.format(DATE_FORMAT) ?? null,
     };
   }
 

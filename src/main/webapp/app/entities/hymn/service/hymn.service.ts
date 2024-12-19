@@ -1,10 +1,13 @@
 import { Injectable, inject } from '@angular/core';
 import { HttpClient, HttpResponse } from '@angular/common/http';
-import { Observable } from 'rxjs';
+import { Observable, asapScheduler, scheduled } from 'rxjs';
+
+import { catchError } from 'rxjs/operators';
 
 import { isPresent } from 'app/core/util/operators';
 import { ApplicationConfigService } from 'app/core/config/application-config.service';
 import { createRequestOption } from 'app/core/request/request-util';
+import { Search } from 'app/core/request/request.model';
 import { IHymn, NewHymn } from '../hymn.model';
 
 export type PartialUpdateHymn = Partial<IHymn> & Pick<IHymn, 'id'>;
@@ -18,6 +21,7 @@ export class HymnService {
   protected readonly applicationConfigService = inject(ApplicationConfigService);
 
   protected resourceUrl = this.applicationConfigService.getEndpointFor('api/hymns');
+  protected resourceSearchUrl = this.applicationConfigService.getEndpointFor('api/hymns/_search');
 
   create(hymn: NewHymn): Observable<EntityResponseType> {
     return this.http.post<IHymn>(this.resourceUrl, hymn, { observe: 'response' });
@@ -42,6 +46,13 @@ export class HymnService {
 
   delete(id: number): Observable<HttpResponse<{}>> {
     return this.http.delete(`${this.resourceUrl}/${id}`, { observe: 'response' });
+  }
+
+  search(req: Search): Observable<EntityArrayResponseType> {
+    const options = createRequestOption(req);
+    return this.http
+      .get<IHymn[]>(this.resourceSearchUrl, { params: options, observe: 'response' })
+      .pipe(catchError(() => scheduled([new HttpResponse<IHymn[]>()], asapScheduler)));
   }
 
   getHymnIdentifier(hymn: Pick<IHymn, 'id'>): number {

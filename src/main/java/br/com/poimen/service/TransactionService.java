@@ -2,6 +2,7 @@ package br.com.poimen.service;
 
 import br.com.poimen.domain.Transaction;
 import br.com.poimen.repository.TransactionRepository;
+import br.com.poimen.repository.search.TransactionSearchRepository;
 import java.util.Optional;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -21,8 +22,11 @@ public class TransactionService {
 
     private final TransactionRepository transactionRepository;
 
-    public TransactionService(TransactionRepository transactionRepository) {
+    private final TransactionSearchRepository transactionSearchRepository;
+
+    public TransactionService(TransactionRepository transactionRepository, TransactionSearchRepository transactionSearchRepository) {
         this.transactionRepository = transactionRepository;
+        this.transactionSearchRepository = transactionSearchRepository;
     }
 
     /**
@@ -33,7 +37,9 @@ public class TransactionService {
      */
     public Transaction save(Transaction transaction) {
         LOG.debug("Request to save Transaction : {}", transaction);
-        return transactionRepository.save(transaction);
+        transaction = transactionRepository.save(transaction);
+        transactionSearchRepository.index(transaction);
+        return transaction;
     }
 
     /**
@@ -44,7 +50,9 @@ public class TransactionService {
      */
     public Transaction update(Transaction transaction) {
         LOG.debug("Request to update Transaction : {}", transaction);
-        return transactionRepository.save(transaction);
+        transaction = transactionRepository.save(transaction);
+        transactionSearchRepository.index(transaction);
+        return transaction;
     }
 
     /**
@@ -83,7 +91,11 @@ public class TransactionService {
 
                 return existingTransaction;
             })
-            .map(transactionRepository::save);
+            .map(transactionRepository::save)
+            .map(savedTransaction -> {
+                transactionSearchRepository.index(savedTransaction);
+                return savedTransaction;
+            });
     }
 
     /**
@@ -99,6 +111,15 @@ public class TransactionService {
     }
 
     /**
+     * Get all the transactions with eager load of many-to-many relationships.
+     *
+     * @return the list of entities.
+     */
+    public Page<Transaction> findAllWithEagerRelationships(Pageable pageable) {
+        return transactionRepository.findAllWithEagerRelationships(pageable);
+    }
+
+    /**
      * Get one transaction by id.
      *
      * @param id the id of the entity.
@@ -107,7 +128,7 @@ public class TransactionService {
     @Transactional(readOnly = true)
     public Optional<Transaction> findOne(Long id) {
         LOG.debug("Request to get Transaction : {}", id);
-        return transactionRepository.findById(id);
+        return transactionRepository.findOneWithEagerRelationships(id);
     }
 
     /**
@@ -118,5 +139,19 @@ public class TransactionService {
     public void delete(Long id) {
         LOG.debug("Request to delete Transaction : {}", id);
         transactionRepository.deleteById(id);
+        transactionSearchRepository.deleteFromIndexById(id);
+    }
+
+    /**
+     * Search for the transaction corresponding to the query.
+     *
+     * @param query the query of the search.
+     * @param pageable the pagination information.
+     * @return the list of entities.
+     */
+    @Transactional(readOnly = true)
+    public Page<Transaction> search(String query, Pageable pageable) {
+        LOG.debug("Request to search for a page of Transactions for query {}", query);
+        return transactionSearchRepository.search(query, pageable);
     }
 }

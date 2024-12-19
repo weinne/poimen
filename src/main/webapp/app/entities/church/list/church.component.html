@@ -15,7 +15,7 @@
         [routerLink]="['/church/new']"
       >
         <fa-icon icon="plus"></fa-icon>
-        <span jhiTranslate="poimenApp.church.home.createLabel">Create a new Church</span>
+        <span class="hidden-sm-down" jhiTranslate="poimenApp.church.home.createLabel">Create a new Church</span>
       </button>
     </div>
   </h2>
@@ -23,6 +23,32 @@
   <jhi-alert-error></jhi-alert-error>
 
   <jhi-alert></jhi-alert>
+
+  <form name="searchForm" class="row row-cols-sm-auto align-items-center">
+    <div class="col-sm-12">
+      <div class="input-group w-100 mt-3">
+        <label class="visually-hidden" for="currentSearch" jhiTranslate="poimenApp.church.home.search">Search for Church</label>
+        <input
+          type="text"
+          class="form-control"
+          [(ngModel)]="currentSearch"
+          id="currentSearch"
+          name="currentSearch"
+          placeholder="{{ 'poimenApp.church.home.search' | translate }}"
+        />
+
+        <button class="btn btn-info" (click)="search(currentSearch)">
+          <fa-icon icon="search"></fa-icon>
+        </button>
+
+        @if (currentSearch) {
+          <button class="btn btn-danger" (click)="search('')">
+            <fa-icon icon="trash-alt"></fa-icon>
+          </button>
+        }
+      </div>
+    </div>
+  </form>
 
   @if (churches?.length === 0) {
     <div class="alert alert-warning" id="no-result">
@@ -45,29 +71,33 @@
             <th scope="col" jhiSortBy="name">
               <div class="d-flex">
                 <span jhiTranslate="poimenApp.church.name">Name</span>
-
-                <fa-icon class="p-1" icon="sort"></fa-icon>
+                @if (!currentSearch) {
+                  <fa-icon class="p-1" icon="sort"></fa-icon>
+                }
               </div>
             </th>
             <th scope="col" jhiSortBy="cnpj">
               <div class="d-flex">
                 <span jhiTranslate="poimenApp.church.cnpj">Cnpj</span>
-
-                <fa-icon class="p-1" icon="sort"></fa-icon>
+                @if (!currentSearch) {
+                  <fa-icon class="p-1" icon="sort"></fa-icon>
+                }
               </div>
             </th>
             <th scope="col" jhiSortBy="address">
               <div class="d-flex">
                 <span jhiTranslate="poimenApp.church.address">Address</span>
-
-                <fa-icon class="p-1" icon="sort"></fa-icon>
+                @if (!currentSearch) {
+                  <fa-icon class="p-1" icon="sort"></fa-icon>
+                }
               </div>
             </th>
             <th scope="col" jhiSortBy="city">
               <div class="d-flex">
                 <span jhiTranslate="poimenApp.church.city">City</span>
-
-                <fa-icon class="p-1" icon="sort"></fa-icon>
+                @if (!currentSearch) {
+                  <fa-icon class="p-1" icon="sort"></fa-icon>
+                }
               </div>
             </th>
             <th scope="col" jhiSortBy="dateFoundation">
@@ -77,10 +107,68 @@
                 <fa-icon class="p-1" icon="sort"></fa-icon>
               </div>
             </th>
-            <th scope="col" jhiSortBy="user.id">
+            <th scope="col" jhiSortBy="phone">
               <div class="d-flex">
-                <span jhiTranslate="poimenApp.church.user">User</span>
-                <fa-icon class="p-1" icon="sort"></fa-icon>
+                <span jhiTranslate="poimenApp.church.phone">Phone</span>
+                @if (!currentSearch) {
+                  <fa-icon class="p-1" icon="sort"></fa-icon>
+                }
+              </div>
+            </th>
+            <th scope="col" jhiSortBy="email">
+              <div class="d-flex">
+                <span jhiTranslate="poimenApp.church.email">Email</span>
+                @if (!currentSearch) {
+                  <fa-icon class="p-1" icon="sort"></fa-icon>
+                }
+              </div>
+            </th>
+            <th scope="col" jhiSortBy="website">
+              <div class="d-flex">
+                <span jhiTranslate="poimenApp.church.website">Website</span>
+                @if (!currentSearch) {
+                  <fa-icon class="p-1" icon="sort"></fa-icon>
+                }
+              </div>
+            </th>
+            <th scope="col" jhiSortBy="facebook">
+              <div class="d-flex">
+                <span jhiTranslate="poimenApp.church.facebook">Facebook</span>
+                @if (!currentSearch) {
+                  <fa-icon class="p-1" icon="sort"></fa-icon>
+                }
+              </div>
+            </th>
+            <th scope="col" jhiSortBy="instagram">
+              <div class="d-flex">
+                <span jhiTranslate="poimenApp.church.instagram">Instagram</span>
+                @if (!currentSearch) {
+                  <fa-icon class="p-1" icon="sort"></fa-icon>
+                }
+              </div>
+            </th>
+            <th scope="col" jhiSortBy="twitter">
+              <div class="d-flex">
+                <span jhiTranslate="poimenApp.church.twitter">Twitter</span>
+                @if (!currentSearch) {
+                  <fa-icon class="p-1" icon="sort"></fa-icon>
+                }
+              </div>
+            </th>
+            <th scope="col" jhiSortBy="youtube">
+              <div class="d-flex">
+                <span jhiTranslate="poimenApp.church.youtube">Youtube</span>
+                @if (!currentSearch) {
+                  <fa-icon class="p-1" icon="sort"></fa-icon>
+                }
+              </div>
+            </th>
+            <th scope="col" jhiSortBy="about">
+              <div class="d-flex">
+                <span jhiTranslate="poimenApp.church.about">About</span>
+                @if (!currentSearch) {
+                  <fa-icon class="p-1" icon="sort"></fa-icon>
+                }
               </div>
             </th>
             <th scope="col"></th>
@@ -96,12 +184,15 @@
               <td>{{ church.cnpj }}</td>
               <td>{{ church.address }}</td>
               <td>{{ church.city }}</td>
-              <td>{{ church.dateFoundation | formatMediumDatetime }}</td>
-              <td>
-                @for (user of church.users; track $index; let last = $last) {
-                  <span>{{ user.id }}{{ last ? '' : ', ' }}</span>
-                }
-              </td>
+              <td>{{ church.dateFoundation | formatMediumDate }}</td>
+              <td>{{ church.phone }}</td>
+              <td>{{ church.email }}</td>
+              <td>{{ church.website }}</td>
+              <td>{{ church.facebook }}</td>
+              <td>{{ church.instagram }}</td>
+              <td>{{ church.twitter }}</td>
+              <td>{{ church.youtube }}</td>
+              <td>{{ church.about }}</td>
               <td class="text-end">
                 <div class="btn-group">
                   <a [routerLink]="['/church', church.id, 'view']" class="btn btn-info btn-sm" data-cy="entityDetailsButton">

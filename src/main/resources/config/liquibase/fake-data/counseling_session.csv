@@ -1,11 +1,11 @@
-id;date;notes
-1;2024-12-17T02:06:29;../fake-data/blob/hipster.txt
-2;2024-12-17T19:50:04;../fake-data/blob/hipster.txt
-3;2024-12-17T23:41:17;../fake-data/blob/hipster.txt
-4;2024-12-17T08:02:17;../fake-data/blob/hipster.txt
-5;2024-12-17T07:59:36;../fake-data/blob/hipster.txt
-6;2024-12-17T01:46:41;../fake-data/blob/hipster.txt
-7;2024-12-17T09:14:06;../fake-data/blob/hipster.txt
-8;2024-12-17T21:48:41;../fake-data/blob/hipster.txt
-9;2024-12-17T03:54:48;../fake-data/blob/hipster.txt
-10;2024-12-17T19:21:44;../fake-data/blob/hipster.txt
+id;subject;date;start_time;end_time;notes;counseling_tasks;status
+1;hmph;2024-12-18;2024-12-18T18:22:04;2024-12-18T23:21:22;../fake-data/blob/hipster.txt;../fake-data/blob/hipster.txt;IN_PROGRESS
+2;against whereas;2024-12-18;2024-12-18T21:35:15;2024-12-18T05:35:14;../fake-data/blob/hipster.txt;../fake-data/blob/hipster.txt;CANCELED
+3;underneath;2024-12-18;2024-12-18T04:45:02;2024-12-18T14:23:56;../fake-data/blob/hipster.txt;../fake-data/blob/hipster.txt;DONE
+4;observe;2024-12-18;2024-12-18T02:07:35;2024-12-18T16:30:54;../fake-data/blob/hipster.txt;../fake-data/blob/hipster.txt;SCHEDULED
+5;reconstitute stool primary;2024-12-18;2024-12-18T18:41:45;2024-12-18T20:41:17;../fake-data/blob/hipster.txt;../fake-data/blob/hipster.txt;SCHEDULED
+6;normal beneath lest;2024-12-18;2024-12-18T08:29:17;2024-12-18T05:32:04;../fake-data/blob/hipster.txt;../fake-data/blob/hipster.txt;CANCELED
+7;than;2024-12-18;2024-12-18T13:24:23;2024-12-18T18:47:52;../fake-data/blob/hipster.txt;../fake-data/blob/hipster.txt;DONE
+8;swerve;2024-12-18;2024-12-18T05:58:55;2024-12-18T07:22:21;../fake-data/blob/hipster.txt;../fake-data/blob/hipster.txt;CANCELED
+9;phew;2024-12-18;2024-12-18T06:43:28;2024-12-18T15:17:20;../fake-data/blob/hipster.txt;../fake-data/blob/hipster.txt;SCHEDULED
+10;astride runny pleasing;2024-12-18;2024-12-18T21:16:15;2024-12-18T06:59:46;../fake-data/blob/hipster.txt;../fake-data/blob/hipster.txt;SCHEDULED

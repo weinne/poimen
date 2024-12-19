@@ -17,19 +17,43 @@
           <dd>
             <span>{{ counselingSessionRef.id }}</span>
           </dd>
+          <dt><span jhiTranslate="poimenApp.counselingSession.subject">Subject</span></dt>
+          <dd>
+            <span>{{ counselingSessionRef.subject }}</span>
+          </dd>
           <dt><span jhiTranslate="poimenApp.counselingSession.date">Date</span></dt>
           <dd>
-            <span>{{ counselingSessionRef.date | formatMediumDatetime }}</span>
+            <span>{{ counselingSessionRef.date | formatMediumDate }}</span>
+          </dd>
+          <dt><span jhiTranslate="poimenApp.counselingSession.startTime">Start Time</span></dt>
+          <dd>
+            <span>{{ counselingSessionRef.startTime | formatMediumDatetime }}</span>
+          </dd>
+          <dt><span jhiTranslate="poimenApp.counselingSession.endTime">End Time</span></dt>
+          <dd>
+            <span>{{ counselingSessionRef.endTime | formatMediumDatetime }}</span>
           </dd>
           <dt><span jhiTranslate="poimenApp.counselingSession.notes">Notes</span></dt>
           <dd>
             <span>{{ counselingSessionRef.notes }}</span>
           </dd>
+          <dt><span jhiTranslate="poimenApp.counselingSession.counselingTasks">Counseling Tasks</span></dt>
+          <dd>
+            <span>{{ counselingSessionRef.counselingTasks }}</span>
+          </dd>
+          <dt><span jhiTranslate="poimenApp.counselingSession.status">Status</span></dt>
+          <dd>
+            <span [jhiTranslate]="'poimenApp.StatusCounseling.' + (counselingSessionRef.status ?? 'null')">{{
+              { null: '', SCHEDULED: 'Scheduled', IN_PROGRESS: 'In Progress', DONE: 'Done', CANCELED: 'Canceled' }[
+                counselingSessionRef.status ?? 'null'
+              ]
+            }}</span>
+          </dd>
           <dt><span jhiTranslate="poimenApp.counselingSession.church">Church</span></dt>
           <dd>
             @if (counselingSession()!.church) {
               <div>
-                <a [routerLink]="['/church', counselingSession()!.church?.id, 'view']">{{ counselingSessionRef.church?.id }}</a>
+                <a [routerLink]="['/church', counselingSession()!.church?.id, 'view']">{{ counselingSessionRef.church?.name }}</a>
               </div>
             }
           </dd>
@@ -37,13 +61,17 @@
           <dd>
             @if (counselingSession()!.member) {
               <div>
-                <a [routerLink]="['/member', counselingSession()!.member?.id, 'view']">{{ counselingSessionRef.member?.id }}</a>
+                <a [routerLink]="['/member', counselingSession()!.member?.id, 'view']">{{ counselingSessionRef.member?.name }}</a>
               </div>
             }
           </dd>
           <dt><span jhiTranslate="poimenApp.counselingSession.user">User</span></dt>
           <dd>
-            <span>{{ counselingSessionRef.user?.id }}</span>
+            @if (counselingSession()!.user) {
+              <div>
+                <a [routerLink]="['/application-user', counselingSession()!.user?.id, 'view']">{{ counselingSessionRef.user?.name }}</a>
+              </div>
+            }
           </dd>
         </dl>
 

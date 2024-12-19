@@ -1,11 +1,11 @@
-id;date;title;description;worship_type
-1;2024-12-17T06:54:11;strategy yahoo responsible;furlough piglet;SUNDAY_SERVICE
-2;2024-12-18T00:38:24;howl;lovely duster sonar;SPECIAL_EVENT
-3;2024-12-17T14:53:40;though at to;competent around knickers;SUNDAY_SERVICE
-4;2024-12-18T00:16:07;youthfully acclaimed busily;nauseate bah geez;SPECIAL_EVENT
-5;2024-12-18T01:07:39;till without;for transparency while;PRAYER_MEETING
-6;2024-12-17T13:50:57;darn oof e-mail;hornet whoever;SUNDAY_SERVICE
-7;2024-12-17T10:50:20;dual;shy;YOUTH_SERVICE
-8;2024-12-17T22:26:56;till solidly replacement;how;BIBLE_STUDY
-9;2024-12-17T20:54:11;via pace;unruly when mature;YOUTH_SERVICE
-10;2024-12-17T16:28:10;sharply waist;lest;SUNDAY_SERVICE
+id;date;title;guest_preacher;description;call_to_worship_text;confession_of_sin_text;assurance_of_pardon_text;lord_supper_text;benediction_text;confessional_text;sermon_text;sermon_file;sermon_file_content_type;sermon_link;youtube_link;bulletin_file;bulletin_file_content_type;worship_type
+1;2024-12-18T05:54:29;strategy yahoo responsible;furlough piglet;../fake-data/blob/hipster.txt;into;grounded including;horse silky vaguely;ack kookily what;nervously boo following;whoa once amendment;../fake-data/blob/hipster.txt;../fake-data/blob/hipster.png;image/png;following yin;till without;../fake-data/blob/hipster.png;image/png;OTHER
+2;2024-12-18T17:49:29;brace;skateboard pro darn;../fake-data/blob/hipster.txt;knight;yahoo than abacus;young circa;unfortunately substitution;acquaintance;wherever;../fake-data/blob/hipster.txt;../fake-data/blob/hipster.png;image/png;scratchy;whenever;../fake-data/blob/hipster.png;image/png;SUNDAY_SERVICE
+3;2024-12-18T19:38:19;voluminous jubilantly whup;absentmindedly briefly;../fake-data/blob/hipster.txt;ouch inasmuch sentimental;freely rewrite;adrenalin;yuck inasmuch;interesting;selfishly boohoo quaintly;../fake-data/blob/hipster.txt;../fake-data/blob/hipster.png;image/png;nor sign sundae;actually aboard destock;../fake-data/blob/hipster.png;image/png;PRAYER_MEETING
+4;2024-12-18T14:19:00;sedately disappointment hateful;incidentally against unlike;../fake-data/blob/hipster.txt;airport;pish quaver throughout;crackle thoughtfully bemuse;exacerbate while;cuckoo;floss ascertain lecture;../fake-data/blob/hipster.txt;../fake-data/blob/hipster.png;image/png;brr;joyful;../fake-data/blob/hipster.png;image/png;SUNDAY_SERVICE
+5;2024-12-18T14:07:46;off victoriously;whose hunger;../fake-data/blob/hipster.txt;developing behind yahoo;busily decouple;yippee;below unethically;anti outflank crumble;before;../fake-data/blob/hipster.txt;../fake-data/blob/hipster.png;image/png;so zowie;pro excluding under;../fake-data/blob/hipster.png;image/png;OTHER
+6;2024-12-18T00:47:49;flight chunder from;drat huzzah hollow;../fake-data/blob/hipster.txt;eventually supposing grass;gracious;shimmering;refine;dress whistle after;oh inasmuch;../fake-data/blob/hipster.txt;../fake-data/blob/hipster.png;image/png;along upwardly or;zowie muffled under;../fake-data/blob/hipster.png;image/png;BIBLE_STUDY
+7;2024-12-18T03:10:07;arbitrate;lest after impartial;../fake-data/blob/hipster.txt;grandpa along;jaggedly avalanche gray;fervently adventurously charm;fit up phooey;peninsula lest;however through;../fake-data/blob/hipster.txt;../fake-data/blob/hipster.png;image/png;orchid aside;readmit hence next;../fake-data/blob/hipster.png;image/png;SUNDAY_SERVICE
+8;2024-12-18T06:33:52;incidentally lovable;brave thongs cheetah;../fake-data/blob/hipster.txt;incidentally culminate;recount ugh;outrageous;reborn fluff;afore;queasily;../fake-data/blob/hipster.txt;../fake-data/blob/hipster.png;image/png;towards zowie;unusual;../fake-data/blob/hipster.png;image/png;SPECIAL_EVENT
+9;2024-12-18T16:21:58;deficient;pleasing now behind;../fake-data/blob/hipster.txt;rue;skean yet gaseous;aw;basic headline meanwhile;ick direct sheepishly;though able pish;../fake-data/blob/hipster.txt;../fake-data/blob/hipster.png;image/png;upwardly analyse pro;huzzah;../fake-data/blob/hipster.png;image/png;PRAYER_MEETING
+10;2024-12-18T08:02:53;failing;warmly seagull;../fake-data/blob/hipster.txt;whoever;arcade custom;humble;marksman in-joke;toward ignorance;unto as;../fake-data/blob/hipster.txt;../fake-data/blob/hipster.png;image/png;separately;abscond long within;../fake-data/blob/hipster.png;image/png;SPECIAL_EVENT

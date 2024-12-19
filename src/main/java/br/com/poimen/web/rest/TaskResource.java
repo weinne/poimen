@@ -4,6 +4,7 @@ import br.com.poimen.domain.Task;
 import br.com.poimen.repository.TaskRepository;
 import br.com.poimen.service.TaskService;
 import br.com.poimen.web.rest.errors.BadRequestAlertException;
+import br.com.poimen.web.rest.errors.ElasticsearchExceptionMapper;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotNull;
 import java.net.URI;
@@ -131,10 +132,11 @@ public class TaskResource {
     /**
      * {@code GET  /tasks} : get all the tasks.
      *
+     * @param eagerload flag to eager load entities from relationships (This is applicable for many-to-many).
      * @return the {@link ResponseEntity} with status {@code 200 (OK)} and the list of tasks in body.
      */
     @GetMapping("")
-    public List<Task> getAllTasks() {
+    public List<Task> getAllTasks(@RequestParam(name = "eagerload", required = false, defaultValue = "true") boolean eagerload) {
         LOG.debug("REST request to get all Tasks");
         return taskService.findAll();
     }
@@ -165,5 +167,22 @@ public class TaskResource {
         return ResponseEntity.noContent()
             .headers(HeaderUtil.createEntityDeletionAlert(applicationName, true, ENTITY_NAME, id.toString()))
             .build();
+    }
+
+    /**
+     * {@code SEARCH  /tasks/_search?query=:query} : search for the task corresponding
+     * to the query.
+     *
+     * @param query the query of the task search.
+     * @return the result of the search.
+     */
+    @GetMapping("/_search")
+    public List<Task> searchTasks(@RequestParam("query") String query) {
+        LOG.debug("REST request to search Tasks for query {}", query);
+        try {
+            return taskService.search(query);
+        } catch (RuntimeException e) {
+            throw ElasticsearchExceptionMapper.mapException(e);
+        }
     }
 }

@@ -10,6 +10,7 @@ export interface IInvoice {
   type?: string | null;
   supplier?: string | null;
   invoiceFile?: string | null;
+  invoiceFileContentType?: string | null;
   church?: IChurch | null;
   transaction?: ITransaction | null;
 }

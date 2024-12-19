@@ -1,8 +1,6 @@
 import { Injectable } from '@angular/core';
 import { FormControl, FormGroup, Validators } from '@angular/forms';
 
-import dayjs from 'dayjs/esm';
-import { DATE_TIME_FORMAT } from 'app/config/input.constants';
 import { IPlanSubscription, NewPlanSubscription } from '../plan-subscription.model';
 
 /**
@@ -16,29 +14,20 @@ type PartialWithRequiredKeyOf<T extends { id: unknown }> = Partial<Omit<T, 'id'>
  */
 type PlanSubscriptionFormGroupInput = IPlanSubscription | PartialWithRequiredKeyOf<NewPlanSubscription>;
 
-/**
- * Type that converts some properties for forms.
- */
-type FormValueOf<T extends IPlanSubscription | NewPlanSubscription> = Omit<T, 'startDate' | 'endDate'> & {
-  startDate?: string | null;
-  endDate?: string | null;
-};
-
-type PlanSubscriptionFormRawValue = FormValueOf<IPlanSubscription>;
-
-type NewPlanSubscriptionFormRawValue = FormValueOf<NewPlanSubscription>;
-
-type PlanSubscriptionFormDefaults = Pick<NewPlanSubscription, 'id' | 'startDate' | 'endDate' | 'active'>;
+type PlanSubscriptionFormDefaults = Pick<NewPlanSubscription, 'id'>;
 
 type PlanSubscriptionFormGroupContent = {
-  id: FormControl<PlanSubscriptionFormRawValue['id'] | NewPlanSubscription['id']>;
-  startDate: FormControl<PlanSubscriptionFormRawValue['startDate']>;
-  endDate: FormControl<PlanSubscriptionFormRawValue['endDate']>;
-  active: FormControl<PlanSubscriptionFormRawValue['active']>;
-  planName: FormControl<PlanSubscriptionFormRawValue['planName']>;
-  plan: FormControl<PlanSubscriptionFormRawValue['plan']>;
-  church: FormControl<PlanSubscriptionFormRawValue['church']>;
-  user: FormControl<PlanSubscriptionFormRawValue['user']>;
+  id: FormControl<IPlanSubscription['id'] | NewPlanSubscription['id']>;
+  description: FormControl<IPlanSubscription['description']>;
+  startDate: FormControl<IPlanSubscription['startDate']>;
+  endDate: FormControl<IPlanSubscription['endDate']>;
+  status: FormControl<IPlanSubscription['status']>;
+  paymentProvider: FormControl<IPlanSubscription['paymentProvider']>;
+  paymentStatus: FormControl<IPlanSubscription['paymentStatus']>;
+  paymentReference: FormControl<IPlanSubscription['paymentReference']>;
+  church: FormControl<IPlanSubscription['church']>;
+  plan: FormControl<IPlanSubscription['plan']>;
+  user: FormControl<IPlanSubscription['user']>;
 };
 
 export type PlanSubscriptionFormGroup = FormGroup<PlanSubscriptionFormGroupContent>;
@@ -46,10 +35,10 @@ export type PlanSubscriptionFormGroup = FormGroup<PlanSubscriptionFormGroupConte
 @Injectable({ providedIn: 'root' })
 export class PlanSubscriptionFormService {
   createPlanSubscriptionFormGroup(planSubscription: PlanSubscriptionFormGroupInput = { id: null }): PlanSubscriptionFormGroup {
-    const planSubscriptionRawValue = this.convertPlanSubscriptionToPlanSubscriptionRawValue({
+    const planSubscriptionRawValue = {
       ...this.getFormDefaults(),
       ...planSubscription,
-    });
+    };
     return new FormGroup<PlanSubscriptionFormGroupContent>({
       id: new FormControl(
         { value: planSubscriptionRawValue.id, disabled: true },
@@ -58,33 +47,35 @@ export class PlanSubscriptionFormService {
           validators: [Validators.required],
         },
       ),
+      description: new FormControl(planSubscriptionRawValue.description, {
+        validators: [Validators.required],
+      }),
       startDate: new FormControl(planSubscriptionRawValue.startDate, {
         validators: [Validators.required],
       }),
       endDate: new FormControl(planSubscriptionRawValue.endDate),
-      active: new FormControl(planSubscriptionRawValue.active, {
+      status: new FormControl(planSubscriptionRawValue.status, {
         validators: [Validators.required],
       }),
-      planName: new FormControl(planSubscriptionRawValue.planName, {
+      paymentProvider: new FormControl(planSubscriptionRawValue.paymentProvider, {
         validators: [Validators.required],
       }),
-      plan: new FormControl(planSubscriptionRawValue.plan),
+      paymentStatus: new FormControl(planSubscriptionRawValue.paymentStatus, {
+        validators: [Validators.required],
+      }),
+      paymentReference: new FormControl(planSubscriptionRawValue.paymentReference),
       church: new FormControl(planSubscriptionRawValue.church),
+      plan: new FormControl(planSubscriptionRawValue.plan),
       user: new FormControl(planSubscriptionRawValue.user),
     });
   }
 
   getPlanSubscription(form: PlanSubscriptionFormGroup): IPlanSubscription | NewPlanSubscription {
-    return this.convertPlanSubscriptionRawValueToPlanSubscription(
-      form.getRawValue() as PlanSubscriptionFormRawValue | NewPlanSubscriptionFormRawValue,
-    );
+    return form.getRawValue() as IPlanSubscription | NewPlanSubscription;
   }
 
   resetForm(form: PlanSubscriptionFormGroup, planSubscription: PlanSubscriptionFormGroupInput): void {
-    const planSubscriptionRawValue = this.convertPlanSubscriptionToPlanSubscriptionRawValue({
-      ...this.getFormDefaults(),
-      ...planSubscription,
-    });
+    const planSubscriptionRawValue = { ...this.getFormDefaults(), ...planSubscription };
     form.reset(
       {
         ...planSubscriptionRawValue,
@@ -94,33 +85,8 @@ export class PlanSubscriptionFormService {
   }
 
   private getFormDefaults(): PlanSubscriptionFormDefaults {
-    const currentTime = dayjs();
-
     return {
       id: null,
-      startDate: currentTime,
-      endDate: currentTime,
-      active: false,
-    };
-  }
-
-  private convertPlanSubscriptionRawValueToPlanSubscription(
-    rawPlanSubscription: PlanSubscriptionFormRawValue | NewPlanSubscriptionFormRawValue,
-  ): IPlanSubscription | NewPlanSubscription {
-    return {
-      ...rawPlanSubscription,
-      startDate: dayjs(rawPlanSubscription.startDate, DATE_TIME_FORMAT),
-      endDate: dayjs(rawPlanSubscription.endDate, DATE_TIME_FORMAT),
-    };
-  }
-
-  private convertPlanSubscriptionToPlanSubscriptionRawValue(
-    planSubscription: IPlanSubscription | (Partial<NewPlanSubscription> & PlanSubscriptionFormDefaults),
-  ): PlanSubscriptionFormRawValue | PartialWithRequiredKeyOf<NewPlanSubscriptionFormRawValue> {
-    return {
-      ...planSubscription,
-      startDate: planSubscription.startDate ? planSubscription.startDate.format(DATE_TIME_FORMAT) : undefined,
-      endDate: planSubscription.endDate ? planSubscription.endDate.format(DATE_TIME_FORMAT) : undefined,
     };
   }
 }

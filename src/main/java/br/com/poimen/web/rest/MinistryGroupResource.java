@@ -4,6 +4,7 @@ import br.com.poimen.domain.MinistryGroup;
 import br.com.poimen.repository.MinistryGroupRepository;
 import br.com.poimen.service.MinistryGroupService;
 import br.com.poimen.web.rest.errors.BadRequestAlertException;
+import br.com.poimen.web.rest.errors.ElasticsearchExceptionMapper;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotNull;
 import java.net.URI;
@@ -139,12 +140,21 @@ public class MinistryGroupResource {
      * {@code GET  /ministry-groups} : get all the ministryGroups.
      *
      * @param pageable the pagination information.
+     * @param eagerload flag to eager load entities from relationships (This is applicable for many-to-many).
      * @return the {@link ResponseEntity} with status {@code 200 (OK)} and the list of ministryGroups in body.
      */
     @GetMapping("")
-    public ResponseEntity<List<MinistryGroup>> getAllMinistryGroups(@org.springdoc.core.annotations.ParameterObject Pageable pageable) {
+    public ResponseEntity<List<MinistryGroup>> getAllMinistryGroups(
+        @org.springdoc.core.annotations.ParameterObject Pageable pageable,
+        @RequestParam(name = "eagerload", required = false, defaultValue = "true") boolean eagerload
+    ) {
         LOG.debug("REST request to get a page of MinistryGroups");
-        Page<MinistryGroup> page = ministryGroupService.findAll(pageable);
+        Page<MinistryGroup> page;
+        if (eagerload) {
+            page = ministryGroupService.findAllWithEagerRelationships(pageable);
+        } else {
+            page = ministryGroupService.findAll(pageable);
+        }
         HttpHeaders headers = PaginationUtil.generatePaginationHttpHeaders(ServletUriComponentsBuilder.fromCurrentRequest(), page);
         return ResponseEntity.ok().headers(headers).body(page.getContent());
     }
@@ -175,5 +185,28 @@ public class MinistryGroupResource {
         return ResponseEntity.noContent()
             .headers(HeaderUtil.createEntityDeletionAlert(applicationName, true, ENTITY_NAME, id.toString()))
             .build();
+    }
+
+    /**
+     * {@code SEARCH  /ministry-groups/_search?query=:query} : search for the ministryGroup corresponding
+     * to the query.
+     *
+     * @param query the query of the ministryGroup search.
+     * @param pageable the pagination information.
+     * @return the result of the search.
+     */
+    @GetMapping("/_search")
+    public ResponseEntity<List<MinistryGroup>> searchMinistryGroups(
+        @RequestParam("query") String query,
+        @org.springdoc.core.annotations.ParameterObject Pageable pageable
+    ) {
+        LOG.debug("REST request to search for a page of MinistryGroups for query {}", query);
+        try {
+            Page<MinistryGroup> page = ministryGroupService.search(query, pageable);
+            HttpHeaders headers = PaginationUtil.generatePaginationHttpHeaders(ServletUriComponentsBuilder.fromCurrentRequest(), page);
+            return ResponseEntity.ok().headers(headers).body(page.getContent());
+        } catch (RuntimeException e) {
+            throw ElasticsearchExceptionMapper.mapException(e);
+        }
     }
 }

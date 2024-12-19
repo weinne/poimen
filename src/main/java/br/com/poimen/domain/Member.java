@@ -1,10 +1,14 @@
 package br.com.poimen.domain;
 
+import br.com.poimen.domain.enumeration.ExitReason;
+import br.com.poimen.domain.enumeration.MaritalStatus;
+import br.com.poimen.domain.enumeration.MemberStatus;
+import br.com.poimen.domain.enumeration.MembershipType;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.*;
 import java.io.Serializable;
-import java.time.Instant;
+import java.time.LocalDate;
 import java.util.HashSet;
 import java.util.Set;
 import org.hibernate.annotations.Cache;
@@ -16,6 +20,7 @@ import org.hibernate.annotations.CacheConcurrencyStrategy;
 @Entity
 @Table(name = "member")
 @Cache(usage = CacheConcurrencyStrategy.READ_WRITE)
+@org.springframework.data.elasticsearch.annotations.Document(indexName = "member")
 @SuppressWarnings("common-java:DuplicatedBlocks")
 public class Member implements Serializable {
 
@@ -28,37 +33,139 @@ public class Member implements Serializable {
     private Long id;
 
     @NotNull
-    @Column(name = "first_name", nullable = false)
-    private String firstName;
+    @Column(name = "name", nullable = false)
+    @org.springframework.data.elasticsearch.annotations.Field(type = org.springframework.data.elasticsearch.annotations.FieldType.Text)
+    private String name;
 
-    @NotNull
-    @Column(name = "last_name", nullable = false)
-    private String lastName;
+    @Lob
+    @Column(name = "photo")
+    private byte[] photo;
 
-    @Column(name = "email", unique = true)
+    @Column(name = "photo_content_type")
+    private String photoContentType;
+
+    @Column(name = "email")
+    @org.springframework.data.elasticsearch.annotations.Field(type = org.springframework.data.elasticsearch.annotations.FieldType.Text)
     private String email;
 
     @Column(name = "phone_number")
+    @org.springframework.data.elasticsearch.annotations.Field(type = org.springframework.data.elasticsearch.annotations.FieldType.Text)
     private String phoneNumber;
 
-    @Column(name = "date_of_birth")
-    private Instant dateOfBirth;
+    @NotNull
+    @Column(name = "date_of_birth", nullable = false)
+    private LocalDate dateOfBirth;
 
     @Column(name = "address")
+    @org.springframework.data.elasticsearch.annotations.Field(type = org.springframework.data.elasticsearch.annotations.FieldType.Text)
     private String address;
+
+    @Column(name = "city")
+    @org.springframework.data.elasticsearch.annotations.Field(type = org.springframework.data.elasticsearch.annotations.FieldType.Text)
+    private String city;
+
+    @Column(name = "state")
+    @org.springframework.data.elasticsearch.annotations.Field(type = org.springframework.data.elasticsearch.annotations.FieldType.Text)
+    private String state;
+
+    @Column(name = "zip_code")
+    @org.springframework.data.elasticsearch.annotations.Field(type = org.springframework.data.elasticsearch.annotations.FieldType.Text)
+    private String zipCode;
+
+    @Column(name = "city_of_birth")
+    @org.springframework.data.elasticsearch.annotations.Field(type = org.springframework.data.elasticsearch.annotations.FieldType.Text)
+    private String cityOfBirth;
+
+    @Column(name = "previous_religion")
+    @org.springframework.data.elasticsearch.annotations.Field(type = org.springframework.data.elasticsearch.annotations.FieldType.Text)
+    private String previousReligion;
+
+    @NotNull
+    @Enumerated(EnumType.STRING)
+    @Column(name = "marital_status", nullable = false)
+    @org.springframework.data.elasticsearch.annotations.Field(type = org.springframework.data.elasticsearch.annotations.FieldType.Keyword)
+    private MaritalStatus maritalStatus;
+
+    @Column(name = "spouse_name")
+    @org.springframework.data.elasticsearch.annotations.Field(type = org.springframework.data.elasticsearch.annotations.FieldType.Text)
+    private String spouseName;
+
+    @Column(name = "date_of_marriage")
+    private LocalDate dateOfMarriage;
+
+    @NotNull
+    @Enumerated(EnumType.STRING)
+    @Column(name = "status", nullable = false)
+    @org.springframework.data.elasticsearch.annotations.Field(type = org.springframework.data.elasticsearch.annotations.FieldType.Keyword)
+    private MemberStatus status;
+
+    @NotNull
+    @Pattern(regexp = "^\\d{11}$")
+    @Column(name = "cpf", nullable = false)
+    @org.springframework.data.elasticsearch.annotations.Field(type = org.springframework.data.elasticsearch.annotations.FieldType.Text)
+    private String cpf;
+
+    @NotNull
+    @Column(name = "rg", nullable = false)
+    @org.springframework.data.elasticsearch.annotations.Field(type = org.springframework.data.elasticsearch.annotations.FieldType.Text)
+    private String rg;
+
+    @Column(name = "date_of_baptism")
+    private LocalDate dateOfBaptism;
+
+    @Column(name = "church_of_baptism")
+    @org.springframework.data.elasticsearch.annotations.Field(type = org.springframework.data.elasticsearch.annotations.FieldType.Text)
+    private String churchOfBaptism;
+
+    @Column(name = "date_of_membership")
+    private LocalDate dateOfMembership;
+
+    @Enumerated(EnumType.STRING)
+    @Column(name = "type_of_membership")
+    @org.springframework.data.elasticsearch.annotations.Field(type = org.springframework.data.elasticsearch.annotations.FieldType.Keyword)
+    private MembershipType typeOfMembership;
+
+    @Column(name = "association_meeting_minutes")
+    @org.springframework.data.elasticsearch.annotations.Field(type = org.springframework.data.elasticsearch.annotations.FieldType.Text)
+    private String associationMeetingMinutes;
+
+    @Column(name = "date_of_death")
+    private LocalDate dateOfDeath;
+
+    @Column(name = "date_of_exit")
+    private LocalDate dateOfExit;
+
+    @Column(name = "exit_destination")
+    @org.springframework.data.elasticsearch.annotations.Field(type = org.springframework.data.elasticsearch.annotations.FieldType.Text)
+    private String exitDestination;
+
+    @Enumerated(EnumType.STRING)
+    @Column(name = "exit_reason")
+    @org.springframework.data.elasticsearch.annotations.Field(type = org.springframework.data.elasticsearch.annotations.FieldType.Keyword)
+    private ExitReason exitReason;
+
+    @Column(name = "exit_meeting_minutes")
+    @org.springframework.data.elasticsearch.annotations.Field(type = org.springframework.data.elasticsearch.annotations.FieldType.Text)
+    private String exitMeetingMinutes;
+
+    @Lob
+    @Column(name = "notes")
+    @org.springframework.data.elasticsearch.annotations.Field(type = org.springframework.data.elasticsearch.annotations.FieldType.Text)
+    private String notes;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JsonIgnoreProperties(
         value = {
             "users",
             "members",
-            "ministryGroups",
-            "worshipEvents",
-            "tasks",
+            "subscriptions",
             "counselingSessions",
-            "invoices",
+            "tasks",
             "transactions",
-            "planSubscriptions",
+            "invoices",
+            "worshipEvents",
+            "appointments",
+            "ministryGroups",
         },
         allowSetters = true
     )
@@ -66,33 +173,75 @@ public class Member implements Serializable {
 
     @OneToMany(fetch = FetchType.LAZY, mappedBy = "member")
     @Cache(usage = CacheConcurrencyStrategy.READ_WRITE)
-    @JsonIgnoreProperties(value = { "church", "member", "user" }, allowSetters = true)
-    private Set<CounselingSession> counselingSessions = new HashSet<>();
+    @org.springframework.data.annotation.Transient
+    @JsonIgnoreProperties(value = { "church", "member", "user", "appointments" }, allowSetters = true)
+    private Set<CounselingSession> counselings = new HashSet<>();
 
     @OneToMany(fetch = FetchType.LAZY, mappedBy = "member")
     @Cache(usage = CacheConcurrencyStrategy.READ_WRITE)
-    @JsonIgnoreProperties(value = { "ministryGroup", "member" }, allowSetters = true)
-    private Set<MinistryMembership> ministryMemberships = new HashSet<>();
-
-    @OneToMany(fetch = FetchType.LAZY, mappedBy = "member")
-    @Cache(usage = CacheConcurrencyStrategy.READ_WRITE)
+    @org.springframework.data.annotation.Transient
     @JsonIgnoreProperties(value = { "church", "member", "user" }, allowSetters = true)
     private Set<Task> tasks = new HashSet<>();
 
+    @OneToMany(fetch = FetchType.LAZY, mappedBy = "preacher")
+    @Cache(usage = CacheConcurrencyStrategy.READ_WRITE)
+    @org.springframework.data.annotation.Transient
+    @JsonIgnoreProperties(
+        value = { "church", "preacher", "liturgist", "hymns", "musicians", "participants", "appointments" },
+        allowSetters = true
+    )
+    private Set<WorshipEvent> preachIns = new HashSet<>();
+
+    @OneToMany(fetch = FetchType.LAZY, mappedBy = "liturgist")
+    @Cache(usage = CacheConcurrencyStrategy.READ_WRITE)
+    @org.springframework.data.annotation.Transient
+    @JsonIgnoreProperties(
+        value = { "church", "preacher", "liturgist", "hymns", "musicians", "participants", "appointments" },
+        allowSetters = true
+    )
+    private Set<WorshipEvent> liturgyIns = new HashSet<>();
+
     @OneToMany(fetch = FetchType.LAZY, mappedBy = "member")
     @Cache(usage = CacheConcurrencyStrategy.READ_WRITE)
-    @JsonIgnoreProperties(value = { "invoices", "church", "member", "user" }, allowSetters = true)
-    private Set<Transaction> transactions = new HashSet<>();
+    @org.springframework.data.annotation.Transient
+    @JsonIgnoreProperties(value = { "church", "member", "service", "group", "counselingSession", "user" }, allowSetters = true)
+    private Set<Appointment> appointments = new HashSet<>();
 
-    @ManyToMany(fetch = FetchType.LAZY, mappedBy = "members")
+    @OneToMany(fetch = FetchType.LAZY, mappedBy = "president")
     @Cache(usage = CacheConcurrencyStrategy.READ_WRITE)
-    @JsonIgnoreProperties(value = { "members", "users" }, allowSetters = true)
-    private Set<Schedule> schedules = new HashSet<>();
+    @org.springframework.data.annotation.Transient
+    @JsonIgnoreProperties(value = { "church", "president", "supervisor", "members", "appointments" }, allowSetters = true)
+    private Set<MinistryGroup> presidentOfs = new HashSet<>();
+
+    @OneToMany(fetch = FetchType.LAZY, mappedBy = "supervisor")
+    @Cache(usage = CacheConcurrencyStrategy.READ_WRITE)
+    @org.springframework.data.annotation.Transient
+    @JsonIgnoreProperties(value = { "church", "president", "supervisor", "members", "appointments" }, allowSetters = true)
+    private Set<MinistryGroup> supervisorOfs = new HashSet<>();
 
     @ManyToMany(fetch = FetchType.LAZY, mappedBy = "musicians")
     @Cache(usage = CacheConcurrencyStrategy.READ_WRITE)
-    @JsonIgnoreProperties(value = { "church", "preacher", "liturgist", "hymns", "musicians" }, allowSetters = true)
-    private Set<WorshipEvent> worshipEvents = new HashSet<>();
+    @org.springframework.data.annotation.Transient
+    @JsonIgnoreProperties(
+        value = { "church", "preacher", "liturgist", "hymns", "musicians", "participants", "appointments" },
+        allowSetters = true
+    )
+    private Set<WorshipEvent> playIns = new HashSet<>();
+
+    @ManyToMany(fetch = FetchType.LAZY, mappedBy = "participants")
+    @Cache(usage = CacheConcurrencyStrategy.READ_WRITE)
+    @org.springframework.data.annotation.Transient
+    @JsonIgnoreProperties(
+        value = { "church", "preacher", "liturgist", "hymns", "musicians", "participants", "appointments" },
+        allowSetters = true
+    )
+    private Set<WorshipEvent> participateIns = new HashSet<>();
+
+    @ManyToMany(fetch = FetchType.LAZY, mappedBy = "members")
+    @Cache(usage = CacheConcurrencyStrategy.READ_WRITE)
+    @org.springframework.data.annotation.Transient
+    @JsonIgnoreProperties(value = { "church", "president", "supervisor", "members", "appointments" }, allowSetters = true)
+    private Set<MinistryGroup> memberOfs = new HashSet<>();
 
     // jhipster-needle-entity-add-field - JHipster will add fields here
 
@@ -109,30 +258,43 @@ public class Member implements Serializable {
         this.id = id;
     }
 
-    public String getFirstName() {
-        return this.firstName;
+    public String getName() {
+        return this.name;
     }
 
-    public Member firstName(String firstName) {
-        this.setFirstName(firstName);
+    public Member name(String name) {
+        this.setName(name);
         return this;
     }
 
-    public void setFirstName(String firstName) {
-        this.firstName = firstName;
+    public void setName(String name) {
+        this.name = name;
     }
 
-    public String getLastName() {
-        return this.lastName;
+    public byte[] getPhoto() {
+        return this.photo;
     }
 
-    public Member lastName(String lastName) {
-        this.setLastName(lastName);
+    public Member photo(byte[] photo) {
+        this.setPhoto(photo);
         return this;
     }
 
-    public void setLastName(String lastName) {
-        this.lastName = lastName;
+    public void setPhoto(byte[] photo) {
+        this.photo = photo;
+    }
+
+    public String getPhotoContentType() {
+        return this.photoContentType;
+    }
+
+    public Member photoContentType(String photoContentType) {
+        this.photoContentType = photoContentType;
+        return this;
+    }
+
+    public void setPhotoContentType(String photoContentType) {
+        this.photoContentType = photoContentType;
     }
 
     public String getEmail() {
@@ -161,16 +323,16 @@ public class Member implements Serializable {
         this.phoneNumber = phoneNumber;
     }
 
-    public Instant getDateOfBirth() {
+    public LocalDate getDateOfBirth() {
         return this.dateOfBirth;
     }
 
-    public Member dateOfBirth(Instant dateOfBirth) {
+    public Member dateOfBirth(LocalDate dateOfBirth) {
         this.setDateOfBirth(dateOfBirth);
         return this;
     }
 
-    public void setDateOfBirth(Instant dateOfBirth) {
+    public void setDateOfBirth(LocalDate dateOfBirth) {
         this.dateOfBirth = dateOfBirth;
     }
 
@@ -187,6 +349,292 @@ public class Member implements Serializable {
         this.address = address;
     }
 
+    public String getCity() {
+        return this.city;
+    }
+
+    public Member city(String city) {
+        this.setCity(city);
+        return this;
+    }
+
+    public void setCity(String city) {
+        this.city = city;
+    }
+
+    public String getState() {
+        return this.state;
+    }
+
+    public Member state(String state) {
+        this.setState(state);
+        return this;
+    }
+
+    public void setState(String state) {
+        this.state = state;
+    }
+
+    public String getZipCode() {
+        return this.zipCode;
+    }
+
+    public Member zipCode(String zipCode) {
+        this.setZipCode(zipCode);
+        return this;
+    }
+
+    public void setZipCode(String zipCode) {
+        this.zipCode = zipCode;
+    }
+
+    public String getCityOfBirth() {
+        return this.cityOfBirth;
+    }
+
+    public Member cityOfBirth(String cityOfBirth) {
+        this.setCityOfBirth(cityOfBirth);
+        return this;
+    }
+
+    public void setCityOfBirth(String cityOfBirth) {
+        this.cityOfBirth = cityOfBirth;
+    }
+
+    public String getPreviousReligion() {
+        return this.previousReligion;
+    }
+
+    public Member previousReligion(String previousReligion) {
+        this.setPreviousReligion(previousReligion);
+        return this;
+    }
+
+    public void setPreviousReligion(String previousReligion) {
+        this.previousReligion = previousReligion;
+    }
+
+    public MaritalStatus getMaritalStatus() {
+        return this.maritalStatus;
+    }
+
+    public Member maritalStatus(MaritalStatus maritalStatus) {
+        this.setMaritalStatus(maritalStatus);
+        return this;
+    }
+
+    public void setMaritalStatus(MaritalStatus maritalStatus) {
+        this.maritalStatus = maritalStatus;
+    }
+
+    public String getSpouseName() {
+        return this.spouseName;
+    }
+
+    public Member spouseName(String spouseName) {
+        this.setSpouseName(spouseName);
+        return this;
+    }
+
+    public void setSpouseName(String spouseName) {
+        this.spouseName = spouseName;
+    }
+
+    public LocalDate getDateOfMarriage() {
+        return this.dateOfMarriage;
+    }
+
+    public Member dateOfMarriage(LocalDate dateOfMarriage) {
+        this.setDateOfMarriage(dateOfMarriage);
+        return this;
+    }
+
+    public void setDateOfMarriage(LocalDate dateOfMarriage) {
+        this.dateOfMarriage = dateOfMarriage;
+    }
+
+    public MemberStatus getStatus() {
+        return this.status;
+    }
+
+    public Member status(MemberStatus status) {
+        this.setStatus(status);
+        return this;
+    }
+
+    public void setStatus(MemberStatus status) {
+        this.status = status;
+    }
+
+    public String getCpf() {
+        return this.cpf;
+    }
+
+    public Member cpf(String cpf) {
+        this.setCpf(cpf);
+        return this;
+    }
+
+    public void setCpf(String cpf) {
+        this.cpf = cpf;
+    }
+
+    public String getRg() {
+        return this.rg;
+    }
+
+    public Member rg(String rg) {
+        this.setRg(rg);
+        return this;
+    }
+
+    public void setRg(String rg) {
+        this.rg = rg;
+    }
+
+    public LocalDate getDateOfBaptism() {
+        return this.dateOfBaptism;
+    }
+
+    public Member dateOfBaptism(LocalDate dateOfBaptism) {
+        this.setDateOfBaptism(dateOfBaptism);
+        return this;
+    }
+
+    public void setDateOfBaptism(LocalDate dateOfBaptism) {
+        this.dateOfBaptism = dateOfBaptism;
+    }
+
+    public String getChurchOfBaptism() {
+        return this.churchOfBaptism;
+    }
+
+    public Member churchOfBaptism(String churchOfBaptism) {
+        this.setChurchOfBaptism(churchOfBaptism);
+        return this;
+    }
+
+    public void setChurchOfBaptism(String churchOfBaptism) {
+        this.churchOfBaptism = churchOfBaptism;
+    }
+
+    public LocalDate getDateOfMembership() {
+        return this.dateOfMembership;
+    }
+
+    public Member dateOfMembership(LocalDate dateOfMembership) {
+        this.setDateOfMembership(dateOfMembership);
+        return this;
+    }
+
+    public void setDateOfMembership(LocalDate dateOfMembership) {
+        this.dateOfMembership = dateOfMembership;
+    }
+
+    public MembershipType getTypeOfMembership() {
+        return this.typeOfMembership;
+    }
+
+    public Member typeOfMembership(MembershipType typeOfMembership) {
+        this.setTypeOfMembership(typeOfMembership);
+        return this;
+    }
+
+    public void setTypeOfMembership(MembershipType typeOfMembership) {
+        this.typeOfMembership = typeOfMembership;
+    }
+
+    public String getAssociationMeetingMinutes() {
+        return this.associationMeetingMinutes;
+    }
+
+    public Member associationMeetingMinutes(String associationMeetingMinutes) {
+        this.setAssociationMeetingMinutes(associationMeetingMinutes);
+        return this;
+    }
+
+    public void setAssociationMeetingMinutes(String associationMeetingMinutes) {
+        this.associationMeetingMinutes = associationMeetingMinutes;
+    }
+
+    public LocalDate getDateOfDeath() {
+        return this.dateOfDeath;
+    }
+
+    public Member dateOfDeath(LocalDate dateOfDeath) {
+        this.setDateOfDeath(dateOfDeath);
+        return this;
+    }
+
+    public void setDateOfDeath(LocalDate dateOfDeath) {
+        this.dateOfDeath = dateOfDeath;
+    }
+
+    public LocalDate getDateOfExit() {
+        return this.dateOfExit;
+    }
+
+    public Member dateOfExit(LocalDate dateOfExit) {
+        this.setDateOfExit(dateOfExit);
+        return this;
+    }
+
+    public void setDateOfExit(LocalDate dateOfExit) {
+        this.dateOfExit = dateOfExit;
+    }
+
+    public String getExitDestination() {
+        return this.exitDestination;
+    }
+
+    public Member exitDestination(String exitDestination) {
+        this.setExitDestination(exitDestination);
+        return this;
+    }
+
+    public void setExitDestination(String exitDestination) {
+        this.exitDestination = exitDestination;
+    }
+
+    public ExitReason getExitReason() {
+        return this.exitReason;
+    }
+
+    public Member exitReason(ExitReason exitReason) {
+        this.setExitReason(exitReason);
+        return this;
+    }
+
+    public void setExitReason(ExitReason exitReason) {
+        this.exitReason = exitReason;
+    }
+
+    public String getExitMeetingMinutes() {
+        return this.exitMeetingMinutes;
+    }
+
+    public Member exitMeetingMinutes(String exitMeetingMinutes) {
+        this.setExitMeetingMinutes(exitMeetingMinutes);
+        return this;
+    }
+
+    public void setExitMeetingMinutes(String exitMeetingMinutes) {
+        this.exitMeetingMinutes = exitMeetingMinutes;
+    }
+
+    public String getNotes() {
+        return this.notes;
+    }
+
+    public Member notes(String notes) {
+        this.setNotes(notes);
+        return this;
+    }
+
+    public void setNotes(String notes) {
+        this.notes = notes;
+    }
+
     public Church getChurch() {
         return this.church;
     }
@@ -200,65 +648,34 @@ public class Member implements Serializable {
         return this;
     }
 
-    public Set<CounselingSession> getCounselingSessions() {
-        return this.counselingSessions;
+    public Set<CounselingSession> getCounselings() {
+        return this.counselings;
     }
 
-    public void setCounselingSessions(Set<CounselingSession> counselingSessions) {
-        if (this.counselingSessions != null) {
-            this.counselingSessions.forEach(i -> i.setMember(null));
+    public void setCounselings(Set<CounselingSession> counselingSessions) {
+        if (this.counselings != null) {
+            this.counselings.forEach(i -> i.setMember(null));
         }
         if (counselingSessions != null) {
             counselingSessions.forEach(i -> i.setMember(this));
         }
-        this.counselingSessions = counselingSessions;
+        this.counselings = counselingSessions;
     }
 
-    public Member counselingSessions(Set<CounselingSession> counselingSessions) {
-        this.setCounselingSessions(counselingSessions);
+    public Member counselings(Set<CounselingSession> counselingSessions) {
+        this.setCounselings(counselingSessions);
         return this;
     }
 
-    public Member addCounselingSession(CounselingSession counselingSession) {
-        this.counselingSessions.add(counselingSession);
+    public Member addCounseling(CounselingSession counselingSession) {
+        this.counselings.add(counselingSession);
         counselingSession.setMember(this);
         return this;
     }
 
-    public Member removeCounselingSession(CounselingSession counselingSession) {
-        this.counselingSessions.remove(counselingSession);
+    public Member removeCounseling(CounselingSession counselingSession) {
+        this.counselings.remove(counselingSession);
         counselingSession.setMember(null);
-        return this;
-    }
-
-    public Set<MinistryMembership> getMinistryMemberships() {
-        return this.ministryMemberships;
-    }
-
-    public void setMinistryMemberships(Set<MinistryMembership> ministryMemberships) {
-        if (this.ministryMemberships != null) {
-            this.ministryMemberships.forEach(i -> i.setMember(null));
-        }
-        if (ministryMemberships != null) {
-            ministryMemberships.forEach(i -> i.setMember(this));
-        }
-        this.ministryMemberships = ministryMemberships;
-    }
-
-    public Member ministryMemberships(Set<MinistryMembership> ministryMemberships) {
-        this.setMinistryMemberships(ministryMemberships);
-        return this;
-    }
-
-    public Member addMinistryMembership(MinistryMembership ministryMembership) {
-        this.ministryMemberships.add(ministryMembership);
-        ministryMembership.setMember(this);
-        return this;
-    }
-
-    public Member removeMinistryMembership(MinistryMembership ministryMembership) {
-        this.ministryMemberships.remove(ministryMembership);
-        ministryMembership.setMember(null);
         return this;
     }
 
@@ -281,108 +698,263 @@ public class Member implements Serializable {
         return this;
     }
 
-    public Member addTask(Task task) {
+    public Member addTasks(Task task) {
         this.tasks.add(task);
         task.setMember(this);
         return this;
     }
 
-    public Member removeTask(Task task) {
+    public Member removeTasks(Task task) {
         this.tasks.remove(task);
         task.setMember(null);
         return this;
     }
 
-    public Set<Transaction> getTransactions() {
-        return this.transactions;
+    public Set<WorshipEvent> getPreachIns() {
+        return this.preachIns;
     }
 
-    public void setTransactions(Set<Transaction> transactions) {
-        if (this.transactions != null) {
-            this.transactions.forEach(i -> i.setMember(null));
+    public void setPreachIns(Set<WorshipEvent> worshipEvents) {
+        if (this.preachIns != null) {
+            this.preachIns.forEach(i -> i.setPreacher(null));
         }
-        if (transactions != null) {
-            transactions.forEach(i -> i.setMember(this));
+        if (worshipEvents != null) {
+            worshipEvents.forEach(i -> i.setPreacher(this));
         }
-        this.transactions = transactions;
+        this.preachIns = worshipEvents;
     }
 
-    public Member transactions(Set<Transaction> transactions) {
-        this.setTransactions(transactions);
+    public Member preachIns(Set<WorshipEvent> worshipEvents) {
+        this.setPreachIns(worshipEvents);
         return this;
     }
 
-    public Member addTransaction(Transaction transaction) {
-        this.transactions.add(transaction);
-        transaction.setMember(this);
+    public Member addPreachIn(WorshipEvent worshipEvent) {
+        this.preachIns.add(worshipEvent);
+        worshipEvent.setPreacher(this);
         return this;
     }
 
-    public Member removeTransaction(Transaction transaction) {
-        this.transactions.remove(transaction);
-        transaction.setMember(null);
+    public Member removePreachIn(WorshipEvent worshipEvent) {
+        this.preachIns.remove(worshipEvent);
+        worshipEvent.setPreacher(null);
         return this;
     }
 
-    public Set<Schedule> getSchedules() {
-        return this.schedules;
+    public Set<WorshipEvent> getLiturgyIns() {
+        return this.liturgyIns;
     }
 
-    public void setSchedules(Set<Schedule> schedules) {
-        if (this.schedules != null) {
-            this.schedules.forEach(i -> i.removeMember(this));
+    public void setLiturgyIns(Set<WorshipEvent> worshipEvents) {
+        if (this.liturgyIns != null) {
+            this.liturgyIns.forEach(i -> i.setLiturgist(null));
         }
-        if (schedules != null) {
-            schedules.forEach(i -> i.addMember(this));
+        if (worshipEvents != null) {
+            worshipEvents.forEach(i -> i.setLiturgist(this));
         }
-        this.schedules = schedules;
+        this.liturgyIns = worshipEvents;
     }
 
-    public Member schedules(Set<Schedule> schedules) {
-        this.setSchedules(schedules);
+    public Member liturgyIns(Set<WorshipEvent> worshipEvents) {
+        this.setLiturgyIns(worshipEvents);
         return this;
     }
 
-    public Member addSchedule(Schedule schedule) {
-        this.schedules.add(schedule);
-        schedule.getMembers().add(this);
+    public Member addLiturgyIn(WorshipEvent worshipEvent) {
+        this.liturgyIns.add(worshipEvent);
+        worshipEvent.setLiturgist(this);
         return this;
     }
 
-    public Member removeSchedule(Schedule schedule) {
-        this.schedules.remove(schedule);
-        schedule.getMembers().remove(this);
+    public Member removeLiturgyIn(WorshipEvent worshipEvent) {
+        this.liturgyIns.remove(worshipEvent);
+        worshipEvent.setLiturgist(null);
         return this;
     }
 
-    public Set<WorshipEvent> getWorshipEvents() {
-        return this.worshipEvents;
+    public Set<Appointment> getAppointments() {
+        return this.appointments;
     }
 
-    public void setWorshipEvents(Set<WorshipEvent> worshipEvents) {
-        if (this.worshipEvents != null) {
-            this.worshipEvents.forEach(i -> i.removeMusicians(this));
+    public void setAppointments(Set<Appointment> appointments) {
+        if (this.appointments != null) {
+            this.appointments.forEach(i -> i.setMember(null));
+        }
+        if (appointments != null) {
+            appointments.forEach(i -> i.setMember(this));
+        }
+        this.appointments = appointments;
+    }
+
+    public Member appointments(Set<Appointment> appointments) {
+        this.setAppointments(appointments);
+        return this;
+    }
+
+    public Member addAppointment(Appointment appointment) {
+        this.appointments.add(appointment);
+        appointment.setMember(this);
+        return this;
+    }
+
+    public Member removeAppointment(Appointment appointment) {
+        this.appointments.remove(appointment);
+        appointment.setMember(null);
+        return this;
+    }
+
+    public Set<MinistryGroup> getPresidentOfs() {
+        return this.presidentOfs;
+    }
+
+    public void setPresidentOfs(Set<MinistryGroup> ministryGroups) {
+        if (this.presidentOfs != null) {
+            this.presidentOfs.forEach(i -> i.setPresident(null));
+        }
+        if (ministryGroups != null) {
+            ministryGroups.forEach(i -> i.setPresident(this));
+        }
+        this.presidentOfs = ministryGroups;
+    }
+
+    public Member presidentOfs(Set<MinistryGroup> ministryGroups) {
+        this.setPresidentOfs(ministryGroups);
+        return this;
+    }
+
+    public Member addPresidentOf(MinistryGroup ministryGroup) {
+        this.presidentOfs.add(ministryGroup);
+        ministryGroup.setPresident(this);
+        return this;
+    }
+
+    public Member removePresidentOf(MinistryGroup ministryGroup) {
+        this.presidentOfs.remove(ministryGroup);
+        ministryGroup.setPresident(null);
+        return this;
+    }
+
+    public Set<MinistryGroup> getSupervisorOfs() {
+        return this.supervisorOfs;
+    }
+
+    public void setSupervisorOfs(Set<MinistryGroup> ministryGroups) {
+        if (this.supervisorOfs != null) {
+            this.supervisorOfs.forEach(i -> i.setSupervisor(null));
+        }
+        if (ministryGroups != null) {
+            ministryGroups.forEach(i -> i.setSupervisor(this));
+        }
+        this.supervisorOfs = ministryGroups;
+    }
+
+    public Member supervisorOfs(Set<MinistryGroup> ministryGroups) {
+        this.setSupervisorOfs(ministryGroups);
+        return this;
+    }
+
+    public Member addSupervisorOf(MinistryGroup ministryGroup) {
+        this.supervisorOfs.add(ministryGroup);
+        ministryGroup.setSupervisor(this);
+        return this;
+    }
+
+    public Member removeSupervisorOf(MinistryGroup ministryGroup) {
+        this.supervisorOfs.remove(ministryGroup);
+        ministryGroup.setSupervisor(null);
+        return this;
+    }
+
+    public Set<WorshipEvent> getPlayIns() {
+        return this.playIns;
+    }
+
+    public void setPlayIns(Set<WorshipEvent> worshipEvents) {
+        if (this.playIns != null) {
+            this.playIns.forEach(i -> i.removeMusicians(this));
         }
         if (worshipEvents != null) {
             worshipEvents.forEach(i -> i.addMusicians(this));
         }
-        this.worshipEvents = worshipEvents;
+        this.playIns = worshipEvents;
     }
 
-    public Member worshipEvents(Set<WorshipEvent> worshipEvents) {
-        this.setWorshipEvents(worshipEvents);
+    public Member playIns(Set<WorshipEvent> worshipEvents) {
+        this.setPlayIns(worshipEvents);
         return this;
     }
 
-    public Member addWorshipEvent(WorshipEvent worshipEvent) {
-        this.worshipEvents.add(worshipEvent);
+    public Member addPlayIn(WorshipEvent worshipEvent) {
+        this.playIns.add(worshipEvent);
         worshipEvent.getMusicians().add(this);
         return this;
     }
 
-    public Member removeWorshipEvent(WorshipEvent worshipEvent) {
-        this.worshipEvents.remove(worshipEvent);
+    public Member removePlayIn(WorshipEvent worshipEvent) {
+        this.playIns.remove(worshipEvent);
         worshipEvent.getMusicians().remove(this);
+        return this;
+    }
+
+    public Set<WorshipEvent> getParticipateIns() {
+        return this.participateIns;
+    }
+
+    public void setParticipateIns(Set<WorshipEvent> worshipEvents) {
+        if (this.participateIns != null) {
+            this.participateIns.forEach(i -> i.removeParticipants(this));
+        }
+        if (worshipEvents != null) {
+            worshipEvents.forEach(i -> i.addParticipants(this));
+        }
+        this.participateIns = worshipEvents;
+    }
+
+    public Member participateIns(Set<WorshipEvent> worshipEvents) {
+        this.setParticipateIns(worshipEvents);
+        return this;
+    }
+
+    public Member addParticipateIn(WorshipEvent worshipEvent) {
+        this.participateIns.add(worshipEvent);
+        worshipEvent.getParticipants().add(this);
+        return this;
+    }
+
+    public Member removeParticipateIn(WorshipEvent worshipEvent) {
+        this.participateIns.remove(worshipEvent);
+        worshipEvent.getParticipants().remove(this);
+        return this;
+    }
+
+    public Set<MinistryGroup> getMemberOfs() {
+        return this.memberOfs;
+    }
+
+    public void setMemberOfs(Set<MinistryGroup> ministryGroups) {
+        if (this.memberOfs != null) {
+            this.memberOfs.forEach(i -> i.removeMembers(this));
+        }
+        if (ministryGroups != null) {
+            ministryGroups.forEach(i -> i.addMembers(this));
+        }
+        this.memberOfs = ministryGroups;
+    }
+
+    public Member memberOfs(Set<MinistryGroup> ministryGroups) {
+        this.setMemberOfs(ministryGroups);
+        return this;
+    }
+
+    public Member addMemberOf(MinistryGroup ministryGroup) {
+        this.memberOfs.add(ministryGroup);
+        ministryGroup.getMembers().add(this);
+        return this;
+    }
+
+    public Member removeMemberOf(MinistryGroup ministryGroup) {
+        this.memberOfs.remove(ministryGroup);
+        ministryGroup.getMembers().remove(this);
         return this;
     }
 
@@ -410,12 +982,35 @@ public class Member implements Serializable {
     public String toString() {
         return "Member{" +
             "id=" + getId() +
-            ", firstName='" + getFirstName() + "'" +
-            ", lastName='" + getLastName() + "'" +
+            ", name='" + getName() + "'" +
+            ", photo='" + getPhoto() + "'" +
+            ", photoContentType='" + getPhotoContentType() + "'" +
             ", email='" + getEmail() + "'" +
             ", phoneNumber='" + getPhoneNumber() + "'" +
             ", dateOfBirth='" + getDateOfBirth() + "'" +
             ", address='" + getAddress() + "'" +
+            ", city='" + getCity() + "'" +
+            ", state='" + getState() + "'" +
+            ", zipCode='" + getZipCode() + "'" +
+            ", cityOfBirth='" + getCityOfBirth() + "'" +
+            ", previousReligion='" + getPreviousReligion() + "'" +
+            ", maritalStatus='" + getMaritalStatus() + "'" +
+            ", spouseName='" + getSpouseName() + "'" +
+            ", dateOfMarriage='" + getDateOfMarriage() + "'" +
+            ", status='" + getStatus() + "'" +
+            ", cpf='" + getCpf() + "'" +
+            ", rg='" + getRg() + "'" +
+            ", dateOfBaptism='" + getDateOfBaptism() + "'" +
+            ", churchOfBaptism='" + getChurchOfBaptism() + "'" +
+            ", dateOfMembership='" + getDateOfMembership() + "'" +
+            ", typeOfMembership='" + getTypeOfMembership() + "'" +
+            ", associationMeetingMinutes='" + getAssociationMeetingMinutes() + "'" +
+            ", dateOfDeath='" + getDateOfDeath() + "'" +
+            ", dateOfExit='" + getDateOfExit() + "'" +
+            ", exitDestination='" + getExitDestination() + "'" +
+            ", exitReason='" + getExitReason() + "'" +
+            ", exitMeetingMinutes='" + getExitMeetingMinutes() + "'" +
+            ", notes='" + getNotes() + "'" +
             "}";
     }
 }

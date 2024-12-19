@@ -15,13 +15,20 @@
           <dd>
             <span>{{ memberRef.id }}</span>
           </dd>
-          <dt><span jhiTranslate="poimenApp.member.firstName">First Name</span></dt>
+          <dt><span jhiTranslate="poimenApp.member.name">Name</span></dt>
           <dd>
-            <span>{{ memberRef.firstName }}</span>
+            <span>{{ memberRef.name }}</span>
           </dd>
-          <dt><span jhiTranslate="poimenApp.member.lastName">Last Name</span></dt>
+          <dt><span jhiTranslate="poimenApp.member.photo">Photo</span></dt>
           <dd>
-            <span>{{ memberRef.lastName }}</span>
+            @if (memberRef.photo) {
+              <div>
+                <a (click)="openFile(memberRef.photo ?? '', memberRef.photoContentType)">
+                  <img [src]="'data:' + memberRef.photoContentType + ';base64,' + memberRef.photo" style="max-width: 100%" alt="member" />
+                </a>
+                {{ memberRef.photoContentType }}, {{ byteSize(memberRef.photo ?? '') }}
+              </div>
+            }
           </dd>
           <dt><span jhiTranslate="poimenApp.member.email">Email</span></dt>
           <dd>
@@ -33,34 +40,170 @@
           </dd>
           <dt><span jhiTranslate="poimenApp.member.dateOfBirth">Date Of Birth</span></dt>
           <dd>
-            <span>{{ memberRef.dateOfBirth | formatMediumDatetime }}</span>
+            <span>{{ memberRef.dateOfBirth | formatMediumDate }}</span>
           </dd>
           <dt><span jhiTranslate="poimenApp.member.address">Address</span></dt>
           <dd>
             <span>{{ memberRef.address }}</span>
           </dd>
+          <dt><span jhiTranslate="poimenApp.member.city">City</span></dt>
+          <dd>
+            <span>{{ memberRef.city }}</span>
+          </dd>
+          <dt><span jhiTranslate="poimenApp.member.state">State</span></dt>
+          <dd>
+            <span>{{ memberRef.state }}</span>
+          </dd>
+          <dt><span jhiTranslate="poimenApp.member.zipCode">Zip Code</span></dt>
+          <dd>
+            <span>{{ memberRef.zipCode }}</span>
+          </dd>
+          <dt><span jhiTranslate="poimenApp.member.cityOfBirth">City Of Birth</span></dt>
+          <dd>
+            <span>{{ memberRef.cityOfBirth }}</span>
+          </dd>
+          <dt><span jhiTranslate="poimenApp.member.previousReligion">Previous Religion</span></dt>
+          <dd>
+            <span>{{ memberRef.previousReligion }}</span>
+          </dd>
+          <dt><span jhiTranslate="poimenApp.member.maritalStatus">Marital Status</span></dt>
+          <dd>
+            <span [jhiTranslate]="'poimenApp.MaritalStatus.' + (memberRef.maritalStatus ?? 'null')">{{
+              { null: '', SINGLE: 'Single', MARRIED: 'Married', DIVORCED: 'Divorced', WIDOWED: 'Widowed' }[
+                memberRef.maritalStatus ?? 'null'
+              ]
+            }}</span>
+          </dd>
+          <dt><span jhiTranslate="poimenApp.member.spouseName">Spouse Name</span></dt>
+          <dd>
+            <span>{{ memberRef.spouseName }}</span>
+          </dd>
+          <dt><span jhiTranslate="poimenApp.member.dateOfMarriage">Date Of Marriage</span></dt>
+          <dd>
+            <span>{{ memberRef.dateOfMarriage | formatMediumDate }}</span>
+          </dd>
+          <dt><span jhiTranslate="poimenApp.member.status">Status</span></dt>
+          <dd>
+            <span [jhiTranslate]="'poimenApp.MemberStatus.' + (memberRef.status ?? 'null')">{{
+              {
+                null: '',
+                COMUNGANT_MEMBER: 'Comungant',
+                NON_COMUNGANT_MEMBER: 'Non-Comungant',
+                VISITOR: 'Visitor',
+                INACTIVE: 'Inactive',
+                EXCOMMUNICATED: 'Excommunicated',
+                DECEASED: 'Deceased',
+                TRANSFERED: 'Transfered',
+                CATECHUMENS: 'Catechumens',
+                PASTOR: 'Pastor',
+                SEMINARIST: 'Seminarist',
+              }[memberRef.status ?? 'null']
+            }}</span>
+          </dd>
+          <dt><span jhiTranslate="poimenApp.member.cpf">Cpf</span></dt>
+          <dd>
+            <span>{{ memberRef.cpf }}</span>
+          </dd>
+          <dt><span jhiTranslate="poimenApp.member.rg">Rg</span></dt>
+          <dd>
+            <span>{{ memberRef.rg }}</span>
+          </dd>
+          <dt><span jhiTranslate="poimenApp.member.dateOfBaptism">Date Of Baptism</span></dt>
+          <dd>
+            <span>{{ memberRef.dateOfBaptism | formatMediumDate }}</span>
+          </dd>
+          <dt><span jhiTranslate="poimenApp.member.churchOfBaptism">Church Of Baptism</span></dt>
+          <dd>
+            <span>{{ memberRef.churchOfBaptism }}</span>
+          </dd>
+          <dt><span jhiTranslate="poimenApp.member.dateOfMembership">Date Of Membership</span></dt>
+          <dd>
+            <span>{{ memberRef.dateOfMembership | formatMediumDate }}</span>
+          </dd>
+          <dt><span jhiTranslate="poimenApp.member.typeOfMembership">Type Of Membership</span></dt>
+          <dd>
+            <span [jhiTranslate]="'poimenApp.MembershipType.' + (memberRef.typeOfMembership ?? 'null')">{{
+              {
+                null: '',
+                PROFESSION_OF_FAITH: 'Profession of Faith',
+                TRANSFER: 'Transfer',
+                BAPTISM: 'Baptism',
+                BAPTISM_AND_PROFESSION_OF_FAITH: 'Baptism and Profession of Faith',
+                JURISDICTION: 'Jurisdiction',
+                JURISDICTION_ON_REQUEST: 'Jurisdiction on Request',
+                PASTOR: 'Pastor',
+              }[memberRef.typeOfMembership ?? 'null']
+            }}</span>
+          </dd>
+          <dt><span jhiTranslate="poimenApp.member.associationMeetingMinutes">Association Meeting Minutes</span></dt>
+          <dd>
+            <span>{{ memberRef.associationMeetingMinutes }}</span>
+          </dd>
+          <dt><span jhiTranslate="poimenApp.member.dateOfDeath">Date Of Death</span></dt>
+          <dd>
+            <span>{{ memberRef.dateOfDeath | formatMediumDate }}</span>
+          </dd>
+          <dt><span jhiTranslate="poimenApp.member.dateOfExit">Date Of Exit</span></dt>
+          <dd>
+            <span>{{ memberRef.dateOfExit | formatMediumDate }}</span>
+          </dd>
+          <dt><span jhiTranslate="poimenApp.member.exitDestination">Exit Destination</span></dt>
+          <dd>
+            <span>{{ memberRef.exitDestination }}</span>
+          </dd>
+          <dt><span jhiTranslate="poimenApp.member.exitReason">Exit Reason</span></dt>
+          <dd>
+            <span [jhiTranslate]="'poimenApp.ExitReason.' + (memberRef.exitReason ?? 'null')">{{
+              {
+                null: '',
+                TRANSFER: 'Transfer',
+                EXCOMMUNICATION: 'Excommunication',
+                DEATH: 'Death',
+                DISMISSAL: 'Dismissal',
+                ORDENATION: 'Ordenation',
+                OTHER: 'Other',
+              }[memberRef.exitReason ?? 'null']
+            }}</span>
+          </dd>
+          <dt><span jhiTranslate="poimenApp.member.exitMeetingMinutes">Exit Meeting Minutes</span></dt>
+          <dd>
+            <span>{{ memberRef.exitMeetingMinutes }}</span>
+          </dd>
+          <dt><span jhiTranslate="poimenApp.member.notes">Notes</span></dt>
+          <dd>
+            <span>{{ memberRef.notes }}</span>
+          </dd>
           <dt><span jhiTranslate="poimenApp.member.church">Church</span></dt>
           <dd>
             @if (member()!.church) {
               <div>
-                <a [routerLink]="['/church', member()!.church?.id, 'view']">{{ memberRef.church?.id }}</a>
+                <a [routerLink]="['/church', member()!.church?.id, 'view']">{{ memberRef.church?.name }}</a>
               </div>
             }
           </dd>
-          <dt><span jhiTranslate="poimenApp.member.schedule">Schedule</span></dt>
+          <dt><span jhiTranslate="poimenApp.member.playIn">Play In</span></dt>
           <dd>
-            @for (schedule of memberRef.schedules; track $index; let last = $last) {
+            @for (playIn of memberRef.playIns; track $index; let last = $last) {
               <span>
-                <a [routerLink]="['/schedule', schedule.id, 'view']">{{ schedule?.id }}</a
+                <a [routerLink]="['/worship-event', playIn.id, 'view']">{{ playIn?.title }}</a
                 >{{ last ? '' : ', ' }}
               </span>
             }
           </dd>
-          <dt><span jhiTranslate="poimenApp.member.worshipEvent">Worship Event</span></dt>
+          <dt><span jhiTranslate="poimenApp.member.participateIn">Participate In</span></dt>
           <dd>
-            @for (worshipEvent of memberRef.worshipEvents; track $index; let last = $last) {
+            @for (participateIn of memberRef.participateIns; track $index; let last = $last) {
               <span>
-                <a [routerLink]="['/worship-event', worshipEvent.id, 'view']">{{ worshipEvent?.id }}</a
+                <a [routerLink]="['/worship-event', participateIn.id, 'view']">{{ participateIn?.title }}</a
+                >{{ last ? '' : ', ' }}
+              </span>
+            }
+          </dd>
+          <dt><span jhiTranslate="poimenApp.member.memberOf">Member Of</span></dt>
+          <dd>
+            @for (memberOf of memberRef.memberOfs; track $index; let last = $last) {
+              <span>
+                <a [routerLink]="['/ministry-group', memberOf.id, 'view']">{{ memberOf?.name }}</a
                 >{{ last ? '' : ', ' }}
               </span>
             }

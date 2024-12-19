@@ -6,6 +6,7 @@
         "refreshListLabel": "Atualizar lista",
         "createLabel": "Criar novo Invoice",
         "createOrEditLabel": "Criar ou editar Invoice",
+        "search": "Pesquisar por Invoice",
         "notFound": "Nenhum Invoice encontrado"
       },
       "created": "Um novo Invoice foi criado com o identificador {{ param }}",

@@ -20,12 +20,15 @@ describe('PlanSubscription Form Service', () => {
         expect(formGroup.controls).toEqual(
           expect.objectContaining({
             id: expect.any(Object),
+            description: expect.any(Object),
             startDate: expect.any(Object),
             endDate: expect.any(Object),
-            active: expect.any(Object),
-            planName: expect.any(Object),
-            plan: expect.any(Object),
+            status: expect.any(Object),
+            paymentProvider: expect.any(Object),
+            paymentStatus: expect.any(Object),
+            paymentReference: expect.any(Object),
             church: expect.any(Object),
+            plan: expect.any(Object),
             user: expect.any(Object),
           }),
         );
@@ -37,12 +40,15 @@ describe('PlanSubscription Form Service', () => {
         expect(formGroup.controls).toEqual(
           expect.objectContaining({
             id: expect.any(Object),
+            description: expect.any(Object),
             startDate: expect.any(Object),
             endDate: expect.any(Object),
-            active: expect.any(Object),
-            planName: expect.any(Object),
-            plan: expect.any(Object),
+            status: expect.any(Object),
+            paymentProvider: expect.any(Object),
+            paymentStatus: expect.any(Object),
+            paymentReference: expect.any(Object),
             church: expect.any(Object),
+            plan: expect.any(Object),
             user: expect.any(Object),
           }),
         );

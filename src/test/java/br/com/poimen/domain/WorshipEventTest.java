@@ -1,5 +1,6 @@
 package br.com.poimen.domain;
 
+import static br.com.poimen.domain.AppointmentTestSamples.*;
 import static br.com.poimen.domain.ChurchTestSamples.*;
 import static br.com.poimen.domain.HymnTestSamples.*;
 import static br.com.poimen.domain.MemberTestSamples.*;
@@ -64,14 +65,14 @@ class WorshipEventTest {
     }
 
     @Test
-    void hymnTest() {
+    void hymnsTest() {
         WorshipEvent worshipEvent = getWorshipEventRandomSampleGenerator();
         Hymn hymnBack = getHymnRandomSampleGenerator();
 
-        worshipEvent.addHymn(hymnBack);
+        worshipEvent.addHymns(hymnBack);
         assertThat(worshipEvent.getHymns()).containsOnly(hymnBack);
 
-        worshipEvent.removeHymn(hymnBack);
+        worshipEvent.removeHymns(hymnBack);
         assertThat(worshipEvent.getHymns()).doesNotContain(hymnBack);
 
         worshipEvent.hymns(new HashSet<>(Set.of(hymnBack)));
@@ -97,5 +98,45 @@ class WorshipEventTest {
 
         worshipEvent.setMusicians(new HashSet<>());
         assertThat(worshipEvent.getMusicians()).doesNotContain(memberBack);
+    }
+
+    @Test
+    void participantsTest() {
+        WorshipEvent worshipEvent = getWorshipEventRandomSampleGenerator();
+        Member memberBack = getMemberRandomSampleGenerator();
+
+        worshipEvent.addParticipants(memberBack);
+        assertThat(worshipEvent.getParticipants()).containsOnly(memberBack);
+
+        worshipEvent.removeParticipants(memberBack);
+        assertThat(worshipEvent.getParticipants()).doesNotContain(memberBack);
+
+        worshipEvent.participants(new HashSet<>(Set.of(memberBack)));
+        assertThat(worshipEvent.getParticipants()).containsOnly(memberBack);
+
+        worshipEvent.setParticipants(new HashSet<>());
+        assertThat(worshipEvent.getParticipants()).doesNotContain(memberBack);
+    }
+
+    @Test
+    void appointmentTest() {
+        WorshipEvent worshipEvent = getWorshipEventRandomSampleGenerator();
+        Appointment appointmentBack = getAppointmentRandomSampleGenerator();
+
+        worshipEvent.addAppointment(appointmentBack);
+        assertThat(worshipEvent.getAppointments()).containsOnly(appointmentBack);
+        assertThat(appointmentBack.getService()).isEqualTo(worshipEvent);
+
+        worshipEvent.removeAppointment(appointmentBack);
+        assertThat(worshipEvent.getAppointments()).doesNotContain(appointmentBack);
+        assertThat(appointmentBack.getService()).isNull();
+
+        worshipEvent.appointments(new HashSet<>(Set.of(appointmentBack)));
+        assertThat(worshipEvent.getAppointments()).containsOnly(appointmentBack);
+        assertThat(appointmentBack.getService()).isEqualTo(worshipEvent);
+
+        worshipEvent.setAppointments(new HashSet<>());
+        assertThat(worshipEvent.getAppointments()).doesNotContain(appointmentBack);
+        assertThat(appointmentBack.getService()).isNull();
     }
 }

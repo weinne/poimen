@@ -2,6 +2,7 @@ import { TestBed } from '@angular/core/testing';
 import { HttpTestingController, provideHttpClientTesting } from '@angular/common/http/testing';
 import { provideHttpClient } from '@angular/common/http';
 
+import { DATE_FORMAT } from 'app/config/input.constants';
 import { ITask } from '../task.model';
 import { sampleWithFullData, sampleWithNewData, sampleWithPartialData, sampleWithRequiredData } from '../task.test-samples';
 
@@ -9,7 +10,7 @@ import { RestTask, TaskService } from './task.service';
 
 const requireRestSample: RestTask = {
   ...sampleWithRequiredData,
-  dueDate: sampleWithRequiredData.dueDate?.toJSON(),
+  dueDate: sampleWithRequiredData.dueDate?.format(DATE_FORMAT),
 };
 
 describe('Task Service', () => {
@@ -95,6 +96,20 @@ describe('Task Service', () => {
       const req = httpMock.expectOne({ method: 'DELETE' });
       req.flush({ status: 200 });
       expect(expectedResult).toBe(expected);
+    });
+
+    it('should handle exceptions for searching a Task', () => {
+      const queryObject: any = {
+        page: 0,
+        size: 20,
+        query: '',
+        sort: [],
+      };
+      service.search(queryObject).subscribe(() => expectedResult);
+
+      const req = httpMock.expectOne({ method: 'GET' });
+      req.flush(null, { status: 500, statusText: 'Internal Server Error' });
+      expect(expectedResult).toBe(null);
     });
 
     describe('addTaskToCollectionIfMissing', () => {

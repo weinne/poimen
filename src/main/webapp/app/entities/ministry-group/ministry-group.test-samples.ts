@@ -3,31 +3,29 @@ import dayjs from 'dayjs/esm';
 import { IMinistryGroup, NewMinistryGroup } from './ministry-group.model';
 
 export const sampleWithRequiredData: IMinistryGroup = {
-  id: 4888,
-  name: 'oh',
-  type: 'INTERNAL_SOCIETY',
+  id: 5074,
+  name: 'crackle unexpectedly pfft',
+  type: 'DEPARTMENT',
 };
 
 export const sampleWithPartialData: IMinistryGroup = {
-  id: 5999,
-  name: 'yahoo',
-  establishedDate: dayjs('2024-12-17T13:05'),
-  leader: 'promptly as',
+  id: 5335,
+  name: 'but',
+  description: 'impractical tough plus',
   type: 'DEACON_BOARD',
 };
 
 export const sampleWithFullData: IMinistryGroup = {
-  id: 4397,
-  name: 'impractical tough plus',
-  description: 'vain even ouch',
-  establishedDate: dayjs('2024-12-17T20:36'),
-  leader: 'ha',
-  type: 'DEPARTMENT',
+  id: 29699,
+  name: 'canter yowza',
+  description: 'impanel bump',
+  establishedDate: dayjs('2024-12-18'),
+  type: 'DEACON_BOARD',
 };
 
 export const sampleWithNewData: NewMinistryGroup = {
-  name: 'once',
-  type: 'CHURCH_COUNCIL',
+  name: 'lovable always',
+  type: 'DEACON_BOARD',
   id: null,
 };
 

@@ -4,7 +4,7 @@ import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.*;
 import java.io.Serializable;
-import java.time.Instant;
+import java.time.LocalDate;
 import java.util.HashSet;
 import java.util.Set;
 import org.hibernate.annotations.Cache;
@@ -16,6 +16,7 @@ import org.hibernate.annotations.CacheConcurrencyStrategy;
 @Entity
 @Table(name = "church")
 @Cache(usage = CacheConcurrencyStrategy.READ_WRITE)
+@org.springframework.data.elasticsearch.annotations.Document(indexName = "church")
 @SuppressWarnings("common-java:DuplicatedBlocks")
 public class Church implements Serializable {
 
@@ -29,71 +30,139 @@ public class Church implements Serializable {
 
     @NotNull
     @Column(name = "name", nullable = false)
+    @org.springframework.data.elasticsearch.annotations.Field(type = org.springframework.data.elasticsearch.annotations.FieldType.Text)
     private String name;
 
     @NotNull
+    @Pattern(regexp = "^\\d{14}$")
     @Column(name = "cnpj", nullable = false)
+    @org.springframework.data.elasticsearch.annotations.Field(type = org.springframework.data.elasticsearch.annotations.FieldType.Text)
     private String cnpj;
 
     @NotNull
     @Column(name = "address", nullable = false)
+    @org.springframework.data.elasticsearch.annotations.Field(type = org.springframework.data.elasticsearch.annotations.FieldType.Text)
     private String address;
 
     @NotNull
     @Column(name = "city", nullable = false)
+    @org.springframework.data.elasticsearch.annotations.Field(type = org.springframework.data.elasticsearch.annotations.FieldType.Text)
     private String city;
 
     @NotNull
     @Column(name = "date_foundation", nullable = false)
-    private Instant dateFoundation;
+    private LocalDate dateFoundation;
 
-    @ManyToMany(fetch = FetchType.LAZY)
-    @JoinTable(name = "rel_church__user", joinColumns = @JoinColumn(name = "church_id"), inverseJoinColumns = @JoinColumn(name = "user_id"))
-    @Cache(usage = CacheConcurrencyStrategy.READ_WRITE)
-    private Set<User> users = new HashSet<>();
+    @Column(name = "phone")
+    @org.springframework.data.elasticsearch.annotations.Field(type = org.springframework.data.elasticsearch.annotations.FieldType.Text)
+    private String phone;
+
+    @Column(name = "email")
+    @org.springframework.data.elasticsearch.annotations.Field(type = org.springframework.data.elasticsearch.annotations.FieldType.Text)
+    private String email;
+
+    @Column(name = "website")
+    @org.springframework.data.elasticsearch.annotations.Field(type = org.springframework.data.elasticsearch.annotations.FieldType.Text)
+    private String website;
+
+    @Column(name = "facebook")
+    @org.springframework.data.elasticsearch.annotations.Field(type = org.springframework.data.elasticsearch.annotations.FieldType.Text)
+    private String facebook;
+
+    @Column(name = "instagram")
+    @org.springframework.data.elasticsearch.annotations.Field(type = org.springframework.data.elasticsearch.annotations.FieldType.Text)
+    private String instagram;
+
+    @Column(name = "twitter")
+    @org.springframework.data.elasticsearch.annotations.Field(type = org.springframework.data.elasticsearch.annotations.FieldType.Text)
+    private String twitter;
+
+    @Column(name = "youtube")
+    @org.springframework.data.elasticsearch.annotations.Field(type = org.springframework.data.elasticsearch.annotations.FieldType.Text)
+    private String youtube;
+
+    @Lob
+    @Column(name = "about")
+    @org.springframework.data.elasticsearch.annotations.Field(type = org.springframework.data.elasticsearch.annotations.FieldType.Text)
+    private String about;
 
     @OneToMany(fetch = FetchType.LAZY, mappedBy = "church")
     @Cache(usage = CacheConcurrencyStrategy.READ_WRITE)
+    @org.springframework.data.annotation.Transient
+    @JsonIgnoreProperties(value = { "internalUser", "church" }, allowSetters = true)
+    private Set<ApplicationUser> users = new HashSet<>();
+
+    @OneToMany(fetch = FetchType.LAZY, mappedBy = "church")
+    @Cache(usage = CacheConcurrencyStrategy.READ_WRITE)
+    @org.springframework.data.annotation.Transient
     @JsonIgnoreProperties(
-        value = { "church", "counselingSessions", "ministryMemberships", "tasks", "transactions", "schedules", "worshipEvents" },
+        value = {
+            "church",
+            "counselings",
+            "tasks",
+            "preachIns",
+            "liturgyIns",
+            "appointments",
+            "presidentOfs",
+            "supervisorOfs",
+            "playIns",
+            "participateIns",
+            "memberOfs",
+        },
         allowSetters = true
     )
     private Set<Member> members = new HashSet<>();
 
     @OneToMany(fetch = FetchType.LAZY, mappedBy = "church")
     @Cache(usage = CacheConcurrencyStrategy.READ_WRITE)
-    @JsonIgnoreProperties(value = { "church", "ministryMemberships" }, allowSetters = true)
-    private Set<MinistryGroup> ministryGroups = new HashSet<>();
+    @org.springframework.data.annotation.Transient
+    @JsonIgnoreProperties(value = { "church", "plan", "user" }, allowSetters = true)
+    private Set<PlanSubscription> subscriptions = new HashSet<>();
 
     @OneToMany(fetch = FetchType.LAZY, mappedBy = "church")
     @Cache(usage = CacheConcurrencyStrategy.READ_WRITE)
-    @JsonIgnoreProperties(value = { "church", "preacher", "liturgist", "hymns", "musicians" }, allowSetters = true)
-    private Set<WorshipEvent> worshipEvents = new HashSet<>();
+    @org.springframework.data.annotation.Transient
+    @JsonIgnoreProperties(value = { "church", "member", "user", "appointments" }, allowSetters = true)
+    private Set<CounselingSession> counselingSessions = new HashSet<>();
 
     @OneToMany(fetch = FetchType.LAZY, mappedBy = "church")
     @Cache(usage = CacheConcurrencyStrategy.READ_WRITE)
+    @org.springframework.data.annotation.Transient
     @JsonIgnoreProperties(value = { "church", "member", "user" }, allowSetters = true)
     private Set<Task> tasks = new HashSet<>();
 
     @OneToMany(fetch = FetchType.LAZY, mappedBy = "church")
     @Cache(usage = CacheConcurrencyStrategy.READ_WRITE)
-    @JsonIgnoreProperties(value = { "church", "member", "user" }, allowSetters = true)
-    private Set<CounselingSession> counselingSessions = new HashSet<>();
-
-    @OneToMany(fetch = FetchType.LAZY, mappedBy = "church")
-    @Cache(usage = CacheConcurrencyStrategy.READ_WRITE)
-    @JsonIgnoreProperties(value = { "church", "transaction" }, allowSetters = true)
-    private Set<Invoice> invoices = new HashSet<>();
-
-    @OneToMany(fetch = FetchType.LAZY, mappedBy = "church")
-    @Cache(usage = CacheConcurrencyStrategy.READ_WRITE)
+    @org.springframework.data.annotation.Transient
     @JsonIgnoreProperties(value = { "invoices", "church", "member", "user" }, allowSetters = true)
     private Set<Transaction> transactions = new HashSet<>();
 
     @OneToMany(fetch = FetchType.LAZY, mappedBy = "church")
     @Cache(usage = CacheConcurrencyStrategy.READ_WRITE)
-    @JsonIgnoreProperties(value = { "plan", "church", "user" }, allowSetters = true)
-    private Set<PlanSubscription> planSubscriptions = new HashSet<>();
+    @org.springframework.data.annotation.Transient
+    @JsonIgnoreProperties(value = { "church", "transaction" }, allowSetters = true)
+    private Set<Invoice> invoices = new HashSet<>();
+
+    @OneToMany(fetch = FetchType.LAZY, mappedBy = "church")
+    @Cache(usage = CacheConcurrencyStrategy.READ_WRITE)
+    @org.springframework.data.annotation.Transient
+    @JsonIgnoreProperties(
+        value = { "church", "preacher", "liturgist", "hymns", "musicians", "participants", "appointments" },
+        allowSetters = true
+    )
+    private Set<WorshipEvent> worshipEvents = new HashSet<>();
+
+    @OneToMany(fetch = FetchType.LAZY, mappedBy = "church")
+    @Cache(usage = CacheConcurrencyStrategy.READ_WRITE)
+    @org.springframework.data.annotation.Transient
+    @JsonIgnoreProperties(value = { "church", "member", "service", "group", "counselingSession", "user" }, allowSetters = true)
+    private Set<Appointment> appointments = new HashSet<>();
+
+    @OneToMany(fetch = FetchType.LAZY, mappedBy = "church")
+    @Cache(usage = CacheConcurrencyStrategy.READ_WRITE)
+    @org.springframework.data.annotation.Transient
+    @JsonIgnoreProperties(value = { "church", "president", "supervisor", "members", "appointments" }, allowSetters = true)
+    private Set<MinistryGroup> ministryGroups = new HashSet<>();
 
     // jhipster-needle-entity-add-field - JHipster will add fields here
 
@@ -162,39 +231,151 @@ public class Church implements Serializable {
         this.city = city;
     }
 
-    public Instant getDateFoundation() {
+    public LocalDate getDateFoundation() {
         return this.dateFoundation;
     }
 
-    public Church dateFoundation(Instant dateFoundation) {
+    public Church dateFoundation(LocalDate dateFoundation) {
         this.setDateFoundation(dateFoundation);
         return this;
     }
 
-    public void setDateFoundation(Instant dateFoundation) {
+    public void setDateFoundation(LocalDate dateFoundation) {
         this.dateFoundation = dateFoundation;
     }
 
-    public Set<User> getUsers() {
+    public String getPhone() {
+        return this.phone;
+    }
+
+    public Church phone(String phone) {
+        this.setPhone(phone);
+        return this;
+    }
+
+    public void setPhone(String phone) {
+        this.phone = phone;
+    }
+
+    public String getEmail() {
+        return this.email;
+    }
+
+    public Church email(String email) {
+        this.setEmail(email);
+        return this;
+    }
+
+    public void setEmail(String email) {
+        this.email = email;
+    }
+
+    public String getWebsite() {
+        return this.website;
+    }
+
+    public Church website(String website) {
+        this.setWebsite(website);
+        return this;
+    }
+
+    public void setWebsite(String website) {
+        this.website = website;
+    }
+
+    public String getFacebook() {
+        return this.facebook;
+    }
+
+    public Church facebook(String facebook) {
+        this.setFacebook(facebook);
+        return this;
+    }
+
+    public void setFacebook(String facebook) {
+        this.facebook = facebook;
+    }
+
+    public String getInstagram() {
+        return this.instagram;
+    }
+
+    public Church instagram(String instagram) {
+        this.setInstagram(instagram);
+        return this;
+    }
+
+    public void setInstagram(String instagram) {
+        this.instagram = instagram;
+    }
+
+    public String getTwitter() {
+        return this.twitter;
+    }
+
+    public Church twitter(String twitter) {
+        this.setTwitter(twitter);
+        return this;
+    }
+
+    public void setTwitter(String twitter) {
+        this.twitter = twitter;
+    }
+
+    public String getYoutube() {
+        return this.youtube;
+    }
+
+    public Church youtube(String youtube) {
+        this.setYoutube(youtube);
+        return this;
+    }
+
+    public void setYoutube(String youtube) {
+        this.youtube = youtube;
+    }
+
+    public String getAbout() {
+        return this.about;
+    }
+
+    public Church about(String about) {
+        this.setAbout(about);
+        return this;
+    }
+
+    public void setAbout(String about) {
+        this.about = about;
+    }
+
+    public Set<ApplicationUser> getUsers() {
         return this.users;
     }
 
-    public void setUsers(Set<User> users) {
-        this.users = users;
+    public void setUsers(Set<ApplicationUser> applicationUsers) {
+        if (this.users != null) {
+            this.users.forEach(i -> i.setChurch(null));
+        }
+        if (applicationUsers != null) {
+            applicationUsers.forEach(i -> i.setChurch(this));
+        }
+        this.users = applicationUsers;
     }
 
-    public Church users(Set<User> users) {
-        this.setUsers(users);
+    public Church users(Set<ApplicationUser> applicationUsers) {
+        this.setUsers(applicationUsers);
         return this;
     }
 
-    public Church addUser(User user) {
-        this.users.add(user);
+    public Church addUser(ApplicationUser applicationUser) {
+        this.users.add(applicationUser);
+        applicationUser.setChurch(this);
         return this;
     }
 
-    public Church removeUser(User user) {
-        this.users.remove(user);
+    public Church removeUser(ApplicationUser applicationUser) {
+        this.users.remove(applicationUser);
+        applicationUser.setChurch(null);
         return this;
     }
 
@@ -229,96 +410,34 @@ public class Church implements Serializable {
         return this;
     }
 
-    public Set<MinistryGroup> getMinistryGroups() {
-        return this.ministryGroups;
+    public Set<PlanSubscription> getSubscriptions() {
+        return this.subscriptions;
     }
 
-    public void setMinistryGroups(Set<MinistryGroup> ministryGroups) {
-        if (this.ministryGroups != null) {
-            this.ministryGroups.forEach(i -> i.setChurch(null));
+    public void setSubscriptions(Set<PlanSubscription> planSubscriptions) {
+        if (this.subscriptions != null) {
+            this.subscriptions.forEach(i -> i.setChurch(null));
         }
-        if (ministryGroups != null) {
-            ministryGroups.forEach(i -> i.setChurch(this));
+        if (planSubscriptions != null) {
+            planSubscriptions.forEach(i -> i.setChurch(this));
         }
-        this.ministryGroups = ministryGroups;
+        this.subscriptions = planSubscriptions;
     }
 
-    public Church ministryGroups(Set<MinistryGroup> ministryGroups) {
-        this.setMinistryGroups(ministryGroups);
+    public Church subscriptions(Set<PlanSubscription> planSubscriptions) {
+        this.setSubscriptions(planSubscriptions);
         return this;
     }
 
-    public Church addMinistryGroup(MinistryGroup ministryGroup) {
-        this.ministryGroups.add(ministryGroup);
-        ministryGroup.setChurch(this);
+    public Church addSubscription(PlanSubscription planSubscription) {
+        this.subscriptions.add(planSubscription);
+        planSubscription.setChurch(this);
         return this;
     }
 
-    public Church removeMinistryGroup(MinistryGroup ministryGroup) {
-        this.ministryGroups.remove(ministryGroup);
-        ministryGroup.setChurch(null);
-        return this;
-    }
-
-    public Set<WorshipEvent> getWorshipEvents() {
-        return this.worshipEvents;
-    }
-
-    public void setWorshipEvents(Set<WorshipEvent> worshipEvents) {
-        if (this.worshipEvents != null) {
-            this.worshipEvents.forEach(i -> i.setChurch(null));
-        }
-        if (worshipEvents != null) {
-            worshipEvents.forEach(i -> i.setChurch(this));
-        }
-        this.worshipEvents = worshipEvents;
-    }
-
-    public Church worshipEvents(Set<WorshipEvent> worshipEvents) {
-        this.setWorshipEvents(worshipEvents);
-        return this;
-    }
-
-    public Church addWorshipEvent(WorshipEvent worshipEvent) {
-        this.worshipEvents.add(worshipEvent);
-        worshipEvent.setChurch(this);
-        return this;
-    }
-
-    public Church removeWorshipEvent(WorshipEvent worshipEvent) {
-        this.worshipEvents.remove(worshipEvent);
-        worshipEvent.setChurch(null);
-        return this;
-    }
-
-    public Set<Task> getTasks() {
-        return this.tasks;
-    }
-
-    public void setTasks(Set<Task> tasks) {
-        if (this.tasks != null) {
-            this.tasks.forEach(i -> i.setChurch(null));
-        }
-        if (tasks != null) {
-            tasks.forEach(i -> i.setChurch(this));
-        }
-        this.tasks = tasks;
-    }
-
-    public Church tasks(Set<Task> tasks) {
-        this.setTasks(tasks);
-        return this;
-    }
-
-    public Church addTask(Task task) {
-        this.tasks.add(task);
-        task.setChurch(this);
-        return this;
-    }
-
-    public Church removeTask(Task task) {
-        this.tasks.remove(task);
-        task.setChurch(null);
+    public Church removeSubscription(PlanSubscription planSubscription) {
+        this.subscriptions.remove(planSubscription);
+        planSubscription.setChurch(null);
         return this;
     }
 
@@ -353,34 +472,34 @@ public class Church implements Serializable {
         return this;
     }
 
-    public Set<Invoice> getInvoices() {
-        return this.invoices;
+    public Set<Task> getTasks() {
+        return this.tasks;
     }
 
-    public void setInvoices(Set<Invoice> invoices) {
-        if (this.invoices != null) {
-            this.invoices.forEach(i -> i.setChurch(null));
+    public void setTasks(Set<Task> tasks) {
+        if (this.tasks != null) {
+            this.tasks.forEach(i -> i.setChurch(null));
         }
-        if (invoices != null) {
-            invoices.forEach(i -> i.setChurch(this));
+        if (tasks != null) {
+            tasks.forEach(i -> i.setChurch(this));
         }
-        this.invoices = invoices;
+        this.tasks = tasks;
     }
 
-    public Church invoices(Set<Invoice> invoices) {
-        this.setInvoices(invoices);
+    public Church tasks(Set<Task> tasks) {
+        this.setTasks(tasks);
         return this;
     }
 
-    public Church addInvoice(Invoice invoice) {
-        this.invoices.add(invoice);
-        invoice.setChurch(this);
+    public Church addTask(Task task) {
+        this.tasks.add(task);
+        task.setChurch(this);
         return this;
     }
 
-    public Church removeInvoice(Invoice invoice) {
-        this.invoices.remove(invoice);
-        invoice.setChurch(null);
+    public Church removeTask(Task task) {
+        this.tasks.remove(task);
+        task.setChurch(null);
         return this;
     }
 
@@ -415,34 +534,127 @@ public class Church implements Serializable {
         return this;
     }
 
-    public Set<PlanSubscription> getPlanSubscriptions() {
-        return this.planSubscriptions;
+    public Set<Invoice> getInvoices() {
+        return this.invoices;
     }
 
-    public void setPlanSubscriptions(Set<PlanSubscription> planSubscriptions) {
-        if (this.planSubscriptions != null) {
-            this.planSubscriptions.forEach(i -> i.setChurch(null));
+    public void setInvoices(Set<Invoice> invoices) {
+        if (this.invoices != null) {
+            this.invoices.forEach(i -> i.setChurch(null));
         }
-        if (planSubscriptions != null) {
-            planSubscriptions.forEach(i -> i.setChurch(this));
+        if (invoices != null) {
+            invoices.forEach(i -> i.setChurch(this));
         }
-        this.planSubscriptions = planSubscriptions;
+        this.invoices = invoices;
     }
 
-    public Church planSubscriptions(Set<PlanSubscription> planSubscriptions) {
-        this.setPlanSubscriptions(planSubscriptions);
+    public Church invoices(Set<Invoice> invoices) {
+        this.setInvoices(invoices);
         return this;
     }
 
-    public Church addPlanSubscription(PlanSubscription planSubscription) {
-        this.planSubscriptions.add(planSubscription);
-        planSubscription.setChurch(this);
+    public Church addInvoice(Invoice invoice) {
+        this.invoices.add(invoice);
+        invoice.setChurch(this);
         return this;
     }
 
-    public Church removePlanSubscription(PlanSubscription planSubscription) {
-        this.planSubscriptions.remove(planSubscription);
-        planSubscription.setChurch(null);
+    public Church removeInvoice(Invoice invoice) {
+        this.invoices.remove(invoice);
+        invoice.setChurch(null);
+        return this;
+    }
+
+    public Set<WorshipEvent> getWorshipEvents() {
+        return this.worshipEvents;
+    }
+
+    public void setWorshipEvents(Set<WorshipEvent> worshipEvents) {
+        if (this.worshipEvents != null) {
+            this.worshipEvents.forEach(i -> i.setChurch(null));
+        }
+        if (worshipEvents != null) {
+            worshipEvents.forEach(i -> i.setChurch(this));
+        }
+        this.worshipEvents = worshipEvents;
+    }
+
+    public Church worshipEvents(Set<WorshipEvent> worshipEvents) {
+        this.setWorshipEvents(worshipEvents);
+        return this;
+    }
+
+    public Church addWorshipEvent(WorshipEvent worshipEvent) {
+        this.worshipEvents.add(worshipEvent);
+        worshipEvent.setChurch(this);
+        return this;
+    }
+
+    public Church removeWorshipEvent(WorshipEvent worshipEvent) {
+        this.worshipEvents.remove(worshipEvent);
+        worshipEvent.setChurch(null);
+        return this;
+    }
+
+    public Set<Appointment> getAppointments() {
+        return this.appointments;
+    }
+
+    public void setAppointments(Set<Appointment> appointments) {
+        if (this.appointments != null) {
+            this.appointments.forEach(i -> i.setChurch(null));
+        }
+        if (appointments != null) {
+            appointments.forEach(i -> i.setChurch(this));
+        }
+        this.appointments = appointments;
+    }
+
+    public Church appointments(Set<Appointment> appointments) {
+        this.setAppointments(appointments);
+        return this;
+    }
+
+    public Church addAppointment(Appointment appointment) {
+        this.appointments.add(appointment);
+        appointment.setChurch(this);
+        return this;
+    }
+
+    public Church removeAppointment(Appointment appointment) {
+        this.appointments.remove(appointment);
+        appointment.setChurch(null);
+        return this;
+    }
+
+    public Set<MinistryGroup> getMinistryGroups() {
+        return this.ministryGroups;
+    }
+
+    public void setMinistryGroups(Set<MinistryGroup> ministryGroups) {
+        if (this.ministryGroups != null) {
+            this.ministryGroups.forEach(i -> i.setChurch(null));
+        }
+        if (ministryGroups != null) {
+            ministryGroups.forEach(i -> i.setChurch(this));
+        }
+        this.ministryGroups = ministryGroups;
+    }
+
+    public Church ministryGroups(Set<MinistryGroup> ministryGroups) {
+        this.setMinistryGroups(ministryGroups);
+        return this;
+    }
+
+    public Church addMinistryGroup(MinistryGroup ministryGroup) {
+        this.ministryGroups.add(ministryGroup);
+        ministryGroup.setChurch(this);
+        return this;
+    }
+
+    public Church removeMinistryGroup(MinistryGroup ministryGroup) {
+        this.ministryGroups.remove(ministryGroup);
+        ministryGroup.setChurch(null);
         return this;
     }
 
@@ -475,6 +687,14 @@ public class Church implements Serializable {
             ", address='" + getAddress() + "'" +
             ", city='" + getCity() + "'" +
             ", dateFoundation='" + getDateFoundation() + "'" +
+            ", phone='" + getPhone() + "'" +
+            ", email='" + getEmail() + "'" +
+            ", website='" + getWebsite() + "'" +
+            ", facebook='" + getFacebook() + "'" +
+            ", instagram='" + getInstagram() + "'" +
+            ", twitter='" + getTwitter() + "'" +
+            ", youtube='" + getYoutube() + "'" +
+            ", about='" + getAbout() + "'" +
             "}";
     }
 }

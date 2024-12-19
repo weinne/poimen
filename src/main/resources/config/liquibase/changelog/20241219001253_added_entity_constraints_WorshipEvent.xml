@@ -1,0 +1,76 @@
+<?xml version="1.0" encoding="utf-8"?>
+<databaseChangeLog
+    xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+    xmlns:ext="http://www.liquibase.org/xml/ns/dbchangelog-ext"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-latest.xsd
+                        http://www.liquibase.org/xml/ns/dbchangelog-ext http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-ext.xsd">
+    <!--
+        Added the constraints for entity WorshipEvent.
+    -->
+    <changeSet id="20241219001253-2" author="jhipster">
+
+        <addForeignKeyConstraint baseColumnNames="church_id"
+                                 baseTableName="worship_event"
+                                 constraintName="fk_worship_event__church_id"
+                                 referencedColumnNames="id"
+                                 referencedTableName="church"
+                                 />
+
+        <addForeignKeyConstraint baseColumnNames="preacher_id"
+                                 baseTableName="worship_event"
+                                 constraintName="fk_worship_event__preacher_id"
+                                 referencedColumnNames="id"
+                                 referencedTableName="member"
+                                 />
+
+        <addForeignKeyConstraint baseColumnNames="liturgist_id"
+                                 baseTableName="worship_event"
+                                 constraintName="fk_worship_event__liturgist_id"
+                                 referencedColumnNames="id"
+                                 referencedTableName="member"
+                                 />
+
+        <addForeignKeyConstraint baseColumnNames="worship_event_id"
+                                 baseTableName="rel_worship_event__hymns"
+                                 constraintName="fk_rel_worship_event__hymns__worship_event_id"
+                                 referencedColumnNames="id"
+                                 referencedTableName="worship_event"
+                                 />
+
+        <addForeignKeyConstraint baseColumnNames="hymns_id"
+                                 baseTableName="rel_worship_event__hymns"
+                                 constraintName="fk_rel_worship_event__hymns__hymns_id"
+                                 referencedColumnNames="id"
+                                 referencedTableName="hymn"
+                                 />
+
+        <addForeignKeyConstraint baseColumnNames="worship_event_id"
+                                 baseTableName="rel_worship_event__musicians"
+                                 constraintName="fk_rel_worship_event__musicians__worship_event_id"
+                                 referencedColumnNames="id"
+                                 referencedTableName="worship_event"
+                                 />
+
+        <addForeignKeyConstraint baseColumnNames="musicians_id"
+                                 baseTableName="rel_worship_event__musicians"
+                                 constraintName="fk_rel_worship_event__musicians__musicians_id"
+                                 referencedColumnNames="id"
+                                 referencedTableName="member"
+                                 />
+
+        <addForeignKeyConstraint baseColumnNames="worship_event_id"
+                                 baseTableName="rel_worship_event__participants"
+                                 constraintName="fk_rel_worship_event__participants__worship_event_id"
+                                 referencedColumnNames="id"
+                                 referencedTableName="worship_event"
+                                 />
+
+        <addForeignKeyConstraint baseColumnNames="participants_id"
+                                 baseTableName="rel_worship_event__participants"
+                                 constraintName="fk_rel_worship_event__participants__participants_id"
+                                 referencedColumnNames="id"
+                                 referencedTableName="member"
+                                 />
+    </changeSet>
+</databaseChangeLog>

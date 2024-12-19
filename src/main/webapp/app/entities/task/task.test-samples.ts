@@ -3,27 +3,34 @@ import dayjs from 'dayjs/esm';
 import { ITask, NewTask } from './task.model';
 
 export const sampleWithRequiredData: ITask = {
-  id: 3783,
-  title: 'drat',
+  id: 1861,
+  title: 'pro whimsical',
+  status: 'DONE',
+  priority: 'LOW',
 };
 
 export const sampleWithPartialData: ITask = {
-  id: 11715,
-  title: 'positively',
-  description: 'instead known',
-  completed: false,
+  id: 23318,
+  title: 'which ragged overstay',
+  dueDate: dayjs('2024-12-18'),
+  status: 'IN_PROGRESS',
+  priority: 'MEDIUM',
 };
 
 export const sampleWithFullData: ITask = {
-  id: 24616,
-  title: 'overstay superb',
-  description: 'creamy',
-  dueDate: dayjs('2024-12-17T02:34'),
-  completed: false,
+  id: 22846,
+  title: 'round hm final',
+  description: 'faraway during once',
+  dueDate: dayjs('2024-12-18'),
+  status: 'DONE',
+  priority: 'MEDIUM',
+  notes: '../fake-data/blob/hipster.txt',
 };
 
 export const sampleWithNewData: NewTask = {
-  title: 'begonia taut',
+  title: 'decryption brr',
+  status: 'PENDING',
+  priority: 'HIGH',
   id: null,
 };
 

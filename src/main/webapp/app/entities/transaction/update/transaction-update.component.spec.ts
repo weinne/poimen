@@ -8,8 +8,8 @@ import { IChurch } from 'app/entities/church/church.model';
 import { ChurchService } from 'app/entities/church/service/church.service';
 import { IMember } from 'app/entities/member/member.model';
 import { MemberService } from 'app/entities/member/service/member.service';
-import { IUser } from 'app/entities/user/user.model';
-import { UserService } from 'app/entities/user/service/user.service';
+import { IApplicationUser } from 'app/entities/application-user/application-user.model';
+import { ApplicationUserService } from 'app/entities/application-user/service/application-user.service';
 import { ITransaction } from '../transaction.model';
 import { TransactionService } from '../service/transaction.service';
 import { TransactionFormService } from './transaction-form.service';
@@ -24,7 +24,7 @@ describe('Transaction Management Update Component', () => {
   let transactionService: TransactionService;
   let churchService: ChurchService;
   let memberService: MemberService;
-  let userService: UserService;
+  let applicationUserService: ApplicationUserService;
 
   beforeEach(() => {
     TestBed.configureTestingModule({
@@ -49,7 +49,7 @@ describe('Transaction Management Update Component', () => {
     transactionService = TestBed.inject(TransactionService);
     churchService = TestBed.inject(ChurchService);
     memberService = TestBed.inject(MemberService);
-    userService = TestBed.inject(UserService);
+    applicationUserService = TestBed.inject(ApplicationUserService);
 
     comp = fixture.componentInstance;
   });
@@ -57,10 +57,10 @@ describe('Transaction Management Update Component', () => {
   describe('ngOnInit', () => {
     it('Should call Church query and add missing value', () => {
       const transaction: ITransaction = { id: 456 };
-      const church: IChurch = { id: 4041 };
+      const church: IChurch = { id: 7117 };
       transaction.church = church;
 
-      const churchCollection: IChurch[] = [{ id: 8814 }];
+      const churchCollection: IChurch[] = [{ id: 4998 }];
       jest.spyOn(churchService, 'query').mockReturnValue(of(new HttpResponse({ body: churchCollection })));
       const additionalChurches = [church];
       const expectedCollection: IChurch[] = [...additionalChurches, ...churchCollection];
@@ -79,10 +79,10 @@ describe('Transaction Management Update Component', () => {
 
     it('Should call Member query and add missing value', () => {
       const transaction: ITransaction = { id: 456 };
-      const member: IMember = { id: 19824 };
+      const member: IMember = { id: 23872 };
       transaction.member = member;
 
-      const memberCollection: IMember[] = [{ id: 25015 }];
+      const memberCollection: IMember[] = [{ id: 32130 }];
       jest.spyOn(memberService, 'query').mockReturnValue(of(new HttpResponse({ body: memberCollection })));
       const additionalMembers = [member];
       const expectedCollection: IMember[] = [...additionalMembers, ...memberCollection];
@@ -99,35 +99,35 @@ describe('Transaction Management Update Component', () => {
       expect(comp.membersSharedCollection).toEqual(expectedCollection);
     });
 
-    it('Should call User query and add missing value', () => {
+    it('Should call ApplicationUser query and add missing value', () => {
       const transaction: ITransaction = { id: 456 };
-      const user: IUser = { id: 24571 };
+      const user: IApplicationUser = { id: 701 };
       transaction.user = user;
 
-      const userCollection: IUser[] = [{ id: 16970 }];
-      jest.spyOn(userService, 'query').mockReturnValue(of(new HttpResponse({ body: userCollection })));
-      const additionalUsers = [user];
-      const expectedCollection: IUser[] = [...additionalUsers, ...userCollection];
-      jest.spyOn(userService, 'addUserToCollectionIfMissing').mockReturnValue(expectedCollection);
+      const applicationUserCollection: IApplicationUser[] = [{ id: 22478 }];
+      jest.spyOn(applicationUserService, 'query').mockReturnValue(of(new HttpResponse({ body: applicationUserCollection })));
+      const additionalApplicationUsers = [user];
+      const expectedCollection: IApplicationUser[] = [...additionalApplicationUsers, ...applicationUserCollection];
+      jest.spyOn(applicationUserService, 'addApplicationUserToCollectionIfMissing').mockReturnValue(expectedCollection);
 
       activatedRoute.data = of({ transaction });
       comp.ngOnInit();
 
-      expect(userService.query).toHaveBeenCalled();
-      expect(userService.addUserToCollectionIfMissing).toHaveBeenCalledWith(
-        userCollection,
-        ...additionalUsers.map(expect.objectContaining),
+      expect(applicationUserService.query).toHaveBeenCalled();
+      expect(applicationUserService.addApplicationUserToCollectionIfMissing).toHaveBeenCalledWith(
+        applicationUserCollection,
+        ...additionalApplicationUsers.map(expect.objectContaining),
       );
-      expect(comp.usersSharedCollection).toEqual(expectedCollection);
+      expect(comp.applicationUsersSharedCollection).toEqual(expectedCollection);
     });
 
     it('Should update editForm', () => {
       const transaction: ITransaction = { id: 456 };
-      const church: IChurch = { id: 5793 };
+      const church: IChurch = { id: 22966 };
       transaction.church = church;
-      const member: IMember = { id: 14781 };
+      const member: IMember = { id: 6991 };
       transaction.member = member;
-      const user: IUser = { id: 4709 };
+      const user: IApplicationUser = { id: 23535 };
       transaction.user = user;
 
       activatedRoute.data = of({ transaction });
@@ -135,7 +135,7 @@ describe('Transaction Management Update Component', () => {
 
       expect(comp.churchesSharedCollection).toContain(church);
       expect(comp.membersSharedCollection).toContain(member);
-      expect(comp.usersSharedCollection).toContain(user);
+      expect(comp.applicationUsersSharedCollection).toContain(user);
       expect(comp.transaction).toEqual(transaction);
     });
   });
@@ -229,13 +229,13 @@ describe('Transaction Management Update Component', () => {
       });
     });
 
-    describe('compareUser', () => {
-      it('Should forward to userService', () => {
+    describe('compareApplicationUser', () => {
+      it('Should forward to applicationUserService', () => {
         const entity = { id: 123 };
         const entity2 = { id: 456 };
-        jest.spyOn(userService, 'compareUser');
-        comp.compareUser(entity, entity2);
-        expect(userService.compareUser).toHaveBeenCalledWith(entity, entity2);
+        jest.spyOn(applicationUserService, 'compareApplicationUser');
+        comp.compareApplicationUser(entity, entity2);
+        expect(applicationUserService.compareApplicationUser).toHaveBeenCalledWith(entity, entity2);
       });
     });
   });

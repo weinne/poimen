@@ -57,10 +57,10 @@ describe('WorshipEvent Management Update Component', () => {
   describe('ngOnInit', () => {
     it('Should call Church query and add missing value', () => {
       const worshipEvent: IWorshipEvent = { id: 456 };
-      const church: IChurch = { id: 1225 };
+      const church: IChurch = { id: 805 };
       worshipEvent.church = church;
 
-      const churchCollection: IChurch[] = [{ id: 22920 }];
+      const churchCollection: IChurch[] = [{ id: 17483 }];
       jest.spyOn(churchService, 'query').mockReturnValue(of(new HttpResponse({ body: churchCollection })));
       const additionalChurches = [church];
       const expectedCollection: IChurch[] = [...additionalChurches, ...churchCollection];
@@ -79,16 +79,18 @@ describe('WorshipEvent Management Update Component', () => {
 
     it('Should call Member query and add missing value', () => {
       const worshipEvent: IWorshipEvent = { id: 456 };
-      const preacher: IMember = { id: 3686 };
+      const preacher: IMember = { id: 8548 };
       worshipEvent.preacher = preacher;
-      const liturgist: IMember = { id: 17883 };
+      const liturgist: IMember = { id: 2657 };
       worshipEvent.liturgist = liturgist;
-      const musicians: IMember[] = [{ id: 6460 }];
+      const musicians: IMember[] = [{ id: 5715 }];
       worshipEvent.musicians = musicians;
+      const participants: IMember[] = [{ id: 8104 }];
+      worshipEvent.participants = participants;
 
-      const memberCollection: IMember[] = [{ id: 16627 }];
+      const memberCollection: IMember[] = [{ id: 6115 }];
       jest.spyOn(memberService, 'query').mockReturnValue(of(new HttpResponse({ body: memberCollection })));
-      const additionalMembers = [preacher, liturgist, ...musicians];
+      const additionalMembers = [preacher, liturgist, ...musicians, ...participants];
       const expectedCollection: IMember[] = [...additionalMembers, ...memberCollection];
       jest.spyOn(memberService, 'addMemberToCollectionIfMissing').mockReturnValue(expectedCollection);
 
@@ -105,10 +107,10 @@ describe('WorshipEvent Management Update Component', () => {
 
     it('Should call Hymn query and add missing value', () => {
       const worshipEvent: IWorshipEvent = { id: 456 };
-      const hymns: IHymn[] = [{ id: 26558 }];
+      const hymns: IHymn[] = [{ id: 16041 }];
       worshipEvent.hymns = hymns;
 
-      const hymnCollection: IHymn[] = [{ id: 9316 }];
+      const hymnCollection: IHymn[] = [{ id: 768 }];
       jest.spyOn(hymnService, 'query').mockReturnValue(of(new HttpResponse({ body: hymnCollection })));
       const additionalHymns = [...hymns];
       const expectedCollection: IHymn[] = [...additionalHymns, ...hymnCollection];
@@ -127,16 +129,18 @@ describe('WorshipEvent Management Update Component', () => {
 
     it('Should update editForm', () => {
       const worshipEvent: IWorshipEvent = { id: 456 };
-      const church: IChurch = { id: 15668 };
+      const church: IChurch = { id: 20995 };
       worshipEvent.church = church;
-      const preacher: IMember = { id: 7060 };
+      const preacher: IMember = { id: 10545 };
       worshipEvent.preacher = preacher;
-      const liturgist: IMember = { id: 15453 };
+      const liturgist: IMember = { id: 21143 };
       worshipEvent.liturgist = liturgist;
-      const musicians: IMember = { id: 10053 };
+      const musicians: IMember = { id: 6489 };
       worshipEvent.musicians = [musicians];
-      const hymn: IHymn = { id: 30111 };
-      worshipEvent.hymns = [hymn];
+      const participants: IMember = { id: 19537 };
+      worshipEvent.participants = [participants];
+      const hymns: IHymn = { id: 3179 };
+      worshipEvent.hymns = [hymns];
 
       activatedRoute.data = of({ worshipEvent });
       comp.ngOnInit();
@@ -145,7 +149,8 @@ describe('WorshipEvent Management Update Component', () => {
       expect(comp.membersSharedCollection).toContain(preacher);
       expect(comp.membersSharedCollection).toContain(liturgist);
       expect(comp.membersSharedCollection).toContain(musicians);
-      expect(comp.hymnsSharedCollection).toContain(hymn);
+      expect(comp.membersSharedCollection).toContain(participants);
+      expect(comp.hymnsSharedCollection).toContain(hymns);
       expect(comp.worshipEvent).toEqual(worshipEvent);
     });
   });

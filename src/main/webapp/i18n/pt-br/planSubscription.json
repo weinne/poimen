@@ -6,6 +6,7 @@
         "refreshListLabel": "Atualizar lista",
         "createLabel": "Criar novo Plan Subscription",
         "createOrEditLabel": "Criar ou editar Plan Subscription",
+        "search": "Pesquisar por Plan Subscription",
         "notFound": "Nenhum Plan Subscription encontrado"
       },
       "created": "Um novo Plan Subscription foi criado com o identificador {{ param }}",
@@ -18,12 +19,15 @@
         "title": "Plan Subscription"
       },
       "id": "ID",
+      "description": "Description",
       "startDate": "Start Date",
       "endDate": "End Date",
-      "active": "Active",
-      "planName": "Plan Name",
-      "plan": "Plan",
+      "status": "Status",
+      "paymentProvider": "Payment Provider",
+      "paymentStatus": "Payment Status",
+      "paymentReference": "Payment Reference",
       "church": "Church",
+      "plan": "Plan",
       "user": "User"
     }
   }

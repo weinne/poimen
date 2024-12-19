@@ -1,0 +1,88 @@
+{
+  "annotations": {
+    "changelogDate": "20241219001242"
+  },
+  "applications": "*",
+  "fields": [
+    {
+      "fieldName": "subject",
+      "fieldType": "String",
+      "fieldValidateRules": ["required"]
+    },
+    {
+      "fieldName": "startTime",
+      "fieldType": "Instant",
+      "fieldValidateRules": ["required"]
+    },
+    {
+      "fieldName": "endTime",
+      "fieldType": "Instant"
+    },
+    {
+      "fieldName": "notes",
+      "fieldType": "TextBlob"
+    },
+    {
+      "fieldName": "local",
+      "fieldType": "String"
+    },
+    {
+      "fieldName": "appointmentType",
+      "fieldType": "AppointmentType",
+      "fieldValidateRules": ["required"],
+      "fieldValues": "SERVICE (Worship Service),MEETING (Meeting),EVENT (Event),REHEARSAL (Rehearsal),VISIT (Visit),COUNSELING (Counseling),DISCIPLESHIP (Discipleship),SMALL_GROUP (Small Group),OTHER (Other)"
+    }
+  ],
+  "name": "Appointment",
+  "pagination": "pagination",
+  "relationships": [
+    {
+      "otherEntityField": "name",
+      "otherEntityName": "church",
+      "otherEntityRelationshipName": "appointment",
+      "relationshipName": "church",
+      "relationshipSide": "left",
+      "relationshipType": "many-to-one"
+    },
+    {
+      "otherEntityField": "name",
+      "otherEntityName": "member",
+      "otherEntityRelationshipName": "appointment",
+      "relationshipName": "member",
+      "relationshipSide": "left",
+      "relationshipType": "many-to-one"
+    },
+    {
+      "otherEntityField": "title",
+      "otherEntityName": "worshipEvent",
+      "otherEntityRelationshipName": "appointment",
+      "relationshipName": "service",
+      "relationshipSide": "left",
+      "relationshipType": "many-to-one"
+    },
+    {
+      "otherEntityField": "name",
+      "otherEntityName": "ministryGroup",
+      "otherEntityRelationshipName": "appointment",
+      "relationshipName": "group",
+      "relationshipSide": "left",
+      "relationshipType": "many-to-one"
+    },
+    {
+      "otherEntityField": "subject",
+      "otherEntityName": "counselingSession",
+      "otherEntityRelationshipName": "appointment",
+      "relationshipName": "counselingSession",
+      "relationshipSide": "left",
+      "relationshipType": "many-to-one"
+    },
+    {
+      "otherEntityField": "name",
+      "otherEntityName": "applicationUser",
+      "relationshipName": "user",
+      "relationshipSide": "left",
+      "relationshipType": "many-to-one"
+    }
+  ],
+  "service": "serviceClass"
+}

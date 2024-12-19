@@ -15,7 +15,7 @@
         [routerLink]="['/plan/new']"
       >
         <fa-icon icon="plus"></fa-icon>
-        <span jhiTranslate="poimenApp.plan.home.createLabel">Create a new Plan</span>
+        <span class="hidden-sm-down" jhiTranslate="poimenApp.plan.home.createLabel">Create a new Plan</span>
       </button>
     </div>
   </h2>
@@ -23,6 +23,32 @@
   <jhi-alert-error></jhi-alert-error>
 
   <jhi-alert></jhi-alert>
+
+  <form name="searchForm" class="row row-cols-sm-auto align-items-center">
+    <div class="col-sm-12">
+      <div class="input-group w-100 mt-3">
+        <label class="visually-hidden" for="currentSearch" jhiTranslate="poimenApp.plan.home.search">Search for Plan</label>
+        <input
+          type="text"
+          class="form-control"
+          [(ngModel)]="currentSearch"
+          id="currentSearch"
+          name="currentSearch"
+          placeholder="{{ 'poimenApp.plan.home.search' | translate }}"
+        />
+
+        <button class="btn btn-info" (click)="search(currentSearch)">
+          <fa-icon icon="search"></fa-icon>
+        </button>
+
+        @if (currentSearch) {
+          <button class="btn btn-danger" (click)="search('')">
+            <fa-icon icon="trash-alt"></fa-icon>
+          </button>
+        }
+      </div>
+    </div>
+  </form>
 
   @if (plans?.length === 0) {
     <div class="alert alert-warning" id="no-result">
@@ -45,15 +71,41 @@
             <th scope="col" jhiSortBy="name">
               <div class="d-flex">
                 <span jhiTranslate="poimenApp.plan.name">Name</span>
-
-                <fa-icon class="p-1" icon="sort"></fa-icon>
+                @if (!currentSearch) {
+                  <fa-icon class="p-1" icon="sort"></fa-icon>
+                }
               </div>
             </th>
             <th scope="col" jhiSortBy="price">
               <div class="d-flex">
                 <span jhiTranslate="poimenApp.plan.price">Price</span>
-
-                <fa-icon class="p-1" icon="sort"></fa-icon>
+                @if (!currentSearch) {
+                  <fa-icon class="p-1" icon="sort"></fa-icon>
+                }
+              </div>
+            </th>
+            <th scope="col" jhiSortBy="description">
+              <div class="d-flex">
+                <span jhiTranslate="poimenApp.plan.description">Description</span>
+                @if (!currentSearch) {
+                  <fa-icon class="p-1" icon="sort"></fa-icon>
+                }
+              </div>
+            </th>
+            <th scope="col" jhiSortBy="features">
+              <div class="d-flex">
+                <span jhiTranslate="poimenApp.plan.features">Features</span>
+                @if (!currentSearch) {
+                  <fa-icon class="p-1" icon="sort"></fa-icon>
+                }
+              </div>
+            </th>
+            <th scope="col" jhiSortBy="renewalPeriod">
+              <div class="d-flex">
+                <span jhiTranslate="poimenApp.plan.renewalPeriod">Renewal Period</span>
+                @if (!currentSearch) {
+                  <fa-icon class="p-1" icon="sort"></fa-icon>
+                }
               </div>
             </th>
             <th scope="col"></th>
@@ -67,6 +119,9 @@
               </td>
               <td>{{ plan.name }}</td>
               <td>{{ plan.price }}</td>
+              <td>{{ plan.description }}</td>
+              <td>{{ plan.features }}</td>
+              <td>{{ plan.renewalPeriod }}</td>
               <td class="text-end">
                 <div class="btn-group">
                   <a [routerLink]="['/plan', plan.id, 'view']" class="btn btn-info btn-sm" data-cy="entityDetailsButton">

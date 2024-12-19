@@ -15,7 +15,7 @@
         [routerLink]="['/transaction/new']"
       >
         <fa-icon icon="plus"></fa-icon>
-        <span jhiTranslate="poimenApp.transaction.home.createLabel">Create a new Transaction</span>
+        <span class="hidden-sm-down" jhiTranslate="poimenApp.transaction.home.createLabel">Create a new Transaction</span>
       </button>
     </div>
   </h2>
@@ -23,6 +23,32 @@
   <jhi-alert-error></jhi-alert-error>
 
   <jhi-alert></jhi-alert>
+
+  <form name="searchForm" class="row row-cols-sm-auto align-items-center">
+    <div class="col-sm-12">
+      <div class="input-group w-100 mt-3">
+        <label class="visually-hidden" for="currentSearch" jhiTranslate="poimenApp.transaction.home.search">Search for Transaction</label>
+        <input
+          type="text"
+          class="form-control"
+          [(ngModel)]="currentSearch"
+          id="currentSearch"
+          name="currentSearch"
+          placeholder="{{ 'poimenApp.transaction.home.search' | translate }}"
+        />
+
+        <button class="btn btn-info" (click)="search(currentSearch)">
+          <fa-icon icon="search"></fa-icon>
+        </button>
+
+        @if (currentSearch) {
+          <button class="btn btn-danger" (click)="search('')">
+            <fa-icon icon="trash-alt"></fa-icon>
+          </button>
+        }
+      </div>
+    </div>
+  </form>
 
   @if (transactions?.length === 0) {
     <div class="alert alert-warning" id="no-result">
@@ -45,8 +71,9 @@
             <th scope="col" jhiSortBy="description">
               <div class="d-flex">
                 <span jhiTranslate="poimenApp.transaction.description">Description</span>
-
-                <fa-icon class="p-1" icon="sort"></fa-icon>
+                @if (!currentSearch) {
+                  <fa-icon class="p-1" icon="sort"></fa-icon>
+                }
               </div>
             </th>
             <th scope="col" jhiSortBy="amount">
@@ -66,44 +93,48 @@
             <th scope="col" jhiSortBy="paymentMethod">
               <div class="d-flex">
                 <span jhiTranslate="poimenApp.transaction.paymentMethod">Payment Method</span>
-
-                <fa-icon class="p-1" icon="sort"></fa-icon>
+                @if (!currentSearch) {
+                  <fa-icon class="p-1" icon="sort"></fa-icon>
+                }
               </div>
             </th>
             <th scope="col" jhiSortBy="type">
               <div class="d-flex">
                 <span jhiTranslate="poimenApp.transaction.type">Type</span>
-
-                <fa-icon class="p-1" icon="sort"></fa-icon>
+                @if (!currentSearch) {
+                  <fa-icon class="p-1" icon="sort"></fa-icon>
+                }
               </div>
             </th>
             <th scope="col" jhiSortBy="supplierOrClient">
               <div class="d-flex">
                 <span jhiTranslate="poimenApp.transaction.supplierOrClient">Supplier Or Client</span>
-
-                <fa-icon class="p-1" icon="sort"></fa-icon>
+                @if (!currentSearch) {
+                  <fa-icon class="p-1" icon="sort"></fa-icon>
+                }
               </div>
             </th>
             <th scope="col" jhiSortBy="invoiceFile">
               <div class="d-flex">
                 <span jhiTranslate="poimenApp.transaction.invoiceFile">Invoice File</span>
-
-                <fa-icon class="p-1" icon="sort"></fa-icon>
+                @if (!currentSearch) {
+                  <fa-icon class="p-1" icon="sort"></fa-icon>
+                }
               </div>
             </th>
-            <th scope="col" jhiSortBy="church.id">
+            <th scope="col" jhiSortBy="church.name">
               <div class="d-flex">
                 <span jhiTranslate="poimenApp.transaction.church">Church</span>
                 <fa-icon class="p-1" icon="sort"></fa-icon>
               </div>
             </th>
-            <th scope="col" jhiSortBy="member.id">
+            <th scope="col" jhiSortBy="member.name">
               <div class="d-flex">
                 <span jhiTranslate="poimenApp.transaction.member">Member</span>
                 <fa-icon class="p-1" icon="sort"></fa-icon>
               </div>
             </th>
-            <th scope="col" jhiSortBy="user.id">
+            <th scope="col" jhiSortBy="user.name">
               <div class="d-flex">
                 <span jhiTranslate="poimenApp.transaction.user">User</span>
                 <fa-icon class="p-1" icon="sort"></fa-icon>
@@ -128,19 +159,23 @@
               <td>
                 @if (transaction.church) {
                   <div>
-                    <a [routerLink]="['/church', transaction.church.id, 'view']">{{ transaction.church.id }}</a>
+                    <a [routerLink]="['/church', transaction.church.id, 'view']">{{ transaction.church.name }}</a>
                   </div>
                 }
               </td>
               <td>
                 @if (transaction.member) {
                   <div>
-                    <a [routerLink]="['/member', transaction.member.id, 'view']">{{ transaction.member.id }}</a>
+                    <a [routerLink]="['/member', transaction.member.id, 'view']">{{ transaction.member.name }}</a>
                   </div>
                 }
               </td>
               <td>
-                {{ transaction.user?.id }}
+                @if (transaction.user) {
+                  <div>
+                    <a [routerLink]="['/application-user', transaction.user.id, 'view']">{{ transaction.user.name }}</a>
+                  </div>
+                }
               </td>
               <td class="text-end">
                 <div class="btn-group">

@@ -14,8 +14,9 @@ import { IChurch } from 'app/entities/church/church.model';
 import { ChurchService } from 'app/entities/church/service/church.service';
 import { IMember } from 'app/entities/member/member.model';
 import { MemberService } from 'app/entities/member/service/member.service';
-import { IUser } from 'app/entities/user/user.model';
-import { UserService } from 'app/entities/user/service/user.service';
+import { IApplicationUser } from 'app/entities/application-user/application-user.model';
+import { ApplicationUserService } from 'app/entities/application-user/service/application-user.service';
+import { StatusCounseling } from 'app/entities/enumerations/status-counseling.model';
 import { CounselingSessionService } from '../service/counseling-session.service';
 import { ICounselingSession } from '../counseling-session.model';
 import { CounselingSessionFormGroup, CounselingSessionFormService } from './counseling-session-form.service';
@@ -29,10 +30,11 @@ import { CounselingSessionFormGroup, CounselingSessionFormService } from './coun
 export class CounselingSessionUpdateComponent implements OnInit {
   isSaving = false;
   counselingSession: ICounselingSession | null = null;
+  statusCounselingValues = Object.keys(StatusCounseling);
 
   churchesSharedCollection: IChurch[] = [];
   membersSharedCollection: IMember[] = [];
-  usersSharedCollection: IUser[] = [];
+  applicationUsersSharedCollection: IApplicationUser[] = [];
 
   protected dataUtils = inject(DataUtils);
   protected eventManager = inject(EventManager);
@@ -40,7 +42,7 @@ export class CounselingSessionUpdateComponent implements OnInit {
   protected counselingSessionFormService = inject(CounselingSessionFormService);
   protected churchService = inject(ChurchService);
   protected memberService = inject(MemberService);
-  protected userService = inject(UserService);
+  protected applicationUserService = inject(ApplicationUserService);
   protected activatedRoute = inject(ActivatedRoute);
 
   // eslint-disable-next-line @typescript-eslint/member-ordering
@@ -50,7 +52,8 @@ export class CounselingSessionUpdateComponent implements OnInit {
 
   compareMember = (o1: IMember | null, o2: IMember | null): boolean => this.memberService.compareMember(o1, o2);
 
-  compareUser = (o1: IUser | null, o2: IUser | null): boolean => this.userService.compareUser(o1, o2);
+  compareApplicationUser = (o1: IApplicationUser | null, o2: IApplicationUser | null): boolean =>
+    this.applicationUserService.compareApplicationUser(o1, o2);
 
   ngOnInit(): void {
     this.activatedRoute.data.subscribe(({ counselingSession }) => {
@@ -123,7 +126,10 @@ export class CounselingSessionUpdateComponent implements OnInit {
       this.membersSharedCollection,
       counselingSession.member,
     );
-    this.usersSharedCollection = this.userService.addUserToCollectionIfMissing<IUser>(this.usersSharedCollection, counselingSession.user);
+    this.applicationUsersSharedCollection = this.applicationUserService.addApplicationUserToCollectionIfMissing<IApplicationUser>(
+      this.applicationUsersSharedCollection,
+      counselingSession.user,
+    );
   }
 
   protected loadRelationshipsOptions(): void {
@@ -143,10 +149,17 @@ export class CounselingSessionUpdateComponent implements OnInit {
       )
       .subscribe((members: IMember[]) => (this.membersSharedCollection = members));
 
-    this.userService
+    this.applicationUserService
       .query()
-      .pipe(map((res: HttpResponse<IUser[]>) => res.body ?? []))
-      .pipe(map((users: IUser[]) => this.userService.addUserToCollectionIfMissing<IUser>(users, this.counselingSession?.user)))
-      .subscribe((users: IUser[]) => (this.usersSharedCollection = users));
+      .pipe(map((res: HttpResponse<IApplicationUser[]>) => res.body ?? []))
+      .pipe(
+        map((applicationUsers: IApplicationUser[]) =>
+          this.applicationUserService.addApplicationUserToCollectionIfMissing<IApplicationUser>(
+            applicationUsers,
+            this.counselingSession?.user,
+          ),
+        ),
+      )
+      .subscribe((applicationUsers: IApplicationUser[]) => (this.applicationUsersSharedCollection = applicationUsers));
   }
 }

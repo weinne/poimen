@@ -37,13 +37,20 @@
           </dd>
           <dt><span jhiTranslate="poimenApp.invoice.invoiceFile">Invoice File</span></dt>
           <dd>
-            <span>{{ invoiceRef.invoiceFile }}</span>
+            @if (invoiceRef.invoiceFile) {
+              <div>
+                <a (click)="openFile(invoiceRef.invoiceFile ?? '', invoiceRef.invoiceFileContentType)" jhiTranslate="entity.action.open"
+                  >Open</a
+                >
+                {{ invoiceRef.invoiceFileContentType }}, {{ byteSize(invoiceRef.invoiceFile ?? '') }}
+              </div>
+            }
           </dd>
           <dt><span jhiTranslate="poimenApp.invoice.church">Church</span></dt>
           <dd>
             @if (invoice()!.church) {
               <div>
-                <a [routerLink]="['/church', invoice()!.church?.id, 'view']">{{ invoiceRef.church?.id }}</a>
+                <a [routerLink]="['/church', invoice()!.church?.id, 'view']">{{ invoiceRef.church?.name }}</a>
               </div>
             }
           </dd>
@@ -51,7 +58,7 @@
           <dd>
             @if (invoice()!.transaction) {
               <div>
-                <a [routerLink]="['/transaction', invoice()!.transaction?.id, 'view']">{{ invoiceRef.transaction?.id }}</a>
+                <a [routerLink]="['/transaction', invoice()!.transaction?.id, 'view']">{{ invoiceRef.transaction?.description }}</a>
               </div>
             }
           </dd>

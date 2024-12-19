@@ -26,24 +26,24 @@ class HymnTest {
     }
 
     @Test
-    void worshipEventTest() {
+    void servicesTest() {
         Hymn hymn = getHymnRandomSampleGenerator();
         WorshipEvent worshipEventBack = getWorshipEventRandomSampleGenerator();
 
-        hymn.addWorshipEvent(worshipEventBack);
-        assertThat(hymn.getWorshipEvents()).containsOnly(worshipEventBack);
+        hymn.addServices(worshipEventBack);
+        assertThat(hymn.getServices()).containsOnly(worshipEventBack);
         assertThat(worshipEventBack.getHymns()).containsOnly(hymn);
 
-        hymn.removeWorshipEvent(worshipEventBack);
-        assertThat(hymn.getWorshipEvents()).doesNotContain(worshipEventBack);
+        hymn.removeServices(worshipEventBack);
+        assertThat(hymn.getServices()).doesNotContain(worshipEventBack);
         assertThat(worshipEventBack.getHymns()).doesNotContain(hymn);
 
-        hymn.worshipEvents(new HashSet<>(Set.of(worshipEventBack)));
-        assertThat(hymn.getWorshipEvents()).containsOnly(worshipEventBack);
+        hymn.services(new HashSet<>(Set.of(worshipEventBack)));
+        assertThat(hymn.getServices()).containsOnly(worshipEventBack);
         assertThat(worshipEventBack.getHymns()).containsOnly(hymn);
 
-        hymn.setWorshipEvents(new HashSet<>());
-        assertThat(hymn.getWorshipEvents()).doesNotContain(worshipEventBack);
+        hymn.setServices(new HashSet<>());
+        assertThat(hymn.getServices()).doesNotContain(worshipEventBack);
         assertThat(worshipEventBack.getHymns()).doesNotContain(hymn);
     }
 }

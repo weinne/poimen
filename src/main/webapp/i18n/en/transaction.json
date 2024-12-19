@@ -6,6 +6,7 @@
         "refreshListLabel": "Refresh list",
         "createLabel": "Create a new Transaction",
         "createOrEditLabel": "Create or edit a Transaction",
+        "search": "Search for Transaction",
         "notFound": "No Transactions found"
       },
       "created": "A new Transaction is created with identifier {{ param }}",
@@ -25,7 +26,7 @@
       "type": "Type",
       "supplierOrClient": "Supplier Or Client",
       "invoiceFile": "Invoice File",
-      "invoice": "Invoice",
+      "invoices": "Invoices",
       "church": "Church",
       "member": "Member",
       "user": "User"

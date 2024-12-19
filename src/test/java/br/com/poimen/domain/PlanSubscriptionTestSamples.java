@@ -10,14 +10,17 @@ public class PlanSubscriptionTestSamples {
     private static final AtomicLong longCount = new AtomicLong(random.nextInt() + (2 * Integer.MAX_VALUE));
 
     public static PlanSubscription getPlanSubscriptionSample1() {
-        return new PlanSubscription().id(1L).planName("planName1");
+        return new PlanSubscription().id(1L).description("description1").paymentReference("paymentReference1");
     }
 
     public static PlanSubscription getPlanSubscriptionSample2() {
-        return new PlanSubscription().id(2L).planName("planName2");
+        return new PlanSubscription().id(2L).description("description2").paymentReference("paymentReference2");
     }
 
     public static PlanSubscription getPlanSubscriptionRandomSampleGenerator() {
-        return new PlanSubscription().id(longCount.incrementAndGet()).planName(UUID.randomUUID().toString());
+        return new PlanSubscription()
+            .id(longCount.incrementAndGet())
+            .description(UUID.randomUUID().toString())
+            .paymentReference(UUID.randomUUID().toString());
     }
 }

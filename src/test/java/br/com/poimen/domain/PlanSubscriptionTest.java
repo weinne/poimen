@@ -1,5 +1,6 @@
 package br.com.poimen.domain;
 
+import static br.com.poimen.domain.ApplicationUserTestSamples.*;
 import static br.com.poimen.domain.ChurchTestSamples.*;
 import static br.com.poimen.domain.PlanSubscriptionTestSamples.*;
 import static br.com.poimen.domain.PlanTestSamples.*;
@@ -25,6 +26,18 @@ class PlanSubscriptionTest {
     }
 
     @Test
+    void churchTest() {
+        PlanSubscription planSubscription = getPlanSubscriptionRandomSampleGenerator();
+        Church churchBack = getChurchRandomSampleGenerator();
+
+        planSubscription.setChurch(churchBack);
+        assertThat(planSubscription.getChurch()).isEqualTo(churchBack);
+
+        planSubscription.church(null);
+        assertThat(planSubscription.getChurch()).isNull();
+    }
+
+    @Test
     void planTest() {
         PlanSubscription planSubscription = getPlanSubscriptionRandomSampleGenerator();
         Plan planBack = getPlanRandomSampleGenerator();
@@ -37,14 +50,14 @@ class PlanSubscriptionTest {
     }
 
     @Test
-    void churchTest() {
+    void userTest() {
         PlanSubscription planSubscription = getPlanSubscriptionRandomSampleGenerator();
-        Church churchBack = getChurchRandomSampleGenerator();
+        ApplicationUser applicationUserBack = getApplicationUserRandomSampleGenerator();
 
-        planSubscription.setChurch(churchBack);
-        assertThat(planSubscription.getChurch()).isEqualTo(churchBack);
+        planSubscription.setUser(applicationUserBack);
+        assertThat(planSubscription.getUser()).isEqualTo(applicationUserBack);
 
-        planSubscription.church(null);
-        assertThat(planSubscription.getChurch()).isNull();
+        planSubscription.user(null);
+        assertThat(planSubscription.getUser()).isNull();
     }
 }

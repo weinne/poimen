@@ -1,0 +1,29 @@
+{
+  "poimenApp": {
+    "applicationUser": {
+      "home": {
+        "title": "Application Users",
+        "refreshListLabel": "Atualizar lista",
+        "createLabel": "Criar novo Application User",
+        "createOrEditLabel": "Criar ou editar Application User",
+        "search": "Pesquisar por Application User",
+        "notFound": "Nenhum Application User encontrado"
+      },
+      "created": "Um novo Application User foi criado com o identificador {{ param }}",
+      "updated": "Um Application User foi atualizado com o identificador {{ param }}",
+      "deleted": "Um Application User foi excluído com o identificador {{ param }}",
+      "delete": {
+        "question": "Tem certeza de que deseja excluir Application User {{ id }}?"
+      },
+      "detail": {
+        "title": "Application User"
+      },
+      "id": "ID",
+      "name": "Name",
+      "description": "Description",
+      "status": "Status",
+      "internalUser": "Internal User",
+      "church": "Church"
+    }
+  }
+}
