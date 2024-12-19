@@ -7,6 +7,9 @@ import jakarta.validation.constraints.*;
 import java.io.Serializable;
 import org.hibernate.annotations.Cache;
 import org.hibernate.annotations.CacheConcurrencyStrategy;
+import org.hibernate.annotations.Filter;
+import org.hibernate.annotations.FilterDef;
+import org.hibernate.annotations.ParamDef;
 
 /**
  * A ApplicationUser.
@@ -15,6 +18,8 @@ import org.hibernate.annotations.CacheConcurrencyStrategy;
 @Table(name = "application_user")
 @Cache(usage = CacheConcurrencyStrategy.READ_WRITE)
 @org.springframework.data.elasticsearch.annotations.Document(indexName = "applicationuser")
+@FilterDef(name = "userFilter", parameters = @ParamDef(name = "userId", type = Long.class))
+@Filter(name = "userFilter", condition = "id = :userId")
 @SuppressWarnings("common-java:DuplicatedBlocks")
 public class ApplicationUser implements Serializable {
 

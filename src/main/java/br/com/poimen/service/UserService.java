@@ -1,8 +1,11 @@
 package br.com.poimen.service;
 
 import br.com.poimen.config.Constants;
+import br.com.poimen.domain.ApplicationUser;
 import br.com.poimen.domain.Authority;
 import br.com.poimen.domain.User;
+import br.com.poimen.domain.enumeration.UserStatus;
+import br.com.poimen.repository.ApplicationUserRepository;
 import br.com.poimen.repository.AuthorityRepository;
 import br.com.poimen.repository.UserRepository;
 import br.com.poimen.repository.search.UserSearchRepository;
@@ -44,17 +47,21 @@ public class UserService {
 
     private final CacheManager cacheManager;
 
+    private final ApplicationUserRepository applicationUserRepository;
+
     public UserService(
         UserRepository userRepository,
         PasswordEncoder passwordEncoder,
         UserSearchRepository userSearchRepository,
         AuthorityRepository authorityRepository,
+        ApplicationUserRepository applicationUserRepository,
         CacheManager cacheManager
     ) {
         this.userRepository = userRepository;
         this.passwordEncoder = passwordEncoder;
         this.userSearchRepository = userSearchRepository;
         this.authorityRepository = authorityRepository;
+        this.applicationUserRepository = applicationUserRepository;
         this.cacheManager = cacheManager;
     }
 
@@ -119,6 +126,7 @@ public class UserService {
         User newUser = new User();
         String encryptedPassword = passwordEncoder.encode(password);
         newUser.setLogin(userDTO.getLogin().toLowerCase());
+
         // new user gets initially a generated password
         newUser.setPassword(encryptedPassword);
         newUser.setFirstName(userDTO.getFirstName());
@@ -128,8 +136,10 @@ public class UserService {
         }
         newUser.setImageUrl(userDTO.getImageUrl());
         newUser.setLangKey(userDTO.getLangKey());
-        // new user is not active
-        newUser.setActivated(false);
+
+        // new user is active (for now)
+        newUser.setActivated(true);
+
         // new user gets registration key
         newUser.setActivationKey(RandomUtil.generateActivationKey());
         Set<Authority> authorities = new HashSet<>();
@@ -137,8 +147,17 @@ public class UserService {
         newUser.setAuthorities(authorities);
         userRepository.save(newUser);
         userSearchRepository.save(newUser);
+        userSearchRepository.index(newUser); // Index the new user
         this.clearUserCaches(newUser);
         LOG.debug("Created Information for User: {}", newUser);
+
+        ApplicationUser applicationUser = new ApplicationUser();
+        applicationUser.setName(userDTO.getLogin()); // Define name as login for now
+        applicationUser.setStatus(UserStatus.ACTIVE);
+        applicationUser.setInternalUser(newUser);
+        applicationUserRepository.save(applicationUser);
+        LOG.debug("Created ApplicationUser for User: {}", applicationUser);
+
         return newUser;
     }
 
@@ -185,6 +204,14 @@ public class UserService {
         userSearchRepository.index(user);
         this.clearUserCaches(user);
         LOG.debug("Created Information for User: {}", user);
+
+        ApplicationUser applicationUser = new ApplicationUser();
+        applicationUser.setName(userDTO.getLogin()); // Define name as login for now
+        applicationUser.setStatus(UserStatus.ACTIVE);
+        applicationUser.setInternalUser(user);
+        applicationUserRepository.save(applicationUser);
+        LOG.debug("Created ApplicationUser for User: {}", applicationUser);
+
         return user;
     }
 
@@ -260,6 +287,15 @@ public class UserService {
                 user.setImageUrl(imageUrl);
                 userRepository.save(user);
                 userSearchRepository.index(user);
+
+                applicationUserRepository
+                    .findByInternalUserId(user.getId())
+                    .ifPresent(applicationUser -> {
+                        applicationUser.setName(user.getFirstName() + " " + user.getLastName());
+                        applicationUserRepository.save(applicationUser);
+                        LOG.debug("Updated ApplicationUser for User: {}", applicationUser);
+                    });
+
                 this.clearUserCaches(user);
                 LOG.debug("Changed Information for User: {}", user);
             });

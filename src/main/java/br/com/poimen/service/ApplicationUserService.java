@@ -1,14 +1,19 @@
 package br.com.poimen.service;
 
 import br.com.poimen.domain.ApplicationUser;
+import br.com.poimen.domain.User;
 import br.com.poimen.repository.ApplicationUserRepository;
 import br.com.poimen.repository.UserRepository;
 import br.com.poimen.repository.search.ApplicationUserSearchRepository;
+import br.com.poimen.security.SecurityUtils;
+import jakarta.persistence.EntityManager;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.StreamSupport;
+import org.hibernate.Session;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
@@ -29,6 +34,9 @@ public class ApplicationUserService {
 
     private final UserRepository userRepository;
 
+    @Autowired
+    private EntityManager entityManager;
+
     public ApplicationUserService(
         ApplicationUserRepository applicationUserRepository,
         ApplicationUserSearchRepository applicationUserSearchRepository,
@@ -47,8 +55,21 @@ public class ApplicationUserService {
      */
     public ApplicationUser save(ApplicationUser applicationUser) {
         LOG.debug("Request to save ApplicationUser : {}", applicationUser);
-        Long userId = applicationUser.getInternalUser().getId();
-        userRepository.findById(userId).ifPresent(applicationUser::internalUser);
+
+        // Get the current logged-in user
+        String currentUserLogin = SecurityUtils.getCurrentUserLogin().orElseThrow(() -> new IllegalStateException("User not logged in"));
+        User currentUser = userRepository.findOneByLogin(currentUserLogin).orElseThrow(() -> new IllegalStateException("User not found"));
+
+        // Check if the user already has an ApplicationUser
+        Optional<ApplicationUser> existingApplicationUser = applicationUserRepository.findByInternalUserId(currentUser.getId());
+        if (existingApplicationUser.isPresent()) {
+            throw new IllegalStateException("User already has an ApplicationUser");
+        }
+
+        // Set the internal user to the current user
+        applicationUser.setInternalUser(currentUser);
+
+        // Save the ApplicationUser
         applicationUser = applicationUserRepository.save(applicationUser);
         applicationUserSearchRepository.index(applicationUser);
         return applicationUser;
@@ -106,6 +127,15 @@ public class ApplicationUserService {
     @Transactional(readOnly = true)
     public List<ApplicationUser> findAll() {
         LOG.debug("Request to get all ApplicationUsers");
+
+        // Get the current logged-in user
+        String currentUserLogin = SecurityUtils.getCurrentUserLogin().orElseThrow(() -> new IllegalStateException("User not logged in"));
+        User currentUser = userRepository.findOneByLogin(currentUserLogin).orElseThrow(() -> new IllegalStateException("User not found"));
+
+        // Activate the filter
+        Session session = entityManager.unwrap(Session.class);
+        session.enableFilter("userFilter").setParameter("userId", currentUser.getId());
+
         return applicationUserRepository.findAll();
     }
 
@@ -127,7 +157,16 @@ public class ApplicationUserService {
     @Transactional(readOnly = true)
     public Optional<ApplicationUser> findOne(Long id) {
         LOG.debug("Request to get ApplicationUser : {}", id);
-        return applicationUserRepository.findOneWithEagerRelationships(id);
+
+        // Get the current logged-in user
+        String currentUserLogin = SecurityUtils.getCurrentUserLogin().orElseThrow(() -> new IllegalStateException("User not logged in"));
+        User currentUser = userRepository.findOneByLogin(currentUserLogin).orElseThrow(() -> new IllegalStateException("User not found"));
+
+        // Activate the filter
+        Session session = entityManager.unwrap(Session.class);
+        session.enableFilter("userFilter").setParameter("userId", currentUser.getId());
+
+        return applicationUserRepository.findById(id);
     }
 
     /**

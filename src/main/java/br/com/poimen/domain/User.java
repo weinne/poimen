@@ -83,6 +83,9 @@ public class User extends AbstractAuditingEntity<Long> implements Serializable {
     @Column(name = "reset_date")
     private Instant resetDate = null;
 
+    @OneToOne(mappedBy = "internalUser", cascade = CascadeType.ALL, orphanRemoval = true, fetch = FetchType.LAZY)
+    private ApplicationUser applicationUser;
+
     @JsonIgnore
     @ManyToMany
     @JoinTable(

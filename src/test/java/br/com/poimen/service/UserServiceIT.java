@@ -7,9 +7,12 @@ import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 import br.com.poimen.IntegrationTest;
+import br.com.poimen.domain.ApplicationUser;
 import br.com.poimen.domain.User;
+import br.com.poimen.repository.ApplicationUserRepository;
 import br.com.poimen.repository.UserRepository;
 import br.com.poimen.repository.search.UserSearchRepository;
+import br.com.poimen.service.dto.AdminUserDTO;
 import java.time.Instant;
 import java.time.LocalDateTime;
 import java.time.temporal.ChronoUnit;
@@ -71,6 +74,9 @@ class UserServiceIT {
 
     @MockBean
     private DateTimeProvider dateTimeProvider;
+
+    @Autowired
+    private ApplicationUserRepository applicationUserRepository;
 
     private User user;
 
@@ -223,5 +229,24 @@ class UserServiceIT {
 
         // Verify Elasticsearch mock
         verify(spiedUserSearchRepository, never()).deleteFromIndex(user);
+    }
+
+    @Test
+    @Transactional
+    void testCreateUserCreatesApplicationUser() {
+        AdminUserDTO userDTO = new AdminUserDTO();
+        userDTO.setLogin(DEFAULT_LOGIN);
+        userDTO.setEmail(DEFAULT_EMAIL);
+        userDTO.setFirstName(DEFAULT_FIRSTNAME);
+        userDTO.setLastName(DEFAULT_LASTNAME);
+
+        User user = userService.createUser(userDTO);
+
+        assertThat(user).isNotNull();
+        assertThat(user.getLogin()).isEqualTo("testuser");
+
+        ApplicationUser applicationUser = applicationUserRepository.findByInternalUserId(user.getId()).orElse(null);
+        assertThat(applicationUser).isNotNull();
+        assertThat(applicationUser.getInternalUser().getId()).isEqualTo(user.getId());
     }
 }
