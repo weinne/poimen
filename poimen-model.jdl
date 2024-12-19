@@ -1,3 +1,33 @@
+application {
+  config {
+    applicationType monolith
+    authenticationType jwt
+    baseName poimen
+    buildTool maven
+    cacheProvider ehcache
+    clientFramework angularX
+    clientTheme zephyr
+    clientThemeVariant primary
+    databaseType sql
+    devDatabaseType h2Disk
+    enableHibernateCache true
+    enableSwaggerCodegen false
+    enableTranslation true
+    jwtSecretKey "NGY4YjY1ZmY0ZWM3MzIyZjU5M2E4YzU1Y2RjNzBiMjUxYzI4YTJiMDQ2OTllNzNkYmFiM2E3YjI3ZmFiNzc4NGVjNDJkNjlmZTU0MDY3NzIzMTA4MWVjNTIzYWEyYTFmMDFjNWE2OTkxYWM1YzYxYjIyMzgxZGIwYzkxMmFjZjg="
+    languages [en, pt-br]
+    nativeLanguage en
+    packageName br.com.poimen
+    prodDatabaseType postgresql
+    reactive false
+    searchEngine elasticsearch
+    serviceDiscoveryType false
+    testFrameworks [cucumber, cypress]
+    websocket false
+    withAdminUi true
+  }
+  entities ApplicationUser, Appointment, Church, CounselingSession, Hymn, Invoice, Member, MinistryGroup, Plan, PlanSubscription, Task, Transaction, WorshipEvent
+}
+
 entity ApplicationUser {
   name String required                     // Nome do usuário
   description TextBlob
