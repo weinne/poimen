@@ -1,5 +1,9 @@
 import { Routes } from '@angular/router';
 
+import { Authority } from 'app/config/authority.constants';
+
+import { UserRouteAccessService } from 'app/core/auth/user-route-access.service';
+
 const routes: Routes = [
   {
     path: 'authority',
@@ -8,7 +12,11 @@ const routes: Routes = [
   },
   {
     path: 'application-user',
-    data: { pageTitle: 'poimenApp.applicationUser.home.title' },
+    data: {
+      pageTitle: 'poimenApp.applicationUser.home.title',
+      authorities: [Authority.ADMIN],
+    },
+    canActivate: [UserRouteAccessService],
     loadChildren: () => import('./application-user/application-user.routes'),
   },
   {

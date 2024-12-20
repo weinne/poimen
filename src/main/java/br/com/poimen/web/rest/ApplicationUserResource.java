@@ -1,7 +1,10 @@
 package br.com.poimen.web.rest;
 
 import br.com.poimen.domain.ApplicationUser;
+import br.com.poimen.domain.User;
 import br.com.poimen.repository.ApplicationUserRepository;
+import br.com.poimen.repository.UserRepository;
+import br.com.poimen.security.SecurityUtils;
 import br.com.poimen.service.ApplicationUserService;
 import br.com.poimen.web.rest.errors.BadRequestAlertException;
 import br.com.poimen.web.rest.errors.ElasticsearchExceptionMapper;
@@ -38,9 +41,16 @@ public class ApplicationUserResource {
 
     private final ApplicationUserRepository applicationUserRepository;
 
-    public ApplicationUserResource(ApplicationUserService applicationUserService, ApplicationUserRepository applicationUserRepository) {
+    private final UserRepository userRepository;
+
+    public ApplicationUserResource(
+        ApplicationUserService applicationUserService,
+        ApplicationUserRepository applicationUserRepository,
+        UserRepository userRepository
+    ) {
         this.applicationUserService = applicationUserService;
         this.applicationUserRepository = applicationUserRepository;
+        this.userRepository = userRepository;
     }
 
     /**
@@ -54,6 +64,17 @@ public class ApplicationUserResource {
     public ResponseEntity<ApplicationUser> createApplicationUser(@Valid @RequestBody ApplicationUser applicationUser)
         throws URISyntaxException {
         LOG.debug("REST request to save ApplicationUser : {}", applicationUser);
+
+        // Get the current logged-in user
+        String currentUserLogin = SecurityUtils.getCurrentUserLogin().orElseThrow(() -> new IllegalStateException("User not logged in"));
+        User currentUser = userRepository.findOneByLogin(currentUserLogin).orElseThrow(() -> new IllegalStateException("User not found"));
+
+        // Check if the user already has an ApplicationUser
+        Optional<ApplicationUser> existingApplicationUser = applicationUserRepository.findByInternalUserId(currentUser.getId());
+        if (existingApplicationUser.isPresent()) {
+            throw new BadRequestAlertException("User already has an ApplicationUser", "applicationUser", "userExists");
+        }
+
         if (applicationUser.getId() != null) {
             throw new BadRequestAlertException("A new applicationUser cannot already have an ID", ENTITY_NAME, "idexists");
         }

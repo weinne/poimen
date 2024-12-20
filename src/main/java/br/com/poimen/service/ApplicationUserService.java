@@ -60,12 +60,6 @@ public class ApplicationUserService {
         String currentUserLogin = SecurityUtils.getCurrentUserLogin().orElseThrow(() -> new IllegalStateException("User not logged in"));
         User currentUser = userRepository.findOneByLogin(currentUserLogin).orElseThrow(() -> new IllegalStateException("User not found"));
 
-        // Check if the user already has an ApplicationUser
-        Optional<ApplicationUser> existingApplicationUser = applicationUserRepository.findByInternalUserId(currentUser.getId());
-        if (existingApplicationUser.isPresent()) {
-            throw new IllegalStateException("User already has an ApplicationUser");
-        }
-
         // Set the internal user to the current user
         applicationUser.setInternalUser(currentUser);
 

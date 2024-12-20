@@ -3,7 +3,14 @@
     <h2 id="configuration-page-heading" data-cy="configurationPageHeading" jhiTranslate="configuration.title">Configuration</h2>
 
     <span jhiTranslate="configuration.filter">Filter (by prefix)</span>
-    <input type="text" [ngModel]="beansFilter()" (ngModelChange)="beansFilter.set($event)" class="form-control" />
+    <input
+      type="text"
+      [ngModel]="beansFilter()"
+      (ngModelChange)="beansFilter.set($event)"
+      class="form-control"
+      title="Filter beans"
+      placeholder="Enter prefix to filter"
+    />
 
     <h3 id="spring-configuration">Spring configuration</h3>
 
