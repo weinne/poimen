@@ -49,5 +49,8 @@
   "features": {
     "docker-in-docker": "latest",
     "docker-from-docker": "latest"
-  }
+  },
+
+  // Adicione a configuração de rede
+  "runArgs": ["--network=host"]
 }
